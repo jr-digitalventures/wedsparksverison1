@@ -11,7 +11,11 @@ const icons = {
  verified:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/>',
  heart:'<path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.5a5.5 5.5 0 0 0 0-7.8Z"/>',
  budget:'<circle cx="12" cy="12" r="9"/><path d="M12 3v9h9M8.5 16.5l3.5-4.5"/>',
- bookmark:'<path d="M6 3h12v18l-6-4-6 4V3Z"/>'
+ bookmark:'<path d="M6 3h12v18l-6-4-6 4V3Z"/>',
+ search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/>',
+ compare:'<path d="M7 7h13m-4-4 4 4-4 4M17 17H4m4 4-4-4 4-4"/>',
+ message:'<path d="M21 11.5a8 8 0 0 1-8.5 8 9 9 0 0 1-3.7-.8L3 21l1.7-5A8 8 0 1 1 21 11.5Z"/><circle cx="8" cy="11.5" r=".5"/><circle cx="12" cy="11.5" r=".5"/><circle cx="16" cy="11.5" r=".5"/>',
+ checklist:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3V1m6 2V1M8 9l1.5 1.5L12 8m-4 7 1.5 1.5L12 14m2-4h2m-2 6h2"/>'
 };
 const icon = name => `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${icons[name]}</svg>`;
 document.querySelectorAll('[data-icon]').forEach(el => el.innerHTML=icon(el.dataset.icon));
