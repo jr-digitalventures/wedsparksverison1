@@ -139,7 +139,11 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
 
 /* Compact mobile search sizing */
 @media(max-width:700px){
-  .hero-inner,.hero.has-expanded-search .hero-inner{--responsive-copy-gap:50px}
+  .site-header{background:transparent}
+  .hero,.hero.has-expanded-search{height:100svh;min-height:100svh;border-bottom:20px solid var(--green);background-image:url('assets/background-v2.png?v=5');background-size:auto 100%;background-position:59% top;background-repeat:no-repeat}
+  .hero-inner,.hero.has-expanded-search .hero-inner{--responsive-copy-gap:50px;height:calc(100svh - 20px);min-height:0;padding-bottom:50px}
+  .hero-inner::before,.hero.has-expanded-search .hero-inner::before{content:'';display:block;height:var(--responsive-copy-gap);flex:0 0 var(--responsive-copy-gap)}
+  .hero h1{font-size:clamp(32px,8.5vw,44px);line-height:1.01;margin-bottom:12px}.hero h2{font-size:clamp(15px,4vw,18px);line-height:1.28}
   .search-card{padding:0 20px 20px;font-size:14px}
   .tab-menu-toggle{min-height:58px;padding:9px 6px}.tab-menu-toggle strong{font-size:14px}.tab-menu-toggle i{width:10px;height:10px}
   #panel-build .field-shell{min-height:60px;padding:10px 7px;gap:12px}
