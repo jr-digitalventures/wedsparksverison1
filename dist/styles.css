@@ -208,6 +208,9 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
 @media(min-width:1201px){
   .trust-item:first-child{padding-left:0}
   .trust-item:last-child{padding-right:0}
+  .trust-item:first-child{justify-content:flex-start}
+  .trust-item:nth-child(2),.trust-item:nth-child(3){justify-content:center}
+  .trust-item:last-child{justify-content:flex-end}
 }
 @media(max-width:1200px){
   .site-header{padding-left:45px;padding-right:45px}
