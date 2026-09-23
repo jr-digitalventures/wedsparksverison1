@@ -81,3 +81,35 @@ document.addEventListener('click',event=>{if(!event.target.closest('.site-header
 document.addEventListener('keydown',event=>{if(event.key!=='Escape')return;if(!mobileNavigation.hidden){closeMobileMenu();mobileMenuToggle.focus();}if(searchTabs.classList.contains('is-open')){closeTabMenu();tabMenuToggle.focus();}});
 const mobileMoreToggle=document.querySelector('.mobile-more-toggle');
 mobileMoreToggle.addEventListener('click',()=>{const form=mobileMoreToggle.closest('form');const open=!form.classList.contains('mobile-details-open');form.classList.toggle('mobile-details-open',open);mobileMoreToggle.setAttribute('aria-expanded',String(open));mobileMoreToggle.querySelector('.mobile-plus').textContent=open?'−':'+';});
+
+const supplierCarousel=document.querySelector('#supplier-carousel');
+const supplierPagination=document.querySelector('.supplier-pagination');
+if(supplierCarousel&&supplierPagination){
+  const pageCount=5;
+  let carouselFrame;
+  const pageButtons=Array.from({length:pageCount},(_,index)=>{
+    const button=document.createElement('button');
+    button.type='button';
+    button.setAttribute('aria-label',`Show supplier categories page ${index+1}`);
+    button.setAttribute('aria-current',String(index===0));
+    button.addEventListener('click',()=>{
+      const maxScroll=supplierCarousel.scrollWidth-supplierCarousel.clientWidth;
+      supplierCarousel.scrollTo({left:maxScroll*(index/(pageCount-1)),behavior:'smooth'});
+    });
+    supplierPagination.append(button);
+    return button;
+  });
+  function updateSupplierPagination(){
+    const maxScroll=supplierCarousel.scrollWidth-supplierCarousel.clientWidth;
+    const active=maxScroll>0?Math.round((supplierCarousel.scrollLeft/maxScroll)*(pageCount-1)):0;
+    pageButtons.forEach((button,index)=>button.setAttribute('aria-current',String(index===active)));
+  }
+  supplierCarousel.addEventListener('scroll',()=>{cancelAnimationFrame(carouselFrame);carouselFrame=requestAnimationFrame(updateSupplierPagination);},{passive:true});
+  supplierCarousel.addEventListener('keydown',event=>{
+    if(!['ArrowLeft','ArrowRight'].includes(event.key))return;
+    event.preventDefault();
+    const direction=event.key==='ArrowRight'?1:-1;
+    supplierCarousel.scrollBy({left:direction*supplierCarousel.clientWidth*.72,behavior:'smooth'});
+  });
+  window.addEventListener('resize',updateSupplierPagination,{passive:true});
+}

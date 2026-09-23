@@ -97,6 +97,27 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
   .hero.has-expanded-search{height:auto;min-height:100svh}.hero.has-expanded-search .hero-inner{height:auto;min-height:calc(100svh - 20px);justify-content:flex-start}.hero.has-expanded-search .hero-inner::before{height:var(--expanded-copy-gap);flex-basis:var(--expanded-copy-gap)}.hero.has-expanded-search .hero-copy{margin-bottom:var(--expanded-copy-gap)}
 }
 
+/* Popular supplier carousel */
+.supplier-explorer{width:100%;background:#fcfbf8;padding:72px 0 62px;color:#17231f}
+.supplier-explorer-inner{width:92%;max-width:1840px;margin:0 auto;display:grid;grid-template-columns:minmax(330px,.72fr) minmax(0,1.85fr);align-items:center;gap:62px}
+.supplier-explorer-copy{padding-left:1%}
+.supplier-explorer-copy h2{max-width:500px;margin:0 0 22px;font-family:var(--serif);font-size:clamp(34px,2.7vw,52px);font-weight:400;line-height:1.08;letter-spacing:.035em;text-transform:uppercase;color:#161b19}
+.supplier-explorer-copy p{max-width:525px;margin:0;font:400 17px/1.6 var(--sans);color:#6f7371}
+.supplier-carousel-wrap{min-width:0;overflow:hidden}
+.supplier-carousel{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(205px,20.5vw,290px);gap:16px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;padding:3px 2px 4px}
+.supplier-carousel::-webkit-scrollbar{display:none}
+.supplier-card{position:relative;isolation:isolate;aspect-ratio:3/4;overflow:hidden;border-radius:8px;background-image:url('assets/category-reference.png');background-size:1106% auto;background-position:var(--crop-x) 88%;background-repeat:no-repeat;scroll-snap-align:start;text-decoration:none;color:#fff;box-shadow:0 1px 2px rgba(17,43,34,.08)}
+.supplier-card::after{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(7,17,13,.78) 100%)}
+.supplier-card>span{position:absolute;left:25px;right:18px;bottom:25px;display:grid;gap:9px}
+.supplier-card strong{font:400 clamp(25px,1.7vw,32px)/1.08 var(--serif)}
+.supplier-card small{font:400 15px/1.2 var(--serif)}.supplier-card small b{margin-left:7px;font-weight:400}
+.supplier-card:focus-visible{outline:3px solid #103e33;outline-offset:3px}
+.supplier-pagination{display:flex;justify-content:center;gap:14px;margin-top:38px}
+.supplier-pagination button{width:68px;height:4px;padding:0;border:0;border-radius:999px;background:#d6d5d1;cursor:pointer;transition:background .2s ease}
+.supplier-pagination button[aria-current="true"]{background:#103e33}
+@media(max-width:1200px){.supplier-explorer{padding-block:58px}.supplier-explorer-inner{grid-template-columns:1fr;gap:34px}.supplier-explorer-copy{padding-left:0}.supplier-explorer-copy h2,.supplier-explorer-copy p{max-width:760px}.supplier-carousel{grid-auto-columns:clamp(220px,34vw,300px)}}
+@media(max-width:700px){.supplier-explorer{padding:45px 0}.supplier-explorer-inner{width:90%;gap:28px}.supplier-explorer-copy h2{font-size:30px;margin-bottom:16px}.supplier-explorer-copy p{font-size:15px;line-height:1.55}.supplier-carousel{grid-auto-columns:min(76vw,275px);gap:13px}.supplier-card>span{left:20px;bottom:21px}.supplier-pagination{gap:8px;margin-top:25px}.supplier-pagination button{width:34px}}
+
 @media(max-width:900px){
   .site-header{height:72px;min-height:72px;padding:0 5%;display:flex;align-items:center;gap:16px;background:linear-gradient(180deg,rgba(8,27,22,.58),rgba(8,27,22,.08))}.site-header .brand{grid-column:auto;grid-row:auto;justify-self:auto;margin:0 auto 0 0;font-size:27px}.site-header .brand svg{width:32px;height:31px}.site-header>.header-side{display:none}
   .mobile-menu-toggle{width:44px;height:42px;margin-left:auto;border:1px solid rgba(255,255,255,.82);border-radius:999px;background:rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0}.mobile-menu-toggle span{display:block;width:17px;height:1.5px;background:#fff;border-radius:2px}.mobile-menu-toggle[aria-expanded=true] span:nth-child(1){transform:translateY(5.5px) rotate(45deg)}.mobile-menu-toggle[aria-expanded=true] span:nth-child(2){opacity:0}.mobile-menu-toggle[aria-expanded=true] span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
