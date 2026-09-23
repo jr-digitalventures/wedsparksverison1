@@ -104,7 +104,7 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
 .supplier-explorer-copy h2{max-width:500px;margin:0 0 22px;font-family:var(--serif);font-size:clamp(32px,2.35vw,46px);font-weight:400;line-height:1.08;letter-spacing:.035em;text-transform:uppercase;color:#161b19}.supplier-explorer-copy h2 span{display:block;white-space:nowrap}
 .supplier-explorer-copy p{max-width:525px;margin:0;font:400 17px/1.6 var(--sans);color:#161b19}
 .supplier-explorer-cta{width:max-content;min-width:220px;min-height:54px;margin-top:22px;padding:12px 22px;display:inline-flex;align-items:center;justify-content:center;gap:16px;border:1px solid #103e33;border-radius:9px;background:#103e33;color:#fff;font:400 17px/1.2 var(--serif);text-decoration:none;transition:background .2s ease}.supplier-explorer-cta:hover{background:#195345}.supplier-explorer-cta span{font-size:22px;line-height:1}
-.supplier-carousel-wrap{min-width:0;overflow:hidden}
+.supplier-carousel-wrap{position:relative;min-width:0;overflow:visible}
 .supplier-carousel{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(205px,20.5vw,290px);gap:16px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;padding:3px 2px 4px}
 .supplier-carousel::-webkit-scrollbar{display:none}
 .supplier-card{position:relative;isolation:isolate;aspect-ratio:3/4;overflow:hidden;border-radius:8px;background-image:url('assets/category-reference.png');background-size:1106% auto;background-position:var(--crop-x) 88%;background-repeat:no-repeat;scroll-snap-align:start;text-decoration:none;color:#fff;box-shadow:0 1px 2px rgba(17,43,34,.08)}
@@ -114,13 +114,13 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
 .supplier-card strong{font:400 clamp(25px,1.7vw,32px)/1.08 var(--serif)}
 .supplier-card small{font:400 15px/1.2 var(--serif)}.supplier-card small b{margin-left:7px;font-weight:400}
 .supplier-card:focus-visible{outline:3px solid #103e33;outline-offset:3px}
-.supplier-pagination{display:flex;justify-content:center;gap:14px;margin-top:38px}
+.supplier-pagination{position:absolute;top:calc(100% + 38px);left:0;right:0;display:flex;justify-content:center;gap:14px;margin-top:0}
 .supplier-pagination button{width:68px;height:4px;padding:0;border:0;border-radius:999px;background:#d6d5d1;cursor:pointer;transition:background .2s ease}
 .supplier-pagination button[aria-current="true"]{background:#103e33}
 @media(max-width:1350px){.supplier-explorer-inner{width:88%}}
 @media(max-width:1200px){.supplier-explorer{padding-block:58px}.supplier-explorer-inner{grid-template-columns:1fr;gap:34px}.supplier-explorer-copy{padding-left:0}.supplier-explorer-copy h2,.supplier-explorer-copy p{max-width:760px}.supplier-carousel{grid-auto-columns:clamp(220px,34vw,300px)}}
 @media(max-width:1050px){.supplier-explorer-inner{width:91%}}
-@media(max-width:700px){.supplier-explorer{padding:45px 0}.supplier-explorer-inner{width:91%;gap:28px}.supplier-explorer-copy h2{font-size:28px;margin-bottom:16px}.supplier-explorer-copy p{font-size:15px;line-height:1.55}.supplier-explorer-cta{min-width:205px;min-height:50px;font-size:16px}.supplier-carousel{grid-auto-columns:min(76vw,275px);gap:13px}.supplier-card>span{left:20px;bottom:21px}.supplier-pagination{gap:8px;margin-top:25px}.supplier-pagination button{width:34px}}
+@media(max-width:700px){.supplier-explorer{padding:45px 0 74px}.supplier-explorer-inner{width:91%;gap:28px}.supplier-explorer-copy h2{font-size:28px;margin-bottom:16px}.supplier-explorer-copy p{font-size:15px;line-height:1.55}.supplier-explorer-cta{min-width:205px;min-height:50px;font-size:16px}.supplier-carousel{grid-auto-columns:min(76vw,275px);gap:13px}.supplier-card>span{left:20px;bottom:21px}.supplier-pagination{top:calc(100% + 25px);gap:8px}.supplier-pagination button{width:34px}}
 
 @media(max-width:900px){
   .site-header{height:72px;min-height:72px;padding:0 5%;display:flex;align-items:center;gap:16px;background:linear-gradient(180deg,rgba(8,27,22,.58),rgba(8,27,22,.08))}.site-header .brand{grid-column:auto;grid-row:auto;justify-self:auto;margin:0 auto 0 0;font-size:27px}.site-header .brand svg{width:32px;height:31px}.site-header>.header-side{display:none}
