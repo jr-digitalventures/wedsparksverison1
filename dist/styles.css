@@ -136,3 +136,18 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
   .mobile-more-toggle{font-size:17px;padding-inline:13px;gap:13px}.mobile-more-toggle .mobile-plus{width:38px;height:38px;flex-basis:38px}
   #panel-build .search-submit{height:68px;min-height:68px;font-size:21px}
 }
+
+/* Compact mobile search sizing */
+@media(max-width:700px){
+  .hero-inner,.hero.has-expanded-search .hero-inner{--responsive-copy-gap:50px}
+  .search-card{padding:0 20px 20px;font-size:14px}
+  .tab-menu-toggle{min-height:58px;padding:9px 6px}.tab-menu-toggle strong{font-size:14px}.tab-menu-toggle i{width:10px;height:10px}
+  #panel-build .field-shell{min-height:60px;padding:10px 7px;gap:12px}
+  #panel-build .field-shell>.icon{width:18px;height:18px}
+  #panel-build .field-value,#panel-build .field-shell input{font-size:14px}
+  #panel-build .chevron{width:9px;height:9px}
+  .mobile-more-toggle{min-height:54px;margin:11px 0 14px;padding:8px 12px;gap:11px;font-size:14px}
+  .mobile-more-toggle .mobile-plus{width:30px;height:30px;flex-basis:30px;font-size:24px}.mobile-more-toggle .chevron{width:9px;height:9px}
+  #panel-build .search-submit{height:58px;min-height:58px;font-size:14px}
+  #panel-build .search-submit .icon{width:18px;height:18px}
+}
