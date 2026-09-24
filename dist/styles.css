@@ -286,3 +286,24 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
   .planning-tool-grid{grid-template-columns:1fr;gap:14px;margin-top:30px}.planning-tool-card{min-height:0;padding:20px;gap:15px}.planning-tool-icon{width:48px;height:48px;flex-basis:48px}.planning-tool-icon .icon{width:22px;height:22px}
   .planning-tool-card h3{font-size:15px;margin-top:3px;margin-bottom:9px}.planning-tool-card p{font-size:13px}
 }
+
+/* Account call to action */
+.account-cta-section{padding:0 0 0 135px;display:grid;grid-template-columns:minmax(0,1fr) 50vw;align-items:stretch;background:#fff;color:#161b19}
+.account-cta-content{min-width:0;padding:75px 72px 75px 0;align-self:center}
+.account-cta-content h2{max-width:640px;margin:0 0 22px;color:#161b19;font:400 34px/1.15 var(--serif);letter-spacing:.025em}
+.account-cta-content p{max-width:640px;margin:0;color:#161b19;font:400 17px/1.62 var(--sans)}
+.account-cta-button{width:max-content;min-width:270px;min-height:56px;margin-top:30px;padding:12px 24px;border:1px solid #103e33;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;gap:18px;background:#103e33;color:#fff;font:400 18px/1.2 var(--serif);text-decoration:none;transition:background .2s ease}
+.account-cta-button:hover{background:#195345}.account-cta-button span{font-size:22px;line-height:1}
+.account-cta-media{min-height:540px;overflow:hidden;border-radius:10px 0 0 10px;background:#e7e3dd}
+.account-cta-media img{width:100%;height:100%;display:block;object-fit:cover}
+@media(max-width:1200px){
+  .account-cta-section{padding-left:45px;grid-template-columns:1fr}
+  .account-cta-content{padding:60px 45px 60px 0}.account-cta-content h2{font-size:30px}.account-cta-content p{font-size:15px}
+  .account-cta-media{min-height:460px;max-height:620px;border-radius:8px 0 0 8px}
+}
+@media(max-width:700px){
+  .account-cta-section{padding-left:30px}
+  .account-cta-content{padding:45px 30px 45px 0}.account-cta-content h2{font-size:25px;line-height:1.2;margin-bottom:18px}.account-cta-content p{font-size:13px;line-height:1.6}
+  .account-cta-button{width:100%;min-width:0;min-height:52px;margin-top:26px;font-size:16px}
+  .account-cta-media{min-height:340px;max-height:440px}
+}
