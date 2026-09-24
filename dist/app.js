@@ -15,7 +15,9 @@ const icons = {
  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/>',
  compare:'<path d="M7 7h13m-4-4 4 4-4 4M17 17H4m4 4-4-4 4-4"/>',
  message:'<path d="M21 11.5a8 8 0 0 1-8.5 8 9 9 0 0 1-3.7-.8L3 21l1.7-5A8 8 0 1 1 21 11.5Z"/><circle cx="8" cy="11.5" r=".5"/><circle cx="12" cy="11.5" r=".5"/><circle cx="16" cy="11.5" r=".5"/>',
- checklist:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3V1m6 2V1M8 9l1.5 1.5L12 8m-4 7 1.5 1.5L12 14m2-4h2m-2 6h2"/>'
+ checklist:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3V1m6 2V1M8 9l1.5 1.5L12 8m-4 7 1.5 1.5L12 14m2-4h2m-2 6h2"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+ dashboard:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'
 };
 const icon = name => `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${icons[name]}</svg>`;
 document.querySelectorAll('[data-icon]').forEach(el => el.innerHTML=icon(el.dataset.icon));
