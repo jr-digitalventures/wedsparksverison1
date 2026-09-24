@@ -7,7 +7,7 @@
   <meta name="description" content="Discover, shortlist and connect with suppliers for every part of your wedding.">
   <title>WedSparks — Create Your Day, Your Way.</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23103e33'/%3E%3Cpath d='M20 31 8 18C1 7 15 3 20 12 25 3 39 7 32 18Z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=42">
+  <link rel="stylesheet" href="styles.css?v=43">
   <script src="app.js?v=20" defer></script>
 </head>
 <body>
@@ -46,6 +46,28 @@
         </div>
       </div>
     </section>
+    <section class="supplier-explorer" aria-labelledby="supplier-explorer-title">
+      <div class="supplier-explorer-inner">
+        <div class="supplier-explorer-copy">
+          <h2 id="supplier-explorer-title"><span>EXPLORE POPULAR</span><span>WEDDING SUPPLIERS</span></h2>
+          <p>Explore wedding suppliers across popular categories, from venues and photographers to florists, celebrants, catering and entertainment.</p>
+          <a class="supplier-explorer-cta" href="https://www.google.com/">Browse all suppliers <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="supplier-carousel-wrap">
+          <div class="supplier-carousel" id="supplier-carousel" tabindex="0" aria-label="Popular wedding supplier categories">
+            <a class="supplier-card" href="./?category=venues" style="--crop-x:7.52%"><span><strong>Venues</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="./?category=florists" style="--crop-x:28.78%"><span><strong>Florists</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="./?category=catering" style="--crop-x:39.43%"><span><strong>Catering</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="./?category=photography" style="--crop-x:18.12%"><span><strong>Photography</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="./?category=entertainment" style="--crop-x:71.28%"><span><strong>Entertainment</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="./?category=cakes" style="--crop-x:50.03%"><span><strong>Cakes</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="./?category=hair-and-makeup" style="--crop-x:60.68%"><span><strong>Hair &amp; Makeup</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="./?category=styling-and-hire" style="--crop-x:81.93%"><span><strong>Styling &amp; Hire</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+          </div>
+          <div class="supplier-pagination" aria-label="Supplier carousel pages"></div>
+        </div>
+      </div>
+    </section>
     <section class="trust-strip" aria-label="Why couples choose WedSparks">
       <div class="trust-strip-inner">
         <article class="trust-item">
@@ -69,25 +91,30 @@
         </article>
       </div>
     </section>
-    <section class="supplier-explorer" aria-labelledby="supplier-explorer-title">
-      <div class="supplier-explorer-inner">
-        <div class="supplier-explorer-copy">
-          <h2 id="supplier-explorer-title"><span>EXPLORE POPULAR</span><span>WEDDING SUPPLIERS</span></h2>
-          <p>Explore wedding suppliers across popular categories, from venues and photographers to florists, celebrants, catering and entertainment.</p>
-          <a class="supplier-explorer-cta" href="https://www.google.com/">Browse all suppliers <span aria-hidden="true">→</span></a>
-        </div>
-        <div class="supplier-carousel-wrap">
-          <div class="supplier-carousel" id="supplier-carousel" tabindex="0" aria-label="Popular wedding supplier categories">
-            <a class="supplier-card" href="./?category=venues" style="--crop-x:7.52%"><span><strong>Venues</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="./?category=florists" style="--crop-x:28.78%"><span><strong>Florists</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="./?category=catering" style="--crop-x:39.43%"><span><strong>Catering</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="./?category=photography" style="--crop-x:18.12%"><span><strong>Photography</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="./?category=entertainment" style="--crop-x:71.28%"><span><strong>Entertainment</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="./?category=cakes" style="--crop-x:50.03%"><span><strong>Cakes</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="./?category=hair-and-makeup" style="--crop-x:60.68%"><span><strong>Hair &amp; Makeup</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="./?category=styling-and-hire" style="--crop-x:81.93%"><span><strong>Styling &amp; Hire</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-          </div>
-          <div class="supplier-pagination" aria-label="Supplier carousel pages"></div>
+    <section class="planning-tools-section" aria-labelledby="planning-tools-title">
+      <div class="planning-tools-media">
+        <img src="https://vfdtyxcfrqnqdyuimtho.supabase.co/storage/v1/object/public/Vendor%20Type/ChatGPT%20Image%20Sep%2024,%202026,%2010_36_08%20PM.png" alt="Wedding planning inspiration">
+      </div>
+      <div class="planning-tools-content">
+        <h2 id="planning-tools-title">WHERE YOUR WEDDING TAKES SHAPE</h2>
+        <p class="planning-tools-lead">WedSparks brings the whole planning experience together in one place. Discover suppliers that fit your date, location, budget and style, compare favourites, request quotes, manage conversations, and keep your budget, guests, RSVPs and planning organised through your couple dashboard.</p>
+        <div class="planning-tool-grid">
+          <article class="planning-tool-card">
+            <span class="planning-tool-icon" data-icon="budget"></span>
+            <div><h3>Track Your Wedding Budget</h3><p>Plan costs, monitor spending and keep your wedding budget under control.</p></div>
+          </article>
+          <article class="planning-tool-card">
+            <span class="planning-tool-icon" data-icon="mail"></span>
+            <div><h3>Organise Your Guest List</h3><p>Organise guests, invitations and RSVPs without losing track of anything.</p></div>
+          </article>
+          <article class="planning-tool-card">
+            <span class="planning-tool-icon" data-icon="dashboard"></span>
+            <div><h3>Keep Everything Together</h3><p>Access your plans, suppliers, messages and quotes from one central place.</p></div>
+          </article>
+          <article class="planning-tool-card">
+            <span class="planning-tool-icon" data-icon="palette"></span>
+            <div><h3>Discover Your Style</h3><p>Explore ideas, themes and suppliers that match the wedding you want to create.</p></div>
+          </article>
         </div>
       </div>
     </section>
@@ -119,33 +146,6 @@
         </article>
       </div>
       <a class="planning-cta" href="#search">Start Planning <span aria-hidden="true">→</span></a>
-    </section>
-    <section class="planning-tools-section" aria-labelledby="planning-tools-title">
-      <div class="planning-tools-media">
-        <img src="https://vfdtyxcfrqnqdyuimtho.supabase.co/storage/v1/object/public/Vendor%20Type/ChatGPT%20Image%20Sep%2024,%202026,%2010_36_08%20PM.png" alt="Wedding planning inspiration">
-      </div>
-      <div class="planning-tools-content">
-        <h2 id="planning-tools-title">WHERE YOUR WEDDING TAKES SHAPE</h2>
-        <p class="planning-tools-lead">WedSparks brings the whole planning experience together in one place. Discover suppliers that fit your date, location, budget and style, compare favourites, request quotes, manage conversations, and keep your budget, guests, RSVPs and planning organised through your couple dashboard.</p>
-        <div class="planning-tool-grid">
-          <article class="planning-tool-card">
-            <span class="planning-tool-icon" data-icon="budget"></span>
-            <div><h3>Track Your Budget</h3><p>Plan costs, monitor spending and keep your wedding budget under control.</p></div>
-          </article>
-          <article class="planning-tool-card">
-            <span class="planning-tool-icon" data-icon="mail"></span>
-            <div><h3>Manage Your Guest List</h3><p>Organise guests, invitations and RSVPs without losing track of anything.</p></div>
-          </article>
-          <article class="planning-tool-card">
-            <span class="planning-tool-icon" data-icon="dashboard"></span>
-            <div><h3>Keep Everything Together</h3><p>Access your plans, suppliers, messages and quotes from one central place.</p></div>
-          </article>
-          <article class="planning-tool-card">
-            <span class="planning-tool-icon" data-icon="palette"></span>
-            <div><h3>Discover Your Style</h3><p>Explore ideas, themes and suppliers that match the wedding you want to create.</p></div>
-          </article>
-        </div>
-      </div>
     </section>
   </main>
 </body>
