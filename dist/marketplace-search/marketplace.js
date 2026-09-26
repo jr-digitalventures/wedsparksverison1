@@ -71,9 +71,10 @@ if (marketplaceCategoryGrid) {
   };
 
   const renderMarketplaceCategories = rows => {
-    const cards = rows.slice(0, 8).map((row, index) => {
+    const featuredRows = rows.filter(row => !/^cake$/i.test(row.name.trim())).slice(0, 7);
+    const cards = featuredRows.map((row, index) => {
       const link = document.createElement('a');
-      link.className = `marketplace-category-card has-data-image${index === 0 ? ' marketplace-category-featured' : ''}${index >= 5 ? ' marketplace-category-small' : ''}`;
+      link.className = `marketplace-category-card has-data-image${index === 0 ? ' marketplace-category-featured' : ''}`;
       link.href = safeUrl(row.destination_url) || '#';
       const imageUrl = safeUrl(row.image_url);
       if (imageUrl) link.style.backgroundImage = `url("${imageUrl.replaceAll('"', '%22')}")`;
@@ -95,7 +96,7 @@ if (marketplaceCategoryGrid) {
   };
 
   const loadMarketplaceCategories = async () => {
-    const query = 'select=name,display_order,image_url,destination_url&is_active=eq.true&order=display_order.asc&limit=8';
+    const query = 'select=name,display_order,image_url,destination_url&is_active=eq.true&order=display_order.asc';
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/supplier_categories?${query}`, {
         headers: {apikey: SUPABASE_PUBLISHABLE_KEY}
