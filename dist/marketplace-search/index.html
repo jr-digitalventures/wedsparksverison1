@@ -8,8 +8,8 @@
   <title>Marketplace Search | WedSparks</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23103e33'/%3E%3Cpath d='M20 31 8 18C1 7 15 3 20 12 25 3 39 7 32 18Z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../styles.css?v=54">
-  <link rel="stylesheet" href="marketplace.css?v=14">
-  <script src="marketplace.js?v=4" defer></script>
+  <link rel="stylesheet" href="marketplace.css?v=15">
+  <script src="marketplace.js?v=5" defer></script>
 </head>
 <body class="marketplace-search-page">
   <a class="skip-link" href="#marketplace-search">Skip to supplier search</a>
@@ -60,7 +60,8 @@
         <a class="marketplace-category-card" href="#" style="--category-x:60.68%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
         <a class="marketplace-category-card" href="#" style="--category-x:71.33%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
       </div>
-      <a class="marketplace-show-categories" href="#">Show all categories <span aria-hidden="true">→</span></a>
+      <button class="marketplace-show-categories" id="marketplace-show-categories" type="button" aria-expanded="false" aria-controls="marketplace-expanded-categories" hidden>Show all categories <span aria-hidden="true">→</span></button>
+      <div class="marketplace-expanded-grid" id="marketplace-expanded-categories" hidden></div>
     </section>
   </main>
 </body>

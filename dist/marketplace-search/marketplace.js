@@ -59,6 +59,8 @@ document.addEventListener('keydown', event => {
 
 const marketplaceCategoryGrid = document.querySelector('#marketplace-category-grid');
 if (marketplaceCategoryGrid) {
+  const marketplaceExpandedGrid = document.querySelector('#marketplace-expanded-categories');
+  const marketplaceShowCategories = document.querySelector('#marketplace-show-categories');
   const SUPABASE_URL = 'https://vfdtyxcfrqnqdyuimtho.supabase.co';
   const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd';
   const safeUrl = value => {
@@ -70,11 +72,9 @@ if (marketplaceCategoryGrid) {
     }
   };
 
-  const renderMarketplaceCategories = rows => {
-    const featuredRows = rows.filter(row => !/^cake$/i.test(row.name.trim())).slice(0, 7);
-    const cards = featuredRows.map((row, index) => {
+  const createCategoryCard = (row, featured = false) => {
       const link = document.createElement('a');
-      link.className = `marketplace-category-card has-data-image${index === 0 ? ' marketplace-category-featured' : ''}`;
+      link.className = `marketplace-category-card has-data-image${featured ? ' marketplace-category-featured' : ''}`;
       link.href = safeUrl(row.destination_url) || '#';
       const imageUrl = safeUrl(row.image_url);
       if (imageUrl) link.style.backgroundImage = `url("${imageUrl.replaceAll('"', '%22')}")`;
@@ -91,9 +91,25 @@ if (marketplaceCategoryGrid) {
       content.append(title, action);
       link.append(content);
       return link;
-    });
-    if (cards.length) marketplaceCategoryGrid.replaceChildren(...cards);
   };
+
+  const renderMarketplaceCategories = rows => {
+    const featuredRows = rows.filter(row => !/^cake$/i.test(row.name.trim())).slice(0, 7);
+    const remainingRows = rows.filter(row => !featuredRows.includes(row));
+    const cards = featuredRows.map((row, index) => createCategoryCard(row, index === 0));
+    if (cards.length) marketplaceCategoryGrid.replaceChildren(...cards);
+
+    if (marketplaceExpandedGrid && marketplaceShowCategories && remainingRows.length) {
+      marketplaceExpandedGrid.replaceChildren(...remainingRows.map(row => createCategoryCard(row)));
+      marketplaceShowCategories.hidden = false;
+    }
+  };
+
+  marketplaceShowCategories?.addEventListener('click', () => {
+    const expanded = marketplaceShowCategories.getAttribute('aria-expanded') === 'true';
+    marketplaceShowCategories.setAttribute('aria-expanded', String(!expanded));
+    marketplaceExpandedGrid.hidden = expanded;
+  });
 
   const loadMarketplaceCategories = async () => {
     const query = 'select=name,display_order,image_url,destination_url&is_active=eq.true&order=display_order.asc';
