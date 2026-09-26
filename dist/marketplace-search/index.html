@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#103e33">
+  <meta name="description" content="Search and discover wedding suppliers on WedSparks.">
+  <title>Marketplace Search | WedSparks</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23103e33'/%3E%3Cpath d='M20 31 8 18C1 7 15 3 20 12 25 3 39 7 32 18Z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../styles.css?v=53">
+  <link rel="stylesheet" href="marketplace.css?v=1">
+  <script src="marketplace.js?v=1" defer></script>
+</head>
+<body class="marketplace-search-page">
+  <a class="skip-link" href="#marketplace-search">Skip to supplier search</a>
+  <header class="site-header">
+    <nav class="header-side header-left" aria-label="Primary navigation"><button type="button" disabled>Option 1</button><button type="button" disabled>Option 2</button><button type="button" disabled>Option 3</button></nav>
+    <a class="brand" href="../" aria-label="WedSparks home"><svg viewBox="0 0 52 46" aria-hidden="true"><path d="M23 39 5 20C-4 5 14-3 23 8M29 39 47 20C56 5 38-3 29 8M26 8C9-4 8 21 26 36 44 21 43-4 26 8Z"/></svg><span>WedSparks</span></a>
+    <nav class="header-side header-right" aria-label="Account navigation"><button type="button" disabled>Option 4</button><button class="header-action login" type="button" disabled>Log In</button><button class="header-action signup" type="button" disabled>Sign Up</button></nav>
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="marketplace-mobile-navigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="mobile-nav-panel" id="marketplace-mobile-navigation" aria-label="Mobile navigation" hidden><button type="button" disabled>Option 1</button><button type="button" disabled>Option 2</button><button type="button" disabled>Option 3</button><button type="button" disabled>Option 4</button><div class="mobile-account-actions"><button type="button" disabled>Log In</button><button type="button" disabled>Sign Up</button></div></nav>
+  </header>
+  <main>
+    <section class="marketplace-hero" aria-label="Wedding supplier marketplace search">
+      <div class="marketplace-search-summary" id="marketplace-search">
+        <div class="marketplace-search-value"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><span>Photographer</span></div>
+        <span class="marketplace-search-divider" aria-hidden="true"></span>
+        <div class="marketplace-search-value"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>Sydney, NSW</span></div>
+        <span class="marketplace-search-divider" aria-hidden="true"></span>
+        <div class="marketplace-search-value"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 11h18"/></svg><span>Sat, 12 Apr 2025</span></div>
+        <span class="marketplace-search-divider" aria-hidden="true"></span>
+        <div class="marketplace-search-value"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M14.5 8.5c-.6-.7-1.4-1-2.5-1-1.4 0-2.5.8-2.5 2s1.1 1.8 2.7 2.2c1.5.4 2.5.9 2.5 2.4s-1.2 2.4-2.8 2.4c-1.2 0-2.2-.4-2.9-1.2M12 5.5v13"/></svg><span>Any budget</span></div>
+        <button class="marketplace-edit-search" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/><path d="m14 7 3 3"/></svg><span>Edit Search</span><i aria-hidden="true"></i></button>
+      </div>
+    </section>
+    <section class="marketplace-placeholder" aria-label="Marketplace results content"></section>
+  </main>
+</body>
+</html>
