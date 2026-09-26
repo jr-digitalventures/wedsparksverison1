@@ -156,3 +156,15 @@ if (marketplaceCategoryGrid) {
 
   loadMarketplaceCategories();
 }
+
+const marketplaceLocationTrack = document.querySelector('#marketplace-location-track');
+if (marketplaceLocationTrack) {
+  const scrollLocations = direction => {
+    const card = marketplaceLocationTrack.querySelector('.marketplace-location-card');
+    if (!card) return;
+    const gap = Number.parseFloat(getComputedStyle(marketplaceLocationTrack).columnGap) || 16;
+    marketplaceLocationTrack.scrollBy({left: direction * (card.getBoundingClientRect().width + gap), behavior: 'smooth'});
+  };
+  document.querySelector('.marketplace-location-prev')?.addEventListener('click', () => scrollLocations(-1));
+  document.querySelector('.marketplace-location-next')?.addEventListener('click', () => scrollLocations(1));
+}
