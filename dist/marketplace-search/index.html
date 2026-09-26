@@ -8,8 +8,8 @@
   <title>Marketplace Search | WedSparks</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23103e33'/%3E%3Cpath d='M20 31 8 18C1 7 15 3 20 12 25 3 39 7 32 18Z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../styles.css?v=54">
-  <link rel="stylesheet" href="marketplace.css?v=19">
-  <script src="marketplace.js?v=9" defer></script>
+  <link rel="stylesheet" href="marketplace.css?v=20">
+  <script src="marketplace.js?v=10" defer></script>
 </head>
 <body class="marketplace-search-page">
   <a class="skip-link" href="#marketplace-search">Skip to supplier search</a>
@@ -70,7 +70,6 @@
         <p>Browse wedding suppliers by location and discover popular destinations across Australia.</p>
       </div>
       <div class="marketplace-locations-carousel">
-        <button class="marketplace-location-nav marketplace-location-prev" type="button" aria-label="Show previous wedding locations">←</button>
         <div class="marketplace-location-track" id="marketplace-location-track">
           <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Sydney Opera House and Harbour Bridge"><span><strong>Sydney</strong><small>1,200+ suppliers</small><b aria-hidden="true">→</b></span></a>
           <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1514395462725-fb4566210144?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Melbourne city skyline"><span><strong>Melbourne</strong><small>980+ suppliers</small><b aria-hidden="true">→</b></span></a>
@@ -79,7 +78,7 @@
           <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1529108190281-9a4f620bc2d8?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Western Australian coastline near Perth"><span><strong>Perth</strong><small>380+ suppliers</small><b aria-hidden="true">→</b></span></a>
           <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Coastal landscape near Byron Bay"><span><strong>Byron Bay</strong><small>360+ suppliers</small><b aria-hidden="true">→</b></span></a>
         </div>
-        <button class="marketplace-location-nav marketplace-location-next" type="button" aria-label="Show more wedding locations">→</button>
+        <div class="marketplace-location-pagination" aria-label="Wedding location carousel pages"></div>
       </div>
     </section>
   </main>

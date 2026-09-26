@@ -159,12 +159,27 @@ if (marketplaceCategoryGrid) {
 
 const marketplaceLocationTrack = document.querySelector('#marketplace-location-track');
 if (marketplaceLocationTrack) {
-  const scrollLocations = direction => {
-    const card = marketplaceLocationTrack.querySelector('.marketplace-location-card');
-    if (!card) return;
-    const gap = Number.parseFloat(getComputedStyle(marketplaceLocationTrack).columnGap) || 16;
-    marketplaceLocationTrack.scrollBy({left: direction * (card.getBoundingClientRect().width + gap), behavior: 'smooth'});
-  };
-  document.querySelector('.marketplace-location-prev')?.addEventListener('click', () => scrollLocations(-1));
-  document.querySelector('.marketplace-location-next')?.addEventListener('click', () => scrollLocations(1));
+  const pagination = document.querySelector('.marketplace-location-pagination');
+  const pageCount = Math.min(5, marketplaceLocationTrack.children.length);
+  const pageButtons = Array.from({length: pageCount}, (_, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.setAttribute('aria-label', `Show wedding locations page ${index + 1}`);
+    button.setAttribute('aria-current', String(index === 0));
+    button.addEventListener('click', () => {
+      const maxScroll = marketplaceLocationTrack.scrollWidth - marketplaceLocationTrack.clientWidth;
+      marketplaceLocationTrack.scrollTo({left: maxScroll * (index / Math.max(1, pageCount - 1)), behavior: 'smooth'});
+    });
+    pagination.append(button);
+    return button;
+  });
+  let locationFrame;
+  marketplaceLocationTrack.addEventListener('scroll', () => {
+    cancelAnimationFrame(locationFrame);
+    locationFrame = requestAnimationFrame(() => {
+      const maxScroll = marketplaceLocationTrack.scrollWidth - marketplaceLocationTrack.clientWidth;
+      const active = maxScroll > 0 ? Math.round((marketplaceLocationTrack.scrollLeft / maxScroll) * (pageButtons.length - 1)) : 0;
+      pageButtons.forEach((button, index) => button.setAttribute('aria-current', String(index === active)));
+    });
+  }, {passive: true});
 }
