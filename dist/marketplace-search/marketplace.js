@@ -61,6 +61,7 @@ const marketplaceCategoryGrid = document.querySelector('#marketplace-category-gr
 if (marketplaceCategoryGrid) {
   const marketplaceExpandedGrid = document.querySelector('#marketplace-expanded-categories');
   const marketplaceShowCategories = document.querySelector('#marketplace-show-categories');
+  const marketplaceHideCategories = document.querySelector('#marketplace-hide-categories');
   const SUPABASE_URL = 'https://vfdtyxcfrqnqdyuimtho.supabase.co';
   const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd';
   const safeUrl = value => {
@@ -106,9 +107,17 @@ if (marketplaceCategoryGrid) {
   };
 
   marketplaceShowCategories?.addEventListener('click', () => {
-    const expanded = marketplaceShowCategories.getAttribute('aria-expanded') === 'true';
-    marketplaceShowCategories.setAttribute('aria-expanded', String(!expanded));
-    marketplaceExpandedGrid.hidden = expanded;
+    marketplaceShowCategories.setAttribute('aria-expanded', 'true');
+    marketplaceShowCategories.hidden = true;
+    marketplaceExpandedGrid.hidden = false;
+    marketplaceHideCategories.hidden = false;
+  });
+
+  marketplaceHideCategories?.addEventListener('click', () => {
+    marketplaceShowCategories.setAttribute('aria-expanded', 'false');
+    marketplaceExpandedGrid.hidden = true;
+    marketplaceHideCategories.hidden = true;
+    marketplaceShowCategories.hidden = false;
   });
 
   const loadMarketplaceCategories = async () => {
