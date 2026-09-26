@@ -56,3 +56,57 @@ document.addEventListener('keydown', event => {
   if (event.key !== 'Escape') return;
   closeSearchDropdowns();
 });
+
+const marketplaceCategoryGrid = document.querySelector('#marketplace-category-grid');
+if (marketplaceCategoryGrid) {
+  const SUPABASE_URL = 'https://vfdtyxcfrqnqdyuimtho.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd';
+  const safeUrl = value => {
+    try {
+      const url = new URL(value, window.location.href);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const renderMarketplaceCategories = rows => {
+    const cards = rows.slice(0, 8).map((row, index) => {
+      const link = document.createElement('a');
+      link.className = `marketplace-category-card has-data-image${index === 0 ? ' marketplace-category-featured' : ''}${index >= 5 ? ' marketplace-category-small' : ''}`;
+      link.href = safeUrl(row.destination_url) || '#';
+      const imageUrl = safeUrl(row.image_url);
+      if (imageUrl) link.style.backgroundImage = `url("${imageUrl.replaceAll('"', '%22')}")`;
+
+      const content = document.createElement('span');
+      const title = document.createElement('strong');
+      title.textContent = row.name;
+      const action = document.createElement('small');
+      action.append('Explore ');
+      const arrow = document.createElement('b');
+      arrow.setAttribute('aria-hidden', 'true');
+      arrow.textContent = '→';
+      action.append(arrow);
+      content.append(title, action);
+      link.append(content);
+      return link;
+    });
+    if (cards.length) marketplaceCategoryGrid.replaceChildren(...cards);
+  };
+
+  const loadMarketplaceCategories = async () => {
+    const query = 'select=name,display_order,image_url,destination_url&is_active=eq.true&order=display_order.asc&limit=8';
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/supplier_categories?${query}`, {
+        headers: {apikey: SUPABASE_PUBLISHABLE_KEY}
+      });
+      if (!response.ok) throw new Error(`Supabase request failed (${response.status})`);
+      const rows = await response.json();
+      if (Array.isArray(rows) && rows.length) renderMarketplaceCategories(rows);
+    } catch (error) {
+      console.warn('Using local Marketplace category fallback:', error.message);
+    }
+  };
+
+  loadMarketplaceCategories();
+}
