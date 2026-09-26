@@ -116,8 +116,12 @@ if (marketplaceCategoryGrid) {
     marketplaceShowCategories.hidden = true;
     marketplaceExpandedGrid.hidden = false;
     marketplaceHideCategories.hidden = false;
+    marketplaceExpandedGrid.classList.remove('is-open');
     marketplaceExpandedGrid.style.setProperty('--expanded-height', `${marketplaceExpandedGrid.scrollHeight}px`);
-    requestAnimationFrame(() => marketplaceExpandedGrid.classList.add('is-open'));
+    marketplaceExpandedGrid.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => marketplaceExpandedGrid.classList.add('is-open'));
+    });
   });
 
   marketplaceHideCategories?.addEventListener('click', () => {
