@@ -182,16 +182,21 @@ if (marketplaceLocationTrack) {
   };
 
   const createLocationPagination = () => {
-    const pageCount = Math.min(5, marketplaceLocationTrack.children.length);
+    const card = marketplaceLocationTrack.querySelector('.marketplace-location-card');
+    if (!card) return;
+    const gap = Number.parseFloat(getComputedStyle(marketplaceLocationTrack).columnGap) || 0;
+    const step = card.getBoundingClientRect().width + gap;
+    const visibleCount = Math.max(1, Math.floor((marketplaceLocationTrack.clientWidth + gap) / step));
+    const pageCount = Math.max(0, marketplaceLocationTrack.children.length - visibleCount);
     pagination.replaceChildren();
+    pagination.hidden = pageCount === 0;
     pageButtons = Array.from({length: pageCount}, (_, index) => {
       const button = document.createElement('button');
       button.type = 'button';
-      button.setAttribute('aria-label', `Show wedding locations page ${index + 1}`);
-      button.setAttribute('aria-current', String(index === 0));
+      button.setAttribute('aria-label', `Show next wedding location ${index + 1}`);
+      button.setAttribute('aria-current', 'false');
       button.addEventListener('click', () => {
-        const maxScroll = marketplaceLocationTrack.scrollWidth - marketplaceLocationTrack.clientWidth;
-        marketplaceLocationTrack.scrollTo({left: maxScroll * (index / Math.max(1, pageCount - 1)), behavior: 'smooth'});
+        marketplaceLocationTrack.scrollTo({left: step * (index + 1), behavior: 'smooth'});
       });
       pagination.append(button);
       return button;
@@ -237,7 +242,10 @@ if (marketplaceLocationTrack) {
     cancelAnimationFrame(locationFrame);
     locationFrame = requestAnimationFrame(() => {
       const maxScroll = marketplaceLocationTrack.scrollWidth - marketplaceLocationTrack.clientWidth;
-      const active = maxScroll > 0 ? Math.round((marketplaceLocationTrack.scrollLeft / maxScroll) * (pageButtons.length - 1)) : 0;
+      const card = marketplaceLocationTrack.querySelector('.marketplace-location-card');
+      const gap = Number.parseFloat(getComputedStyle(marketplaceLocationTrack).columnGap) || 0;
+      const step = card ? card.getBoundingClientRect().width + gap : 1;
+      const active = maxScroll > 0 ? Math.round(marketplaceLocationTrack.scrollLeft / step) - 1 : -1;
       pageButtons.forEach((button, index) => button.setAttribute('aria-current', String(index === active)));
     });
   }, {passive: true});
@@ -256,5 +264,9 @@ if (marketplaceLocationTrack) {
   };
 
   createLocationPagination();
+  window.addEventListener('resize', () => {
+    marketplaceLocationTrack.scrollLeft = 0;
+    createLocationPagination();
+  });
   loadLocations();
 }
