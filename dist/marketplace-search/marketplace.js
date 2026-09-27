@@ -200,22 +200,25 @@ if (marketplaceLocationTrack) {
 
   const renderLocations = rows => {
     const activeRows = rows
-      .filter(row => row.is_active === true || String(row.is_active).toLowerCase() === 'true')
-      .sort((a, b) => Number(a.display_order ?? a.dispaly_order ?? 0) - Number(b.display_order ?? b.dispaly_order ?? 0));
+      .filter(row => {
+        const active = row.is_active ?? row.Is_active;
+        return active === true || String(active).toLowerCase() === 'true';
+      })
+      .sort((a, b) => Number(a.display_order ?? a.dispaly_order ?? a.Display_order ?? a.Dispaly_order ?? 0) - Number(b.display_order ?? b.dispaly_order ?? b.Display_order ?? b.Dispaly_order ?? 0));
     const cards = activeRows.map(row => {
       const link = document.createElement('a');
       link.className = 'marketplace-location-card';
-      link.href = safeLocationUrl(row.destination_url ?? row.desintation_url) || '#';
+      link.href = safeLocationUrl(row.destination_url ?? row.desintation_url ?? row.Destination_url ?? row.Desintation_url) || '#';
 
       const image = document.createElement('img');
       image.src = safeLocationUrl(row.image_url ?? row.Image_url) || '../assets/background-v2.png';
-      image.alt = row.location_name || 'Wedding location';
+      image.alt = row.location_name ?? row.Location_name ?? 'Wedding location';
 
       const content = document.createElement('span');
       const title = document.createElement('strong');
-      title.textContent = row.location_name || 'Wedding location';
+      title.textContent = row.location_name ?? row.Location_name ?? 'Wedding location';
       const count = document.createElement('small');
-      count.textContent = supplierCountLabel(row.location_suppliers);
+      count.textContent = supplierCountLabel(row.location_suppliers ?? row.Location_suppliers);
       const arrow = document.createElement('b');
       arrow.setAttribute('aria-hidden', 'true');
       arrow.textContent = '→';
