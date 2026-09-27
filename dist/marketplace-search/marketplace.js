@@ -160,19 +160,75 @@ if (marketplaceCategoryGrid) {
 const marketplaceLocationTrack = document.querySelector('#marketplace-location-track');
 if (marketplaceLocationTrack) {
   const pagination = document.querySelector('.marketplace-location-pagination');
-  const pageCount = Math.min(5, marketplaceLocationTrack.children.length);
-  const pageButtons = Array.from({length: pageCount}, (_, index) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.setAttribute('aria-label', `Show wedding locations page ${index + 1}`);
-    button.setAttribute('aria-current', String(index === 0));
-    button.addEventListener('click', () => {
-      const maxScroll = marketplaceLocationTrack.scrollWidth - marketplaceLocationTrack.clientWidth;
-      marketplaceLocationTrack.scrollTo({left: maxScroll * (index / Math.max(1, pageCount - 1)), behavior: 'smooth'});
+  const SUPABASE_URL = 'https://vfdtyxcfrqnqdyuimtho.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd';
+  let pageButtons = [];
+
+  const safeLocationUrl = value => {
+    try {
+      const url = new URL(value, window.location.href);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const supplierCountLabel = value => {
+    const text = String(value ?? '').trim();
+    if (!text) return 'Suppliers';
+    if (/suppliers?$/i.test(text)) return text;
+    const numericValue = Number(text.replaceAll(',', '').replace('+', ''));
+    return Number.isFinite(numericValue) ? `${numericValue.toLocaleString('en-AU')}+ suppliers` : `${text} suppliers`;
+  };
+
+  const createLocationPagination = () => {
+    const pageCount = Math.min(5, marketplaceLocationTrack.children.length);
+    pagination.replaceChildren();
+    pageButtons = Array.from({length: pageCount}, (_, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', `Show wedding locations page ${index + 1}`);
+      button.setAttribute('aria-current', String(index === 0));
+      button.addEventListener('click', () => {
+        const maxScroll = marketplaceLocationTrack.scrollWidth - marketplaceLocationTrack.clientWidth;
+        marketplaceLocationTrack.scrollTo({left: maxScroll * (index / Math.max(1, pageCount - 1)), behavior: 'smooth'});
+      });
+      pagination.append(button);
+      return button;
     });
-    pagination.append(button);
-    return button;
-  });
+  };
+
+  const renderLocations = rows => {
+    const activeRows = rows
+      .filter(row => row.is_active === true || String(row.is_active).toLowerCase() === 'true')
+      .sort((a, b) => Number(a.display_order ?? a.dispaly_order ?? 0) - Number(b.display_order ?? b.dispaly_order ?? 0));
+    const cards = activeRows.map(row => {
+      const link = document.createElement('a');
+      link.className = 'marketplace-location-card';
+      link.href = safeLocationUrl(row.destination_url ?? row.desintation_url) || '#';
+
+      const image = document.createElement('img');
+      image.src = safeLocationUrl(row.image_url ?? row.Image_url) || '../assets/background-v2.png';
+      image.alt = row.location_name || 'Wedding location';
+
+      const content = document.createElement('span');
+      const title = document.createElement('strong');
+      title.textContent = row.location_name || 'Wedding location';
+      const count = document.createElement('small');
+      count.textContent = supplierCountLabel(row.location_suppliers);
+      const arrow = document.createElement('b');
+      arrow.setAttribute('aria-hidden', 'true');
+      arrow.textContent = '→';
+      content.append(title, count, arrow);
+      link.append(image, content);
+      return link;
+    });
+    if (!cards.length) return;
+    marketplaceLocationTrack.replaceChildren(...cards);
+    marketplaceLocationTrack.scrollLeft = 0;
+    createLocationPagination();
+  };
+
   let locationFrame;
   marketplaceLocationTrack.addEventListener('scroll', () => {
     cancelAnimationFrame(locationFrame);
@@ -182,4 +238,20 @@ if (marketplaceLocationTrack) {
       pageButtons.forEach((button, index) => button.setAttribute('aria-current', String(index === active)));
     });
   }, {passive: true});
+
+  const loadLocations = async () => {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/Locations?select=*`, {
+        headers: {apikey: SUPABASE_PUBLISHABLE_KEY}
+      });
+      if (!response.ok) throw new Error(`Supabase request failed (${response.status})`);
+      const rows = await response.json();
+      if (Array.isArray(rows)) renderLocations(rows);
+    } catch (error) {
+      console.warn('Using local wedding-location fallback:', error.message);
+    }
+  };
+
+  createLocationPagination();
+  loadLocations();
 }
