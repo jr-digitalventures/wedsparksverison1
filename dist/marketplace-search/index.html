@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23103e33'/%3E%3Cpath d='M20 31 8 18C1 7 15 3 20 12 25 3 39 7 32 18Z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../styles.css?v=54">
   <link rel="stylesheet" href="marketplace.css?v=23">
-  <script src="marketplace.js?v=14" defer></script>
+  <script src="marketplace.js?v=15" defer></script>
 </head>
 <body class="marketplace-search-page">
   <a class="skip-link" href="#marketplace-search">Skip to supplier search</a>
@@ -79,6 +79,25 @@
           <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Coastal landscape near Byron Bay"><span><strong>Byron Bay</strong><small>360+ suppliers</small><b aria-hidden="true">→</b></span></a>
         </div>
         <div class="marketplace-location-pagination" aria-label="Wedding location carousel pages"></div>
+      </div>
+    </section>
+    <section class="supplier-explorer" aria-labelledby="marketplace-supplier-explorer-title">
+      <div class="supplier-explorer-inner">
+        <div class="supplier-explorer-copy">
+          <h2 id="marketplace-supplier-explorer-title"><span>EXPLORE POPULAR</span><span>WEDDING SUPPLIERS</span></h2>
+          <p>Explore wedding suppliers across popular categories, from venues and photographers to florists, celebrants, catering and entertainment.</p>
+          <a class="supplier-explorer-cta" href="https://www.google.com/">Browse all suppliers <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="supplier-carousel-wrap">
+          <div class="supplier-carousel" id="marketplace-supplier-carousel" tabindex="0" aria-label="Popular wedding supplier categories">
+            <a class="supplier-card" href="#" style="--crop-x:7.52%"><span><strong>Venues</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:18.12%"><span><strong>Photography</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:28.78%"><span><strong>Florists</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:39.43%"><span><strong>Catering</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:71.28%"><span><strong>Entertainment</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+          </div>
+          <div class="supplier-pagination marketplace-supplier-pagination" aria-label="Supplier carousel pages"></div>
+        </div>
       </div>
     </section>
   </main>

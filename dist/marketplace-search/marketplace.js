@@ -271,3 +271,101 @@ if (marketplaceLocationTrack) {
   });
   loadLocations();
 }
+
+const marketplaceSupplierCarousel = document.querySelector('#marketplace-supplier-carousel');
+const marketplaceSupplierPagination = document.querySelector('.marketplace-supplier-pagination');
+if (marketplaceSupplierCarousel && marketplaceSupplierPagination) {
+  const SUPABASE_URL = 'https://vfdtyxcfrqnqdyuimtho.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd';
+  let supplierFrame;
+  let supplierPageButtons = [];
+
+  const safeSupplierUrl = value => {
+    try {
+      const url = new URL(value, window.location.href);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const createSupplierPagination = () => {
+    const pageCount = Math.min(5, Math.max(1, marketplaceSupplierCarousel.children.length));
+    marketplaceSupplierPagination.replaceChildren();
+    supplierPageButtons = Array.from({length: pageCount}, (_, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', `Show supplier categories page ${index + 1}`);
+      button.setAttribute('aria-current', String(index === 0));
+      button.addEventListener('click', () => {
+        const maxScroll = marketplaceSupplierCarousel.scrollWidth - marketplaceSupplierCarousel.clientWidth;
+        marketplaceSupplierCarousel.scrollTo({left: maxScroll * (index / Math.max(1, pageCount - 1)), behavior: 'smooth'});
+      });
+      marketplaceSupplierPagination.append(button);
+      return button;
+    });
+  };
+
+  const updateSupplierPagination = () => {
+    const maxScroll = marketplaceSupplierCarousel.scrollWidth - marketplaceSupplierCarousel.clientWidth;
+    const active = maxScroll > 0 ? Math.round((marketplaceSupplierCarousel.scrollLeft / maxScroll) * (supplierPageButtons.length - 1)) : 0;
+    supplierPageButtons.forEach((button, index) => button.setAttribute('aria-current', String(index === active)));
+  };
+
+  const renderSupplierCards = rows => {
+    const cards = rows.map(row => {
+      const link = document.createElement('a');
+      link.className = 'supplier-card has-data-image';
+      link.href = safeSupplierUrl(row.destination_url) || '#';
+      const imageUrl = safeSupplierUrl(row.image_url);
+      if (imageUrl) link.style.backgroundImage = `url("${imageUrl.replaceAll('"', '%22')}")`;
+      const content = document.createElement('span');
+      const title = document.createElement('strong');
+      title.textContent = row.name;
+      const action = document.createElement('small');
+      action.append('Explore ');
+      const arrow = document.createElement('b');
+      arrow.setAttribute('aria-hidden', 'true');
+      arrow.textContent = '→';
+      action.append(arrow);
+      content.append(title, action);
+      link.append(content);
+      return link;
+    });
+    if (!cards.length) return;
+    marketplaceSupplierCarousel.replaceChildren(...cards);
+    marketplaceSupplierCarousel.scrollLeft = 0;
+    createSupplierPagination();
+    updateSupplierPagination();
+  };
+
+  const loadSupplierCategories = async () => {
+    const query = 'select=name,display_order,image_url,destination_url&is_active=eq.true&order=display_order.asc';
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/supplier_categories?${query}`, {
+        headers: {apikey: SUPABASE_PUBLISHABLE_KEY}
+      });
+      if (!response.ok) throw new Error(`Supabase request failed (${response.status})`);
+      const rows = await response.json();
+      if (Array.isArray(rows) && rows.length) renderSupplierCards(rows);
+    } catch (error) {
+      console.warn('Using local supplier carousel fallback:', error.message);
+    }
+  };
+
+  createSupplierPagination();
+  marketplaceSupplierCarousel.addEventListener('scroll', () => {
+    cancelAnimationFrame(supplierFrame);
+    supplierFrame = requestAnimationFrame(updateSupplierPagination);
+  }, {passive: true});
+  marketplaceSupplierCarousel.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    marketplaceSupplierCarousel.scrollBy({left: (event.key === 'ArrowRight' ? 1 : -1) * marketplaceSupplierCarousel.clientWidth * .72, behavior: 'smooth'});
+  });
+  window.addEventListener('resize', () => {
+    createSupplierPagination();
+    updateSupplierPagination();
+  }, {passive: true});
+  loadSupplierCategories();
+}
