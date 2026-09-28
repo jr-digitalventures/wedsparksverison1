@@ -94,8 +94,13 @@ if (marketplaceCategoryGrid) {
       return link;
   };
 
+  let marketplaceCategoryRows = [];
+  let compactCategoryLayout = window.matchMedia('(max-width: 1200px)').matches;
+
   const renderMarketplaceCategories = rows => {
-    const featuredRows = rows.filter(row => !/^cake$/i.test(row.name.trim())).slice(0, 7);
+    marketplaceCategoryRows = rows;
+    const primaryCardCount = window.matchMedia('(max-width: 1200px)').matches ? 6 : 7;
+    const featuredRows = rows.filter(row => !/^cake$/i.test(row.name.trim())).slice(0, primaryCardCount);
     const remainingRows = rows.filter(row => !featuredRows.includes(row));
     const cards = featuredRows.map((row, index) => createCategoryCard(row, index === 0));
     if (cards.length) marketplaceCategoryGrid.replaceChildren(...cards);
@@ -135,6 +140,15 @@ if (marketplaceCategoryGrid) {
   });
 
   window.addEventListener('resize', () => {
+    const nextCompactCategoryLayout = window.matchMedia('(max-width: 1200px)').matches;
+    if (nextCompactCategoryLayout !== compactCategoryLayout && marketplaceCategoryRows.length) {
+      compactCategoryLayout = nextCompactCategoryLayout;
+      marketplaceShowCategories?.setAttribute('aria-expanded', 'false');
+      marketplaceExpandedGrid?.classList.remove('is-open');
+      if (marketplaceExpandedGrid) marketplaceExpandedGrid.hidden = true;
+      if (marketplaceHideCategories) marketplaceHideCategories.hidden = true;
+      renderMarketplaceCategories(marketplaceCategoryRows);
+    }
     if (marketplaceShowCategories?.getAttribute('aria-expanded') === 'true') {
       marketplaceExpandedGrid.style.setProperty('--expanded-height', `${marketplaceExpandedGrid.scrollHeight}px`);
     }
