@@ -1,3 +1,2 @@
+.supplier-category-page .marketplace-title{bottom:35px}
 .supplier-category-content{min-height:500px;background:#fff}
-@media(max-width:1200px){.supplier-category-content{min-height:650px}}
-@media(max-width:700px){.supplier-category-content{min-height:750px}}
