@@ -313,15 +313,21 @@ if (marketplaceSupplierCarousel && marketplaceSupplierPagination) {
   };
 
   const renderSupplierCards = rows => {
-    const cards = rows.map(row => {
+    const activeRows = rows
+      .filter(row => {
+        const active = row.is_active ?? row.Is_active;
+        return active === true || String(active).toLowerCase() === 'true';
+      })
+      .sort((a, b) => Number(a.display_order ?? a.Display_order ?? 0) - Number(b.display_order ?? b.Display_order ?? 0));
+    const cards = activeRows.map(row => {
       const link = document.createElement('a');
       link.className = 'supplier-card has-data-image';
-      link.href = safeSupplierUrl(row.destination_url) || '#';
-      const imageUrl = safeSupplierUrl(row.image_url);
+      link.href = safeSupplierUrl(row.destination_url ?? row.Destination_url) || '#';
+      const imageUrl = safeSupplierUrl(row.Image_url ?? row.image_url);
       if (imageUrl) link.style.backgroundImage = `url("${imageUrl.replaceAll('"', '%22')}")`;
       const content = document.createElement('span');
       const title = document.createElement('strong');
-      title.textContent = row.name;
+      title.textContent = row.Wedding_style ?? row.wedding_style ?? 'Wedding style';
       const action = document.createElement('small');
       action.append('Explore ');
       const arrow = document.createElement('b');
@@ -339,17 +345,16 @@ if (marketplaceSupplierCarousel && marketplaceSupplierPagination) {
     updateSupplierPagination();
   };
 
-  const loadSupplierCategories = async () => {
-    const query = 'select=name,display_order,image_url,destination_url&is_active=eq.true&order=display_order.asc';
+  const loadWeddingStyles = async () => {
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/supplier_categories?${query}`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/Wedding%20Styles?select=*`, {
         headers: {apikey: SUPABASE_PUBLISHABLE_KEY}
       });
       if (!response.ok) throw new Error(`Supabase request failed (${response.status})`);
       const rows = await response.json();
       if (Array.isArray(rows) && rows.length) renderSupplierCards(rows);
     } catch (error) {
-      console.warn('Using local supplier carousel fallback:', error.message);
+      console.warn('Using local wedding-style carousel fallback:', error.message);
     }
   };
 
@@ -367,5 +372,5 @@ if (marketplaceSupplierCarousel && marketplaceSupplierPagination) {
     createSupplierPagination();
     updateSupplierPagination();
   }, {passive: true});
-  loadSupplierCategories();
+  loadWeddingStyles();
 }
