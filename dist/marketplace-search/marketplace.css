@@ -37,3 +37,6 @@
 .marketplace-business-cta{min-height:0}.marketplace-business-cta-content{justify-content:flex-start}.marketplace-business-cta-media{position:relative;min-height:0;margin-left:25px;border-radius:0}.marketplace-business-cta-media img{position:absolute;inset:0;min-height:0}
 @media(max-width:1200px){.marketplace-business-cta-media{height:360px;margin-left:0}.marketplace-business-cta-media img{position:static;height:100%}}
 @media(max-width:700px){.marketplace-business-cta-media{height:280px}.marketplace-business-cta-media img{height:100%}}
+.marketplace-search-page .planning-section{background:#fff}
+.marketplace-supplier-links-content{max-width:none;margin:0;text-align:left}.marketplace-supplier-links h2{max-width:none;margin:0 0 24px}.marketplace-supplier-links p{max-width:none;margin-left:0;margin-right:0}.marketplace-city-links{justify-content:flex-start}
+@media(max-width:700px){.marketplace-supplier-links h2{margin-bottom:18px}.marketplace-city-links{align-items:flex-start}}
