@@ -35,6 +35,24 @@ supplierHeadingTriggers.forEach(trigger => {
   });
 });
 
+const supplierDateInput = document.querySelector('#supplier-filter-date');
+const supplierDateApply = document.querySelector('.supplier-date-apply');
+supplierDateApply?.addEventListener('click', () => {
+  if (!supplierDateInput?.value) return;
+  const selectedDate = new Date(`${supplierDateInput.value}T00:00:00`);
+  const label = new Intl.DateTimeFormat('en-AU', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  }).format(selectedDate);
+  const dateTrigger = document.querySelector('[data-filter-trigger="supplier-date-options"]');
+  dateTrigger.querySelector('span').textContent = label;
+  dateTrigger.classList.add('is-selected');
+  closeSupplierFilters();
+  dateTrigger.focus();
+});
+
 supplierFilterTriggers.forEach(trigger => {
   const menu = document.getElementById(trigger.dataset.filterTrigger);
   if (!menu) return;
@@ -48,7 +66,7 @@ supplierFilterTriggers.forEach(trigger => {
     trigger.setAttribute('aria-expanded', String(opening));
   });
 
-  menu.querySelectorAll('button').forEach(option => {
+  menu.querySelectorAll('button:not(.supplier-date-apply)').forEach(option => {
     option.addEventListener('click', () => {
       trigger.querySelector('span').textContent = option.textContent.trim();
       trigger.classList.add('is-selected');
