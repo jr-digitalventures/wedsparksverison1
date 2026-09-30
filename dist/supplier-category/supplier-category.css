@@ -30,3 +30,14 @@
 .supplier-card-price-block small{color:#161b19;font:400 12px/1.2 var(--sans);white-space:nowrap}.supplier-card-price-block .supplier-price-value{margin-top:7px;font-size:20px}.supplier-listing-card,.supplier-listing-media{height:330px}.supplier-listing-content>.supplier-tags{position:static;margin-top:15px}.featured-supplier-content{position:relative;padding-bottom:104px}.featured-supplier-actions{position:absolute;right:30px;bottom:30px;left:30px;margin:0;padding:0}.supplier-listing-content .supplier-profile-button{position:absolute;right:30px;bottom:30px;left:30px}
 @media(max-width:1200px){.supplier-listing-card,.supplier-listing-media{height:350px}}
 @media(max-width:700px){.supplier-listing-card{height:auto}.supplier-listing-media{height:260px}.supplier-listing-content>.supplier-tags{position:static;margin-top:15px}.supplier-listing-content .supplier-profile-button{position:static;margin-top:20px}.featured-supplier-content{padding-bottom:104px}.featured-supplier-actions{right:30px;bottom:30px;left:30px}}
+
+/* Supplier card layout: preserve the requested content order and spacing. */
+.supplier-card-titleline h2{font-size:30px}
+.supplier-features{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 18px;margin-bottom:0}
+.supplier-listing-card,.supplier-listing-media{height:375px}
+.supplier-listing-content{display:flex;flex-direction:column;padding:30px 30px 104px}
+.supplier-listing-content>.supplier-description{margin:25px 0 0}
+.supplier-listing-content>.supplier-tags{position:static;right:auto;bottom:auto;left:auto;margin:15px 0 0;flex:0 0 auto}
+.supplier-listing-content .supplier-profile-button{position:absolute;right:30px;bottom:30px;left:30px;width:auto;margin:0}
+@media(max-width:1200px){.supplier-card-titleline h2{font-size:30px}.supplier-listing-card,.supplier-listing-media{height:390px}.supplier-features{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.supplier-card-titleline h2{font-size:30px}.supplier-listing-card{height:auto}.supplier-listing-media{height:260px}.supplier-listing-content{padding:30px}.supplier-listing-content>.supplier-tags{margin-top:15px}.supplier-listing-content .supplier-profile-button{position:static;width:100%;margin-top:20px}.supplier-features{grid-template-columns:repeat(2,minmax(0,1fr))}}
