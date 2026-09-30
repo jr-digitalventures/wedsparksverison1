@@ -87,3 +87,64 @@ document.addEventListener('keydown', event => {
     closeSupplierHeadingFilters();
   }
 });
+
+const supplierResultsList = document.querySelector('.supplier-results-list');
+const supplierPagination = document.querySelector('.supplier-pagination');
+
+if (supplierResultsList && supplierPagination) {
+  const placeholderNames = [
+    'Harbour & Vine', 'Evergreen Events', 'Golden Hour Studio',
+    'The Garden House', 'White Rose Floral', 'Storybook Weddings',
+    'Coastal Table Co.', 'Luna Photography', 'Modern Love Events',
+    'The Ivory Room', 'Wildflower Collective', 'Ever After Films'
+  ];
+  const seedCards = [...supplierResultsList.querySelectorAll('.supplier-listing-card')];
+
+  placeholderNames.forEach((name, index) => {
+    const card = seedCards[index % seedCards.length].cloneNode(true);
+    const title = card.querySelector('.supplier-card-titleline h2');
+    const favourite = card.querySelector('.supplier-favourite');
+    if (title) title.textContent = name;
+    if (favourite) favourite.setAttribute('aria-label', `Save ${name}`);
+    supplierResultsList.append(card);
+  });
+
+  const pageSize = 15;
+  const cards = [...supplierResultsList.querySelectorAll('.supplier-listing-card')];
+  const pageCount = Math.ceil(cards.length / pageSize);
+
+  const showSupplierPage = page => {
+    cards.forEach((card, index) => {
+      card.hidden = index < page * pageSize || index >= (page + 1) * pageSize;
+    });
+    supplierPagination.querySelectorAll('button').forEach((button, index) => {
+      button.setAttribute('aria-current', String(index === page));
+    });
+  };
+
+  if (pageCount > 1) {
+    supplierPagination.hidden = false;
+    Array.from({length: pageCount}, (_, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = String(index + 1);
+      button.setAttribute('aria-label', `Show supplier results page ${index + 1}`);
+      button.addEventListener('click', () => {
+        showSupplierPage(index);
+        supplierResultsList.scrollIntoView({behavior: 'smooth', block: 'start'});
+      });
+      supplierPagination.append(button);
+      return button;
+    });
+  }
+  showSupplierPage(0);
+}
+
+document.addEventListener('click', event => {
+  const favourite = event.target.closest('.supplier-favourite');
+  if (!favourite) return;
+  const saved = favourite.classList.toggle('is-saved');
+  favourite.setAttribute('aria-pressed', String(saved));
+  const label = favourite.querySelector('span');
+  if (label) label.textContent = saved ? 'Saved' : 'Save to Favourites';
+});
