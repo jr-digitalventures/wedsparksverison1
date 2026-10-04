@@ -71,3 +71,17 @@
   .featured-supplier-content .supplier-features b{font-weight:500}
   .featured-supplier-actions button,.featured-supplier-actions a{color:#161b19;font-size:14px;font-weight:500}
 }
+
+/* Highlight card anchored and responsive vertical spacing. */
+.featured-supplier-content .supplier-card-titleline h2{font-size:30px}
+.featured-supplier-content .supplier-card-price-block small{text-transform:uppercase}
+.featured-supplier-actions a{color:#fff}
+@media(min-width:701px){
+  .featured-supplier-content{display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto auto minmax(0,1fr) auto}
+  .featured-supplier-content .supplier-card-topline{grid-row:1}
+  .featured-supplier-content .supplier-card-titleline{grid-row:2;margin-top:7px}
+  .featured-supplier-content>.supplier-location{grid-row:3;margin-top:10px}
+  .featured-supplier-content>.supplier-description{grid-row:5;margin:0}
+  .featured-supplier-content>.supplier-features{grid-row:6;margin:15px 0 0}
+  .featured-supplier-content>.featured-supplier-actions{grid-row:8;margin:0;padding:0}
+}
