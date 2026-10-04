@@ -90,15 +90,17 @@
 .supplier-listing-content .supplier-card-price-block small{text-transform:uppercase;font-size:12px;font-weight:600}
 .supplier-listing-content .supplier-price-value{color:#103e33;font-size:22px}
 .supplier-listing-content .supplier-card-titleline h2{font-size:30px}
-.supplier-listing-content>.supplier-location,.supplier-listing-content>.supplier-description,.supplier-listing-content>.supplier-features{color:#161b19;font-size:14px;font-weight:500}
+.supplier-listing-heading>.supplier-location,.supplier-listing-content>.supplier-description,.supplier-listing-content>.supplier-features{color:#161b19;font-size:14px;font-weight:500}
 .supplier-listing-content>.supplier-features b{font-weight:500}
 .supplier-listing-content .supplier-profile-button{color:#fff;font-size:14px;font-weight:500}
 @media(min-width:701px){
-  .supplier-listing-content{display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto auto minmax(0,1fr) auto}
-  .supplier-listing-content .supplier-card-topline{grid-row:1}
-  .supplier-listing-content .supplier-card-titleline{grid-row:2;margin-top:7px}
-  .supplier-listing-content>.supplier-location{grid-row:3;margin-top:10px}
-  .supplier-listing-content>.supplier-description{grid-row:5;margin:0}
-  .supplier-listing-content>.supplier-features{grid-row:6;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 28px;margin:15px 0 0}
-  .supplier-listing-content>.supplier-profile-button{grid-row:8;position:static;width:100%;margin:0}
+  .supplier-listing-content{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto minmax(0,1fr) auto}
+  .supplier-listing-heading{grid-row:1;align-self:start}
+  .supplier-listing-heading .supplier-card-topline{min-height:0}
+  .supplier-listing-heading .supplier-type{margin:0}
+  .supplier-listing-heading .supplier-card-titleline{margin-top:7px}
+  .supplier-listing-heading>.supplier-location{margin-top:10px}
+  .supplier-listing-content>.supplier-description{grid-row:3;margin:0}
+  .supplier-listing-content>.supplier-features{grid-row:4;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 28px;margin:15px 0 0}
+  .supplier-listing-content>.supplier-profile-button{grid-row:6;position:static;width:100%;margin:0}
 }
