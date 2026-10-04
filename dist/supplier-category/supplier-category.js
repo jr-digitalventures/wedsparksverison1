@@ -109,6 +109,15 @@ if (supplierResultsList && supplierPagination) {
     supplierResultsList.append(card);
   });
 
+  const descriptionLimit = 300;
+  supplierResultsList.querySelectorAll('.supplier-listing-content > .supplier-description').forEach(description => {
+    const copy = description.textContent.trim();
+    if (copy.length <= descriptionLimit) return;
+    const shortened = copy.slice(0, descriptionLimit - 3);
+    const lastSpace = shortened.lastIndexOf(' ');
+    description.textContent = `${shortened.slice(0, lastSpace).trimEnd()}...`;
+  });
+
   const pageSize = 15;
   const cards = [...supplierResultsList.querySelectorAll('.supplier-listing-card')];
   const pageCount = Math.ceil(cards.length / pageSize);
