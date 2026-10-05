@@ -163,3 +163,79 @@
   padding: 0 3px;
   color: #59615d;
 }
+
+/* State selection and optional suburb/city expansion share one location dropdown. */
+#heading-location-options {
+  left: auto;
+  right: 0;
+  width: min(360px, calc(100vw - 60px));
+  min-width: 0;
+  max-height: min(440px, 60vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+#heading-location-options .supplier-location-hint {
+  display: block;
+  padding: 13px 15px;
+  border-bottom: 1px solid #e0dfdb;
+  color: #59615d;
+  font: 400 13px/1.4 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+#heading-location-options button {
+  min-height: 44px;
+  border-bottom: 0;
+  white-space: normal;
+}
+#heading-location-options button:focus-visible {
+  outline: 2px solid #103e33;
+  outline-offset: -3px;
+}
+#heading-location-options .supplier-location-group {
+  display: block;
+  border-top: 1px solid #e0dfdb;
+}
+#heading-location-options .supplier-location-state-row { display: flex; }
+#heading-location-options .supplier-location-state-row > button:first-child {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+#heading-location-options .supplier-location-expand {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  padding: 0;
+  color: #103e33;
+  border-left: 1px solid #e0dfdb;
+}
+#heading-location-options .supplier-location-expand::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+}
+#heading-location-options .supplier-location-expand[aria-expanded="true"]::before {
+  transform: translateY(2px) rotate(225deg);
+}
+#heading-location-options .supplier-location-cities { display: block; }
+#heading-location-options .supplier-location-cities button {
+  padding-left: 30px;
+  background: #f8f6f3;
+}
+#heading-location-options .supplier-location-cities button:hover { background: #e7eeeb; }
+#heading-location-options button[aria-pressed="true"] {
+  background: #103e33;
+  color: #fff;
+}
+#heading-location-options[hidden],
+#heading-location-options .supplier-location-cities[hidden] { display: none; }
+@media(max-width:1200px) {
+  #supplier-results-title { position: relative; }
+  #supplier-results-title > .supplier-heading-filter:last-child { position: static; }
+  #heading-location-options { left: 0; right: auto; }
+}
