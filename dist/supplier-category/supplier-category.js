@@ -6,7 +6,7 @@ const val=(r,k)=>r?.[k]??'',clean=v=>String(v??'').trim(),norm=v=>clean(v).toLow
 const safe=v=>{try{const u=new URL(clean(v),location.href);return /^https?:$/.test(u.protocol)?u.href:''}catch{return''}};
 const money=v=>{const s=clean(v),n=Number(s.replace(/[^0-9.]/g,''));return s&&Number.isFinite(n)?new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0}).format(n):s};
 const trunc=(v,n)=>{const s=clean(v);if(s.length<=n)return s;const cut=s.slice(0,n-3),i=cut.lastIndexOf(' ');return`${cut.slice(0,i>0?i:cut.length).trimEnd()}...`};
-const images=r=>Array.from({length:10},(_,i)=>safe(val(r,`Image #${i+1}`))).filter(Boolean),yes=r=>['yes','true','1'].includes(norm(val(r,'Highlighted Record Column')));
+const images=r=>Array.from({length:10},(_,i)=>safe(val(r,`Image #${i+1}`))).filter(Boolean),yes=r=>['yes','true','1'].includes(norm(val(r,'Highlighted Record')??val(r,'Highlighted Record Column')));
 const normalDate=v=>{const s=clean(v),iso=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/),au=s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);if(iso)return`${iso[1]}-${iso[2].padStart(2,'0')}-${iso[3].padStart(2,'0')}`;if(au)return`${au[3]}-${au[2].padStart(2,'0')}-${au[1].padStart(2,'0')}`;const d=new Date(s);return Number.isNaN(d.getTime())?s:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const filterTriggers=[...document.querySelectorAll('[data-filter-trigger]')],headingTriggers=[...document.querySelectorAll('[data-heading-filter]')];
 const closeAll=()=>[...filterTriggers,...headingTriggers].forEach(t=>{t.setAttribute('aria-expanded','false');const m=document.getElementById(t.dataset.filterTrigger||t.dataset.headingFilter);if(m)m.hidden=true});
