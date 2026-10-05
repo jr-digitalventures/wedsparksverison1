@@ -109,14 +109,20 @@ if (supplierResultsList && supplierPagination) {
     supplierResultsList.append(card);
   });
 
-  const descriptionLimit = 300;
-  supplierResultsList.querySelectorAll('.supplier-listing-content > .supplier-description').forEach(description => {
-    const copy = description.textContent.trim();
-    if (copy.length <= descriptionLimit) return;
-    const shortened = copy.slice(0, descriptionLimit - 3);
+  const truncateCopy = (element, limit) => {
+    const copy = element.textContent.trim();
+    if (copy.length <= limit) return;
+    const shortened = copy.slice(0, limit - 3);
     const lastSpace = shortened.lastIndexOf(' ');
-    description.textContent = `${shortened.slice(0, lastSpace).trimEnd()}...`;
-  });
+    element.textContent = `${shortened.slice(0, lastSpace).trimEnd()}...`;
+  };
+
+  supplierResultsList.querySelectorAll('.supplier-listing-content > .supplier-description').forEach(description => truncateCopy(description, 300));
+  supplierResultsList.querySelectorAll('.supplier-listing-content > .supplier-features b').forEach(takeaway => truncateCopy(takeaway, 40));
+
+  const featuredDescription = document.querySelector('.featured-supplier-content > .supplier-description');
+  if (featuredDescription) truncateCopy(featuredDescription, 170);
+  document.querySelectorAll('.featured-supplier-content > .supplier-features b').forEach(takeaway => truncateCopy(takeaway, 30));
 
   const pageSize = 15;
   const cards = [...supplierResultsList.querySelectorAll('.supplier-listing-card')];
