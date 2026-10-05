@@ -127,6 +127,7 @@
   font: 500 14px/1.5 var(--sans);
   text-align: center;
 }
+.supplier-category-page .featured-supplier-card[hidden] { display: none; }
 .supplier-category-page .supplier-pagination {
   position: static;
   inset: auto;
