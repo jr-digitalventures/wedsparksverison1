@@ -13,13 +13,14 @@ const closeAll=()=>[...filterTriggers,...headingTriggers].forEach(t=>{t.setAttri
 [...filterTriggers,...headingTriggers].forEach(t=>{const m=document.getElementById(t.dataset.filterTrigger||t.dataset.headingFilter);t.addEventListener('click',e=>{e.stopPropagation();const open=m.hidden;closeAll();m.hidden=!open;t.setAttribute('aria-expanded',String(open))})});
 document.addEventListener('click',e=>{if(!e.target.closest('.supplier-filter,.supplier-heading-filter'))closeAll()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
 const label=(t,s,on=true)=>{const x=t?.querySelector('span');if(x)x.textContent=s;t?.classList.toggle('is-selected',on)};
-const unique=k=>[...new Set(state.rows.flatMap(r=>split(val(r,k))))].sort((a,b)=>a.localeCompare(b,'en-AU'));
+// Category and location are single values: a comma in "Adelaide, SA" is part of the location.
+const unique=(k,multiple=false)=>[...new Set(state.rows.flatMap(r=>multiple?split(val(r,k)):[clean(val(r,k))]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'en-AU'));
 const menu=(id,items,all,fn)=>{const m=document.getElementById(id);m?.replaceChildren();[all,...items].forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.textContent=x;b.onclick=()=>fn(i?x:'');m?.append(b)})};
 function setupMenus(){
  const ct=document.querySelector('[data-heading-filter="heading-category-options"]'),lt=document.querySelector('[data-heading-filter="heading-location-options"]'),st=document.querySelector('[data-filter-trigger="supplier-style-options"]'),pt=document.querySelector('[data-filter-trigger="supplier-price-options"]');
  menu('heading-category-options',unique('Wedding Vendor Type'),'All wedding categories',v=>{state.category=v;state.page=0;label(ct,v||'WEDDING CATEGORY',!!v);closeAll();render()});
  menu('heading-location-options',unique('Location'),'All locations',v=>{state.location=v;state.page=0;label(lt,v||'LOCATION',!!v);closeAll();render()});
- menu('supplier-style-options',unique('Vendor Style'),'Any style',v=>{state.style=v;state.page=0;label(st,v||'Style',!!v);closeAll();render()});
+ menu('supplier-style-options',unique('Vendor Style',true),'Any style',v=>{state.style=v;state.page=0;label(st,v||'Style',!!v);closeAll();render()});
  document.querySelectorAll('#supplier-price-options button').forEach(b=>b.onclick=()=>{state.price=b.textContent==='Any price'?'':b.textContent;state.page=0;label(pt,state.price||'Starting Price',!!state.price);closeAll();render()});
 }
 document.querySelector('.supplier-date-apply')?.addEventListener('click',()=>{const input=document.querySelector('#supplier-filter-date');if(!input?.value)return;state.date=normalDate(input.value);state.page=0;label(document.querySelector('[data-filter-trigger="supplier-date-options"]'),new Intl.DateTimeFormat('en-AU',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(`${state.date}T00:00:00`)),true);closeAll();render()});
