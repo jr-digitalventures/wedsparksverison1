@@ -34,6 +34,8 @@ function supplier(name, overrides = {}) {
     'Name of Wedding Vendor': name,
     'Wedding Vendor Type': 'Transport',
     Location: 'Adelaide, SA',
+    'Location - State': 'South Australia',
+    'Location - Suburb/City': 'Adelaide',
     'Highlighted Record': true,
     'Starting Price': 1500,
     'Vendor Style': 'Classic, Modern',
@@ -45,7 +47,7 @@ function supplier(name, overrides = {}) {
 const defaultRows = () => [
   supplier('Adelaide Transport'),
   supplier('Second Adelaide Transport'),
-  supplier('Sydney Venue', { 'Wedding Vendor Type': 'Venue', Location: 'Sydney, NSW' }),
+  supplier('Sydney Venue', { 'Wedding Vendor Type': 'Venue', Location: 'Sydney, NSW', 'Location - State': 'New South Wales', 'Location - Suburb/City': 'Sydney' }),
   supplier('Regular Adelaide Venue', { 'Wedding Vendor Type': 'Venue', 'Highlighted Record': false }),
 ];
 
@@ -78,8 +80,36 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
     setupMenus();
     render();
   `, context);
+  const descendants = node => [node, ...node.children.flatMap(descendants)];
+  const locationNodes = () => descendants(element('#heading-location-options'));
+  const locationGroup = region => element('#heading-location-options').children.find(node =>
+    node.className === 'supplier-location-group' && node.children[0].children[0].textContent === region);
   return {
-    options(id) { return element(`#${id}`).children.map(b => b.textContent); },
+    options(id) {
+      if (id === 'heading-location-options') return locationNodes().filter(node => node.attributes['data-location-city'] === '').map(node => node.textContent);
+      return element(`#${id}`).children.map(b => b.textContent);
+    },
+    cities(region) {
+      return descendants(locationGroup(region)).filter(node => node.attributes['data-location-city']).map(node => node.textContent);
+    },
+    expandLocation(region) {
+      const group = locationGroup(region);
+      assert.ok(group, `Missing state: ${region}`);
+      const expand = group.children[0].children[1];
+      expand.onclick();
+      return { expanded: expand.attributes['aria-expanded'], hidden: group.children[1].hidden };
+    },
+    selectLocation(region = '', city = '') {
+      if (city) {
+        const group = locationGroup(region);
+        assert.ok(group, `Missing state: ${region}`);
+        if (group.children[1].hidden) group.children[0].children[1].onclick();
+      }
+      const button = locationNodes().find(node => node.attributes['data-location-state'] === region && node.attributes['data-location-city'] === city);
+      assert.ok(button, `Missing location: ${region} / ${city}`);
+      button.onclick();
+      assert.equal(button.attributes['aria-pressed'], 'true');
+    },
     select(id, text) {
       const button = element(`#${id}`).children.find(b => b.textContent === text);
       assert.ok(button, `Missing dropdown option: ${text}`);
@@ -104,7 +134,10 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
       context.newFilters = filters;
       vm.runInContext('Object.assign(state, newFilters); render();', context);
     },
-    selectedLocation() { return vm.runInContext('state.location', context); },
+    selectedLocation() {
+      return { state: vm.runInContext('state.locationState', context), city: vm.runInContext('state.locationCity', context) };
+    },
+    displayedLocation() { return element('.featured-supplier-card').querySelector('.supplier-location span').textContent; },
     query(search) {
       context.location.search = search;
       vm.runInContext('initialQuery(); render();', context);
@@ -112,9 +145,11 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
   };
 }
 
-test('locations retain city and state; only styles split comma-separated values', () => {
+test('locations group deduplicated cities within states; only styles split at commas', () => {
   const p = page();
-  assert.deepEqual(p.options('heading-location-options'), ['All locations', 'Adelaide, SA', 'Sydney, NSW']);
+  assert.deepEqual(p.options('heading-location-options'), ['All locations', 'New South Wales', 'South Australia']);
+  assert.deepEqual(p.cities('South Australia'), ['Adelaide']);
+  assert.deepEqual(p.cities('New South Wales'), ['Sydney']);
   assert.deepEqual(p.options('supplier-style-options'), ['Any style', 'Classic', 'Modern']);
 });
 
@@ -132,7 +167,7 @@ test('category-only searches choose a highlight and keep the others as results',
 
 test('location alone hides the highlight and retains every matching result', () => {
   const p = page();
-  p.select('heading-location-options', 'Adelaide, SA');
+  p.selectLocation('South Australia', 'Adelaide');
   assert.equal(p.highlight(), null);
   assert.equal(p.results().length, 3);
 });
@@ -140,24 +175,24 @@ test('location alone hides the highlight and retains every matching result', () 
 test('both selected criteria must match; clearing them restores the correct highlight', () => {
   const p = page();
   p.select('heading-category-options', 'Transport');
-  p.select('heading-location-options', 'Adelaide, SA');
+  p.selectLocation('South Australia', 'Adelaide');
   assert.equal(p.highlight(), 'Adelaide Transport');
-  p.select('heading-location-options', 'Sydney, NSW');
+  p.selectLocation('New South Wales', 'Sydney');
   assert.equal(p.highlight(), null);
   p.select('heading-category-options', 'Venue');
   assert.equal(p.highlight(), 'Sydney Venue');
-  p.select('heading-location-options', 'Adelaide, SA');
+  p.selectLocation('South Australia', 'Adelaide');
   assert.equal(p.highlight(), null);
   p.select('heading-category-options', 'All wedding categories');
   assert.equal(p.highlight(), null);
-  p.select('heading-location-options', 'All locations');
+  p.selectLocation();
   assert.equal(p.highlight(), null);
 });
 
 test('category and full location URL parameters select the highlight', () => {
   const p = page();
   p.query('?category=Transport&location=Adelaide%2C%20SA');
-  assert.equal(p.selectedLocation(), 'Adelaide, SA');
+  assert.deepEqual(p.selectedLocation(), { state: 'South Australia', city: 'Adelaide' });
   assert.equal(p.highlight(), 'Adelaide Transport');
   assert.equal(p.results().length, 1);
 });
@@ -292,4 +327,105 @@ test('disabled session storage still allows a stable in-memory choice', () => {
   p.select('heading-category-options', 'Venue');
   p.select('heading-category-options', 'Transport');
   assert.equal(p.highlight(), 'Second Adelaide Transport');
+});
+
+test('state selection uses only the structured state and includes every city in it', () => {
+  const p = page({ rows: [
+    supplier('Adelaide', { Location: 'A custom display address' }),
+    supplier('Glenelg', { 'Location - Suburb/City': 'Glenelg' }),
+    supplier('Statewide', { 'Location - Suburb/City': '' }),
+    supplier('Victoria', { Location: 'Adelaide, South Australia', 'Location - State': 'Victoria' }),
+  ] });
+  p.selectLocation('South Australia');
+  assert.deepEqual(p.results().map(row => row.id), ['Adelaide', 'Glenelg', 'Statewide']);
+  assert.equal(p.highlight(), null);
+  p.select('heading-category-options', 'Transport');
+  assert.equal(p.highlight(), 'Adelaide');
+  assert.equal(p.displayedLocation(), 'A custom display address');
+});
+
+test('state/city values are trimmed and deduplicated without using display text', () => {
+  const p = page({ rows: [
+    supplier('A'),
+    supplier('B', { 'Location - State': ' south australia ', 'Location - Suburb/City': ' adelaide ' }),
+    supplier('C', { 'Location - Suburb/City': 'Glenelg' }),
+    supplier('D', { 'Location - State': '', 'Location - Suburb/City': 'Display only' }),
+  ] });
+  assert.deepEqual(p.options('heading-location-options'), ['All locations', 'South Australia']);
+  assert.deepEqual(p.cities('South Australia'), ['Adelaide', 'Glenelg']);
+  p.selectLocation('South Australia', 'Adelaide');
+  assert.deepEqual(p.results().map(row => row.id), ['A', 'B']);
+});
+
+test('identically named cities in different states never match each other', () => {
+  const p = page({ rows: [
+    supplier('Richmond VIC', { 'Location - State': 'Victoria', 'Location - Suburb/City': 'Richmond' }),
+    supplier('Richmond NSW', { 'Location - State': 'New South Wales', 'Location - Suburb/City': 'Richmond' }),
+    supplier('Mosman NSW', { 'Location - State': 'New South Wales', 'Location - Suburb/City': 'Mosman' }),
+  ] });
+  p.selectLocation('New South Wales', 'Richmond');
+  assert.deepEqual(p.results().map(row => row.id), ['Richmond NSW']);
+  p.select('heading-category-options', 'Transport');
+  assert.equal(p.highlight(), 'Richmond NSW');
+  p.selectLocation('Victoria', 'Richmond');
+  assert.equal(p.highlight(), 'Richmond VIC');
+});
+
+test('expanding a state changes no filters; selecting another state clears the city', () => {
+  const p = page();
+  assert.deepEqual(p.expandLocation('South Australia'), { expanded: 'true', hidden: false });
+  assert.deepEqual(p.selectedLocation(), { state: '', city: '' });
+  assert.equal(p.count(), 4);
+  assert.deepEqual(p.expandLocation('South Australia'), { expanded: 'false', hidden: true });
+  p.selectLocation('South Australia', 'Adelaide');
+  p.selectLocation('New South Wales');
+  assert.deepEqual(p.selectedLocation(), { state: 'New South Wales', city: '' });
+  assert.deepEqual(p.results().map(row => row.id), ['Sydney Venue']);
+  p.selectLocation();
+  assert.deepEqual(p.selectedLocation(), { state: '', city: '' });
+  assert.equal(p.count(), 4);
+});
+
+test('state and city selection reset pagination to page one', () => {
+  const p = page({ rows: Array.from({ length: 32 }, (_, i) => supplier(`Supplier ${i}`)) });
+  p.select('heading-category-options', 'Transport');
+  p.goToPage(2);
+  assert.equal(p.highlight(), null);
+  p.selectLocation('South Australia');
+  assert.equal(p.highlight(), 'Supplier 0');
+  p.goToPage(2);
+  p.selectLocation('South Australia', 'Adelaide');
+  assert.equal(p.highlight(), 'Supplier 0');
+  assert.equal(p.results()[0].id, 'Supplier 1');
+});
+
+test('state-only and state/city URL parameters use the structured columns', () => {
+  const rows = [supplier('A'), supplier('G', { 'Location - Suburb/City': 'Glenelg' })];
+  const statewide = page({ rows });
+  statewide.query('?state=South%20Australia');
+  assert.deepEqual(statewide.selectedLocation(), { state: 'South Australia', city: '' });
+  assert.equal(statewide.count(), 2);
+  assert.equal(statewide.highlight(), null);
+  const city = page({ rows });
+  city.query('?category=Transport&state=SA&city=Glenelg');
+  assert.deepEqual(city.selectedLocation(), { state: 'South Australia', city: 'Glenelg' });
+  assert.equal(city.highlight(), 'G');
+});
+
+test('statewide and city searches remember separate eligible priority winners', () => {
+  const session = storage();
+  const rows = [
+    supplier('Adelaide', { 'Featured Priority': 2 }),
+    supplier('Glenelg', { 'Featured Priority': 1, 'Location - Suburb/City': 'Glenelg' }),
+    supplier('Sydney', { 'Featured Priority': 0, 'Location - State': 'New South Wales', 'Location - Suburb/City': 'Sydney' }),
+  ];
+  const p = page({ rows, session });
+  p.select('heading-category-options', 'Transport');
+  assert.equal(p.highlight(), 'Sydney');
+  p.selectLocation('South Australia');
+  assert.equal(p.highlight(), 'Glenelg');
+  p.selectLocation('South Australia', 'Adelaide');
+  assert.equal(p.highlight(), 'Adelaide');
+  p.selectLocation('South Australia');
+  assert.equal(p.highlight(), 'Glenelg');
 });
