@@ -122,6 +122,31 @@ if (supplierResultsList && supplierPagination) {
   const cards = [...supplierResultsList.querySelectorAll('.supplier-listing-card')];
   const pageCount = Math.ceil(cards.length / pageSize);
 
+  const animateFavourite = (control, expanded) => {
+    const startWidth = parseFloat(getComputedStyle(control).width);
+    const endWidth = expanded ? 180 : 42;
+    control.getAnimations().forEach(animation => animation.cancel());
+    control.classList.toggle('is-expanded', expanded);
+    control.style.width = `${startWidth}px`;
+    const animation = control.animate(
+      [{width: `${startWidth}px`}, {width: `${endWidth}px`}],
+      {duration: 450, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards'}
+    );
+    animation.addEventListener('finish', () => {
+      control.style.width = `${endWidth}px`;
+      animation.cancel();
+    }, {once: true});
+  };
+
+  cards.forEach(card => {
+    const favourite = card.querySelector('.supplier-favourite');
+    if (!favourite) return;
+    favourite.addEventListener('mouseenter', () => animateFavourite(favourite, true));
+    favourite.addEventListener('mouseleave', () => animateFavourite(favourite, false));
+    favourite.addEventListener('focus', () => animateFavourite(favourite, true));
+    favourite.addEventListener('blur', () => animateFavourite(favourite, false));
+  });
+
   const showSupplierPage = page => {
     cards.forEach((card, index) => {
       card.hidden = index < page * pageSize || index >= (page + 1) * pageSize;

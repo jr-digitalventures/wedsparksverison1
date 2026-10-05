@@ -87,9 +87,11 @@
 }
 
 /* Smooth result-card favourites expansion. */
-.supplier-listing-card .supplier-favourite{will-change:width;transition:width .45s cubic-bezier(.22,1,.36,1),gap .45s cubic-bezier(.22,1,.36,1),background-color .25s ease,box-shadow .25s ease}
+.supplier-listing-card .supplier-favourite{will-change:width;transition:gap .45s cubic-bezier(.22,1,.36,1),background-color .25s ease,box-shadow .25s ease}
 .supplier-listing-card .supplier-favourite span{transform:translateX(-8px);transition:max-width .45s cubic-bezier(.22,1,.36,1),opacity .28s ease,transform .45s cubic-bezier(.22,1,.36,1)}
-.supplier-listing-card .supplier-favourite:hover span,.supplier-listing-card .supplier-favourite:focus-visible span{transform:translateX(0)}
+.supplier-listing-card .supplier-favourite:hover,.supplier-listing-card .supplier-favourite:focus-visible{width:42px}
+.supplier-listing-card .supplier-favourite:hover span,.supplier-listing-card .supplier-favourite:focus-visible span{max-width:0;opacity:0;transform:translateX(-8px)}
+.supplier-listing-card .supplier-favourite.is-expanded span{max-width:135px;opacity:1;transform:translateX(0)}
 
 /* Results cards use the featured card content system at their existing size. */
 .supplier-listing-content .supplier-card-price-block small{text-transform:uppercase;font-size:12px;font-weight:600}
