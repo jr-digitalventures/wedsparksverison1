@@ -180,7 +180,7 @@ if (supplierResultsList && supplierPagination) {
       slides.forEach((_, index) => {
         const dot = document.createElement('i');
         dot.setAttribute('aria-hidden', 'true');
-        dot.addEventListener('click', () => showSlide(index));
+        dot.addEventListener('click', () => showSlide(index, index >= currentIndex ? 1 : -1));
         dots.append(dot);
       });
     }
@@ -192,18 +192,43 @@ if (supplierResultsList && supplierPagination) {
       });
     };
 
-    function showSlide(index) {
-      currentIndex = (index + slides.length) % slides.length;
-      image.classList.add('is-changing');
-      window.setTimeout(() => {
-        image.src = slides[currentIndex];
-        image.classList.remove('is-changing');
-      }, 90);
+    let isSliding = false;
+
+    async function showSlide(index, direction) {
+      const targetIndex = (index + slides.length) % slides.length;
+      if (isSliding || targetIndex === currentIndex) return;
+      isSliding = true;
+
+      const incoming = image.cloneNode(false);
+      incoming.classList.add('carousel-incoming');
+      incoming.src = slides[targetIndex];
+      incoming.style.transform = `translateX(${direction * 100}%)`;
+      incoming.removeAttribute('id');
+      try { await incoming.decode(); } catch {}
+      media.append(incoming);
+
+      const timing = {duration: 450, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards'};
+      const outgoingAnimation = image.animate(
+        [{transform: 'translateX(0)'}, {transform: `translateX(${-direction * 100}%)`}],
+        timing
+      );
+      const incomingAnimation = incoming.animate(
+        [{transform: `translateX(${direction * 100}%)`}, {transform: 'translateX(0)'}],
+        timing
+      );
+
+      currentIndex = targetIndex;
       updateIndicators();
+      await Promise.all([outgoingAnimation.finished, incomingAnimation.finished]);
+      image.src = slides[currentIndex];
+      image.style.transform = '';
+      outgoingAnimation.cancel();
+      incoming.remove();
+      isSliding = false;
     }
 
-    previous.addEventListener('click', () => showSlide(currentIndex - 1));
-    next.addEventListener('click', () => showSlide(currentIndex + 1));
+    previous.addEventListener('click', () => showSlide(currentIndex - 1, -1));
+    next.addEventListener('click', () => showSlide(currentIndex + 1, 1));
     updateIndicators();
   });
 

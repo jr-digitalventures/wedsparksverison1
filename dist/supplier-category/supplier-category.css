@@ -94,8 +94,10 @@
 .supplier-listing-card .supplier-favourite.is-expanded span{max-width:135px;opacity:1;transform:translateX(0)}
 
 /* Supplier image carousels. */
-.featured-supplier-media img,.supplier-listing-media img{transition:opacity .18s ease}
-.featured-supplier-media img.is-changing,.supplier-listing-media img.is-changing{opacity:.35}
+.featured-supplier-media>img,.supplier-listing-media>img{will-change:transform}
+.featured-supplier-media>.carousel-incoming,.supplier-listing-media>.carousel-incoming{position:absolute;z-index:1;inset:0}
+.featured-supplier-label,.listing-image-arrow,.featured-image-dots,.listing-image-count{z-index:3}
+.supplier-favourite{z-index:4}
 .featured-image-dots i{cursor:pointer}
 .featured-image-dots i:first-child{background:rgba(255,255,255,.6)}
 .featured-image-dots i.is-active{background:#fff}
