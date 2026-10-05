@@ -1,269 +1,42 @@
-const supplierFilterTriggers = [...document.querySelectorAll('[data-filter-trigger]')];
-const supplierHeadingTriggers = [...document.querySelectorAll('[data-heading-filter]')];
-
-const closeSupplierFilters = () => supplierFilterTriggers.forEach(trigger => {
-  trigger.setAttribute('aria-expanded', 'false');
-  const menu = document.getElementById(trigger.dataset.filterTrigger);
-  if (menu) menu.hidden = true;
-});
-
-const closeSupplierHeadingFilters = () => supplierHeadingTriggers.forEach(trigger => {
-  trigger.setAttribute('aria-expanded', 'false');
-  const menu = document.getElementById(trigger.dataset.headingFilter);
-  if (menu) menu.hidden = true;
-});
-
-supplierHeadingTriggers.forEach(trigger => {
-  const menu = document.getElementById(trigger.dataset.headingFilter);
-  if (!menu) return;
-
-  trigger.addEventListener('click', event => {
-    event.stopPropagation();
-    const opening = menu.hidden;
-    closeSupplierHeadingFilters();
-    closeSupplierFilters();
-    menu.hidden = !opening;
-    trigger.setAttribute('aria-expanded', String(opening));
-  });
-
-  menu.querySelectorAll('button').forEach(option => {
-    option.addEventListener('click', () => {
-      trigger.querySelector('span').textContent = option.textContent.trim();
-      closeSupplierHeadingFilters();
-      trigger.focus();
-    });
-  });
-});
-
-const supplierDateInput = document.querySelector('#supplier-filter-date');
-const supplierDateApply = document.querySelector('.supplier-date-apply');
-supplierDateApply?.addEventListener('click', () => {
-  if (!supplierDateInput?.value) return;
-  const selectedDate = new Date(`${supplierDateInput.value}T00:00:00`);
-  const label = new Intl.DateTimeFormat('en-AU', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  }).format(selectedDate);
-  const dateTrigger = document.querySelector('[data-filter-trigger="supplier-date-options"]');
-  dateTrigger.querySelector('span').textContent = label;
-  dateTrigger.classList.add('is-selected');
-  closeSupplierFilters();
-  dateTrigger.focus();
-});
-
-supplierFilterTriggers.forEach(trigger => {
-  const menu = document.getElementById(trigger.dataset.filterTrigger);
-  if (!menu) return;
-
-  trigger.addEventListener('click', event => {
-    event.stopPropagation();
-    const opening = menu.hidden;
-    closeSupplierFilters();
-    closeSupplierHeadingFilters();
-    menu.hidden = !opening;
-    trigger.setAttribute('aria-expanded', String(opening));
-  });
-
-  menu.querySelectorAll('button:not(.supplier-date-apply)').forEach(option => {
-    option.addEventListener('click', () => {
-      trigger.querySelector('span').textContent = option.textContent.trim();
-      trigger.classList.add('is-selected');
-      closeSupplierFilters();
-      trigger.focus();
-    });
-  });
-});
-
-document.addEventListener('click', event => {
-  if (!event.target.closest('.supplier-filter')) closeSupplierFilters();
-  if (!event.target.closest('.supplier-heading-filter')) closeSupplierHeadingFilters();
-});
-
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') {
-    closeSupplierFilters();
-    closeSupplierHeadingFilters();
-  }
-});
-
-const supplierResultsList = document.querySelector('.supplier-results-list');
-const supplierPagination = document.querySelector('.supplier-pagination');
-
-if (supplierResultsList && supplierPagination) {
-  const placeholderNames = [
-    'Harbour & Vine', 'Evergreen Events', 'Golden Hour Studio',
-    'The Garden House', 'White Rose Floral', 'Storybook Weddings',
-    'Coastal Table Co.', 'Luna Photography', 'Modern Love Events',
-    'The Ivory Room', 'Wildflower Collective', 'Ever After Films'
-  ];
-  const seedCards = [...supplierResultsList.querySelectorAll('.supplier-listing-card')];
-
-  placeholderNames.forEach((name, index) => {
-    const card = seedCards[index % seedCards.length].cloneNode(true);
-    const title = card.querySelector('.supplier-card-titleline h2');
-    const favourite = card.querySelector('.supplier-favourite');
-    if (title) title.textContent = name;
-    if (favourite) favourite.setAttribute('aria-label', `Save ${name}`);
-    supplierResultsList.append(card);
-  });
-
-  const truncateCopy = (element, limit) => {
-    const copy = element.textContent.trim();
-    if (copy.length <= limit) return;
-    const shortened = copy.slice(0, limit - 3);
-    const lastSpace = shortened.lastIndexOf(' ');
-    element.textContent = `${shortened.slice(0, lastSpace).trimEnd()}...`;
-  };
-
-  supplierResultsList.querySelectorAll('.supplier-listing-content > .supplier-description').forEach(description => truncateCopy(description, 300));
-  supplierResultsList.querySelectorAll('.supplier-listing-content > .supplier-features b').forEach(takeaway => truncateCopy(takeaway, 40));
-
-  const featuredDescription = document.querySelector('.featured-supplier-content > .supplier-description');
-  if (featuredDescription) truncateCopy(featuredDescription, 170);
-  document.querySelectorAll('.featured-supplier-content > .supplier-features b').forEach(takeaway => truncateCopy(takeaway, 30));
-
-  const pageSize = 15;
-  const cards = [...supplierResultsList.querySelectorAll('.supplier-listing-card')];
-  const pageCount = Math.ceil(cards.length / pageSize);
-
-  const animateFavourite = (control, expanded) => {
-    const startWidth = parseFloat(getComputedStyle(control).width);
-    const endWidth = expanded ? 180 : 42;
-    control.getAnimations().forEach(animation => animation.cancel());
-    control.classList.toggle('is-expanded', expanded);
-    control.style.width = `${startWidth}px`;
-    const animation = control.animate(
-      [{width: `${startWidth}px`}, {width: `${endWidth}px`}],
-      {duration: 450, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards'}
-    );
-    animation.addEventListener('finish', () => {
-      control.style.width = `${endWidth}px`;
-      animation.cancel();
-    }, {once: true});
-  };
-
-  cards.forEach(card => {
-    const favourite = card.querySelector('.supplier-favourite');
-    if (!favourite) return;
-    favourite.addEventListener('mouseenter', () => animateFavourite(favourite, true));
-    favourite.addEventListener('mouseleave', () => animateFavourite(favourite, false));
-    favourite.addEventListener('focus', () => animateFavourite(favourite, true));
-    favourite.addEventListener('blur', () => animateFavourite(favourite, false));
-  });
-
-  const carouselImages = [...new Set(
-    [...document.querySelectorAll('.featured-supplier-media img, .supplier-listing-media img')]
-      .map(image => image.currentSrc || image.src)
-  )].slice(0, 10);
-
-  const carouselCards = [
-    ...document.querySelectorAll('.featured-supplier-card, .supplier-listing-card')
-  ];
-
-  carouselCards.forEach(card => {
-    const media = card.querySelector('.featured-supplier-media, .supplier-listing-media');
-    const image = media?.querySelector('img');
-    const previous = media?.querySelector('.listing-image-prev');
-    const next = media?.querySelector('.listing-image-next');
-    if (!media || !image || !previous || !next || !carouselImages.length) return;
-
-    const currentImage = image.currentSrc || image.src;
-    const slides = [currentImage, ...carouselImages.filter(source => source !== currentImage)].slice(0, 10);
-    const counter = media.querySelector('.listing-image-count');
-    const dots = media.querySelector('.featured-image-dots');
-    let currentIndex = 0;
-
-    if (dots) {
-      dots.replaceChildren();
-      slides.forEach((_, index) => {
-        const dot = document.createElement('i');
-        dot.setAttribute('aria-hidden', 'true');
-        dot.addEventListener('click', () => showSlide(index, index >= currentIndex ? 1 : -1));
-        dots.append(dot);
-      });
-    }
-
-    const updateIndicators = () => {
-      if (counter) counter.textContent = `${currentIndex + 1}/${slides.length}`;
-      dots?.querySelectorAll('i').forEach((dot, index) => {
-        dot.classList.toggle('is-active', index === currentIndex);
-      });
-    };
-
-    let isSliding = false;
-
-    async function showSlide(index, direction) {
-      const targetIndex = (index + slides.length) % slides.length;
-      if (isSliding || targetIndex === currentIndex) return;
-      isSliding = true;
-
-      const incoming = image.cloneNode(false);
-      incoming.classList.add('carousel-incoming');
-      incoming.src = slides[targetIndex];
-      incoming.style.transform = `translateX(${direction * 100}%)`;
-      incoming.removeAttribute('id');
-      try { await incoming.decode(); } catch {}
-      media.append(incoming);
-
-      const timing = {duration: 450, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards'};
-      const outgoingAnimation = image.animate(
-        [{transform: 'translateX(0)'}, {transform: `translateX(${-direction * 100}%)`}],
-        timing
-      );
-      const incomingAnimation = incoming.animate(
-        [{transform: `translateX(${direction * 100}%)`}, {transform: 'translateX(0)'}],
-        timing
-      );
-
-      currentIndex = targetIndex;
-      updateIndicators();
-      await Promise.all([outgoingAnimation.finished, incomingAnimation.finished]);
-      image.src = slides[currentIndex];
-      image.style.transform = '';
-      outgoingAnimation.cancel();
-      incoming.remove();
-      isSliding = false;
-    }
-
-    previous.addEventListener('click', () => showSlide(currentIndex - 1, -1));
-    next.addEventListener('click', () => showSlide(currentIndex + 1, 1));
-    updateIndicators();
-  });
-
-  const showSupplierPage = page => {
-    cards.forEach((card, index) => {
-      card.hidden = index < page * pageSize || index >= (page + 1) * pageSize;
-    });
-    supplierPagination.querySelectorAll('button').forEach((button, index) => {
-      button.setAttribute('aria-current', String(index === page));
-    });
-  };
-
-  if (pageCount > 1) {
-    supplierPagination.hidden = false;
-    Array.from({length: pageCount}, (_, index) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = String(index + 1);
-      button.setAttribute('aria-label', `Show supplier results page ${index + 1}`);
-      button.addEventListener('click', () => {
-        showSupplierPage(index);
-        supplierResultsList.scrollIntoView({behavior: 'smooth', block: 'start'});
-      });
-      supplierPagination.append(button);
-      return button;
-    });
-  }
-  showSupplierPage(0);
+const SB='https://vfdtyxcfrqnqdyuimtho.supabase.co',KEY='sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd',PAGE=15;
+const list=document.querySelector('.supplier-results-list'),pager=document.querySelector('.supplier-pagination'),featured=document.querySelector('.featured-supplier-card'),count=document.querySelector('#supplier-results-title>span:first-child');
+const template=list?.querySelector('.supplier-listing-card')?.cloneNode(true),spark='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5L12 2Z"/></svg>';
+const state={rows:[],category:'',location:'',price:'',style:'',date:'',page:0};
+const val=(r,k)=>r?.[k]??'',clean=v=>String(v??'').trim(),norm=v=>clean(v).toLowerCase(),split=v=>clean(v).split(/[,;|\n]+/).map(x=>x.trim()).filter(Boolean);
+const safe=v=>{try{const u=new URL(clean(v),location.href);return /^https?:$/.test(u.protocol)?u.href:''}catch{return''}};
+const money=v=>{const s=clean(v),n=Number(s.replace(/[^0-9.]/g,''));return s&&Number.isFinite(n)?new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0}).format(n):s};
+const trunc=(v,n)=>{const s=clean(v);if(s.length<=n)return s;const cut=s.slice(0,n-3),i=cut.lastIndexOf(' ');return`${cut.slice(0,i>0?i:cut.length).trimEnd()}...`};
+const images=r=>Array.from({length:10},(_,i)=>safe(val(r,`Image #${i+1}`))).filter(Boolean),yes=r=>['yes','true','1'].includes(norm(val(r,'Highlighted Record Column')));
+const normalDate=v=>{const s=clean(v),iso=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/),au=s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);if(iso)return`${iso[1]}-${iso[2].padStart(2,'0')}-${iso[3].padStart(2,'0')}`;if(au)return`${au[3]}-${au[2].padStart(2,'0')}-${au[1].padStart(2,'0')}`;const d=new Date(s);return Number.isNaN(d.getTime())?s:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const filterTriggers=[...document.querySelectorAll('[data-filter-trigger]')],headingTriggers=[...document.querySelectorAll('[data-heading-filter]')];
+const closeAll=()=>[...filterTriggers,...headingTriggers].forEach(t=>{t.setAttribute('aria-expanded','false');const m=document.getElementById(t.dataset.filterTrigger||t.dataset.headingFilter);if(m)m.hidden=true});
+[...filterTriggers,...headingTriggers].forEach(t=>{const m=document.getElementById(t.dataset.filterTrigger||t.dataset.headingFilter);t.addEventListener('click',e=>{e.stopPropagation();const open=m.hidden;closeAll();m.hidden=!open;t.setAttribute('aria-expanded',String(open))})});
+document.addEventListener('click',e=>{if(!e.target.closest('.supplier-filter,.supplier-heading-filter'))closeAll()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+const label=(t,s,on=true)=>{const x=t?.querySelector('span');if(x)x.textContent=s;t?.classList.toggle('is-selected',on)};
+const unique=k=>[...new Set(state.rows.flatMap(r=>split(val(r,k))))].sort((a,b)=>a.localeCompare(b,'en-AU'));
+const menu=(id,items,all,fn)=>{const m=document.getElementById(id);m?.replaceChildren();[all,...items].forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.textContent=x;b.onclick=()=>fn(i?x:'');m?.append(b)})};
+function setupMenus(){
+ const ct=document.querySelector('[data-heading-filter="heading-category-options"]'),lt=document.querySelector('[data-heading-filter="heading-location-options"]'),st=document.querySelector('[data-filter-trigger="supplier-style-options"]'),pt=document.querySelector('[data-filter-trigger="supplier-price-options"]');
+ menu('heading-category-options',unique('Wedding Vendor Type'),'All wedding categories',v=>{state.category=v;state.page=0;label(ct,v||'WEDDING CATEGORY',!!v);closeAll();render()});
+ menu('heading-location-options',unique('Location'),'All locations',v=>{state.location=v;state.page=0;label(lt,v||'LOCATION',!!v);closeAll();render()});
+ menu('supplier-style-options',unique('Vendor Style'),'Any style',v=>{state.style=v;state.page=0;label(st,v||'Style',!!v);closeAll();render()});
+ document.querySelectorAll('#supplier-price-options button').forEach(b=>b.onclick=()=>{state.price=b.textContent==='Any price'?'':b.textContent;state.page=0;label(pt,state.price||'Starting Price',!!state.price);closeAll();render()});
 }
-
-document.addEventListener('click', event => {
-  const favourite = event.target.closest('.supplier-favourite');
-  if (!favourite) return;
-  const saved = favourite.classList.toggle('is-saved');
-  favourite.setAttribute('aria-pressed', String(saved));
-  const label = favourite.querySelector('span');
-  if (label) label.textContent = saved ? 'Saved' : 'Save to Favourites';
-});
+document.querySelector('.supplier-date-apply')?.addEventListener('click',()=>{const input=document.querySelector('#supplier-filter-date');if(!input?.value)return;state.date=normalDate(input.value);state.page=0;label(document.querySelector('[data-filter-trigger="supplier-date-options"]'),new Intl.DateTimeFormat('en-AU',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(`${state.date}T00:00:00`)),true);closeAll();render()});
+const priceMatch=r=>{if(!state.price)return true;const n=Number(clean(val(r,'Starting Price')).replace(/[^0-9.]/g,''));if(!Number.isFinite(n))return false;if(state.price==='Under $1,000')return n<1000;if(state.price==='$1,000–$2,500')return n>=1000&&n<=2500;if(state.price==='$2,500–$5,000')return n>=2500&&n<=5000;if(state.price==='$5,000+')return n>=5000;return true};
+const matches=r=>(!state.category||norm(val(r,'Wedding Vendor Type'))===norm(state.category))&&(!state.location||norm(val(r,'Location'))===norm(state.location))&&(!state.style||split(val(r,'Vendor Style')).some(x=>norm(x)===norm(state.style)))&&(!state.date||split(val(r,'Dates Available')).some(x=>normalDate(x)===state.date))&&priceMatch(r);
+const features=(el,values,limit)=>{el.replaceChildren();values.filter(clean).forEach(v=>{const s=document.createElement('span');s.innerHTML=spark;const b=document.createElement('b');b.textContent=trunc(v,limit);s.append(b);el.append(s)})};
+function carousel(card,slides){slides=slides.slice(0,10);const media=card.querySelector('.featured-supplier-media,.supplier-listing-media'),img=media?.querySelector(':scope>img'),prev=media?.querySelector('.listing-image-prev'),next=media?.querySelector('.listing-image-next'),counter=media?.querySelector('.listing-image-count'),dots=media?.querySelector('.featured-image-dots');if(!media||!img)return;if(!slides.length){prev?.setAttribute('hidden','');next?.setAttribute('hidden','');if(counter)counter.hidden=true;if(dots)dots.hidden=true;return}img.src=slides[0];prev?.toggleAttribute('hidden',slides.length<2);next?.toggleAttribute('hidden',slides.length<2);if(counter)counter.hidden=slides.length<2;if(dots)dots.hidden=slides.length<2;let at=0,moving=false;
+ const indicators=()=>{if(counter)counter.textContent=`${at+1}/${slides.length}`;dots?.querySelectorAll('i').forEach((d,i)=>d.classList.toggle('is-active',i===at))};
+ async function show(index,dir){const target=(index+slides.length)%slides.length;if(moving||target===at)return;moving=true;const incoming=img.cloneNode(false);incoming.classList.add('carousel-incoming');incoming.src=slides[target];incoming.style.transform=`translateX(${dir*100}%)`;try{await incoming.decode()}catch{}media.append(incoming);const time={duration:450,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'},out=img.animate([{transform:'translateX(0)'},{transform:`translateX(${-dir*100}%)`}],time),inc=incoming.animate([{transform:`translateX(${dir*100}%)`},{transform:'translateX(0)'}],time);at=target;indicators();await Promise.all([out.finished,inc.finished]);img.src=slides[at];out.cancel();incoming.remove();moving=false}
+ if(dots){dots.replaceChildren();slides.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>show(i,i>=at?1:-1);dots.append(d)})}prev?.addEventListener('click',()=>show(at-1,-1));next?.addEventListener('click',()=>show(at+1,1));indicators();
+}
+const fav=card=>{const b=card.querySelector('.supplier-favourite');if(!b)return;const animate=open=>{const from=parseFloat(getComputedStyle(b).width),to=open?180:42;b.getAnimations().forEach(a=>a.cancel());b.classList.toggle('is-expanded',open);b.style.width=`${from}px`;const a=b.animate([{width:`${from}px`},{width:`${to}px`}],{duration:450,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});a.onfinish=()=>{b.style.width=`${to}px`;a.cancel()}};b.onmouseenter=()=>animate(true);b.onmouseleave=()=>animate(false);b.onfocus=()=>animate(true);b.onblur=()=>animate(false);b.onclick=()=>{const saved=b.classList.toggle('is-saved');b.setAttribute('aria-pressed',String(saved));b.querySelector('span').textContent=saved?'Saved':'Save to Favourites'}};
+function fillFeatured(r){featured.hidden=false;featured.querySelector('.supplier-type').textContent=clean(val(r,'Wedding Vendor Type'));featured.querySelector('.supplier-card-titleline h2').textContent=clean(val(r,'Name of Wedding Vendor'));featured.querySelector('.supplier-location span').textContent=clean(val(r,'Location'));featured.querySelector('.supplier-price-value').textContent=money(val(r,'Starting Price'));featured.querySelector('.supplier-description').textContent=trunc(val(r,'Highlighted About Paragraph'),170);features(featured.querySelector('.supplier-features'),Array.from({length:6},(_,i)=>val(r,`Highlight Feature #${i+1}`)),30);featured.querySelector('.featured-supplier-actions a').href=safe(val(r,'Destination URL'))||'#';featured.querySelector('.featured-supplier-media img').alt=clean(val(r,'Name of Wedding Vendor'))||'Featured wedding supplier';carousel(featured,images(r))}
+function makeCard(r){const c=template.cloneNode(true),name=clean(val(r,'Name of Wedding Vendor'));c.querySelector('.supplier-type').textContent=clean(val(r,'Wedding Vendor Type'));c.querySelector('.supplier-card-titleline h2').textContent=name;c.querySelector('.supplier-location span').textContent=clean(val(r,'Location'));c.querySelector('.supplier-price-value').textContent=money(val(r,'Starting Price'));c.querySelector('.supplier-description').textContent=trunc(val(r,'About Paragraph'),300);features(c.querySelector('.supplier-features'),Array.from({length:4},(_,i)=>val(r,`Showcased Feature #${i+1}`)),40);c.querySelector('.supplier-profile-button').href=safe(val(r,'Destination URL'))||'#';c.querySelector('.supplier-listing-media img').alt=name||'Wedding supplier';const f=c.querySelector('.supplier-favourite');f.setAttribute('aria-label',`Save ${name||'supplier'}`);f.classList.remove('is-saved','is-expanded');f.style.width='';f.querySelector('span').textContent='Save to Favourites';fav(c);carousel(c,images(r));return c}
+const empty=message=>{const p=document.createElement('p');p.className='supplier-results-empty';p.textContent=message;list.append(p)};
+function pagination(n){pager.replaceChildren();pager.hidden=n<=1;for(let i=0;i<n;i++){const b=document.createElement('button');b.type='button';b.textContent=i+1;b.setAttribute('aria-current',String(i===state.page));b.onclick=()=>{state.page=i;render();list.scrollIntoView({behavior:'smooth',block:'start'})};pager.append(b)}}
+function render(){const rows=state.rows.filter(matches),highlight=state.category&&state.location?rows.find(r=>yes(r)&&norm(val(r,'Wedding Vendor Type'))===norm(state.category)&&norm(val(r,'Location'))===norm(state.location)):null;featured.hidden=!highlight;if(highlight)fillFeatured(highlight);const results=highlight?rows.filter(r=>r!==highlight):rows;count.textContent=rows.length;list.replaceChildren();const pages=Math.ceil(results.length/PAGE);if(state.page>=pages)state.page=0;results.slice(state.page*PAGE,state.page*PAGE+PAGE).forEach(r=>list.append(makeCard(r)));if(!results.length)empty('No wedding suppliers match these filters yet.');pagination(pages)}
+function initialQuery(){const q=new URLSearchParams(location.search),cat=q.get('category')||q.get('vendorType')||'',loc=q.get('location')||'',c=unique('Wedding Vendor Type').find(x=>norm(x)===norm(cat)),l=unique('Location').find(x=>norm(x)===norm(loc));if(c){state.category=c;label(document.querySelector('[data-heading-filter="heading-category-options"]'),c,true)}if(l){state.location=l;label(document.querySelector('[data-heading-filter="heading-location-options"]'),l,true)}}
+async function load(){try{const res=await fetch(`${SB}/rest/v1/${encodeURIComponent('Vendor Public Profiles')}?select=*`,{headers:{apikey:KEY,Accept:'application/json'}});if(!res.ok)throw Error(`Supabase request failed (${res.status})`);state.rows=await res.json();setupMenus();initialQuery();render()}catch(e){console.error(e);featured.hidden=true;list.replaceChildren();empty('Wedding suppliers are temporarily unavailable.');pager.hidden=true;count.textContent='0'}}
+load();
