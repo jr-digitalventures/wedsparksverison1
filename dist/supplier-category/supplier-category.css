@@ -93,6 +93,13 @@
 .supplier-listing-card .supplier-favourite:hover span,.supplier-listing-card .supplier-favourite:focus-visible span{max-width:0;opacity:0;transform:translateX(-8px)}
 .supplier-listing-card .supplier-favourite.is-expanded span{max-width:135px;opacity:1;transform:translateX(0)}
 
+/* Supplier image carousels. */
+.featured-supplier-media img,.supplier-listing-media img{transition:opacity .18s ease}
+.featured-supplier-media img.is-changing,.supplier-listing-media img.is-changing{opacity:.35}
+.featured-image-dots i{cursor:pointer}
+.featured-image-dots i:first-child{background:rgba(255,255,255,.6)}
+.featured-image-dots i.is-active{background:#fff}
+
 /* Results cards use the featured card content system at their existing size. */
 .supplier-listing-content .supplier-card-price-block small{text-transform:uppercase;font-size:12px;font-weight:600}
 .supplier-listing-content .supplier-price-value{color:#103e33;font-size:22px}

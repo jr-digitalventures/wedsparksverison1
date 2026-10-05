@@ -153,6 +153,60 @@ if (supplierResultsList && supplierPagination) {
     favourite.addEventListener('blur', () => animateFavourite(favourite, false));
   });
 
+  const carouselImages = [...new Set(
+    [...document.querySelectorAll('.featured-supplier-media img, .supplier-listing-media img')]
+      .map(image => image.currentSrc || image.src)
+  )].slice(0, 10);
+
+  const carouselCards = [
+    ...document.querySelectorAll('.featured-supplier-card, .supplier-listing-card')
+  ];
+
+  carouselCards.forEach(card => {
+    const media = card.querySelector('.featured-supplier-media, .supplier-listing-media');
+    const image = media?.querySelector('img');
+    const previous = media?.querySelector('.listing-image-prev');
+    const next = media?.querySelector('.listing-image-next');
+    if (!media || !image || !previous || !next || !carouselImages.length) return;
+
+    const currentImage = image.currentSrc || image.src;
+    const slides = [currentImage, ...carouselImages.filter(source => source !== currentImage)].slice(0, 10);
+    const counter = media.querySelector('.listing-image-count');
+    const dots = media.querySelector('.featured-image-dots');
+    let currentIndex = 0;
+
+    if (dots) {
+      dots.replaceChildren();
+      slides.forEach((_, index) => {
+        const dot = document.createElement('i');
+        dot.setAttribute('aria-hidden', 'true');
+        dot.addEventListener('click', () => showSlide(index));
+        dots.append(dot);
+      });
+    }
+
+    const updateIndicators = () => {
+      if (counter) counter.textContent = `${currentIndex + 1}/${slides.length}`;
+      dots?.querySelectorAll('i').forEach((dot, index) => {
+        dot.classList.toggle('is-active', index === currentIndex);
+      });
+    };
+
+    function showSlide(index) {
+      currentIndex = (index + slides.length) % slides.length;
+      image.classList.add('is-changing');
+      window.setTimeout(() => {
+        image.src = slides[currentIndex];
+        image.classList.remove('is-changing');
+      }, 90);
+      updateIndicators();
+    }
+
+    previous.addEventListener('click', () => showSlide(currentIndex - 1));
+    next.addEventListener('click', () => showSlide(currentIndex + 1));
+    updateIndicators();
+  });
+
   const showSupplierPage = page => {
     cards.forEach((card, index) => {
       card.hidden = index < page * pageSize || index >= (page + 1) * pageSize;
