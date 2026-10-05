@@ -86,6 +86,11 @@
   .featured-supplier-content>.featured-supplier-actions{grid-row:8;margin:0;padding:0}
 }
 
+/* Smooth result-card favourites expansion. */
+.supplier-listing-card .supplier-favourite{will-change:width;transition:width .45s cubic-bezier(.22,1,.36,1),gap .45s cubic-bezier(.22,1,.36,1),background-color .25s ease,box-shadow .25s ease}
+.supplier-listing-card .supplier-favourite span{transform:translateX(-8px);transition:max-width .45s cubic-bezier(.22,1,.36,1),opacity .28s ease,transform .45s cubic-bezier(.22,1,.36,1)}
+.supplier-listing-card .supplier-favourite:hover span,.supplier-listing-card .supplier-favourite:focus-visible span{transform:translateX(0)}
+
 /* Results cards use the featured card content system at their existing size. */
 .supplier-listing-content .supplier-card-price-block small{text-transform:uppercase;font-size:12px;font-weight:600}
 .supplier-listing-content .supplier-price-value{color:#103e33;font-size:22px}
