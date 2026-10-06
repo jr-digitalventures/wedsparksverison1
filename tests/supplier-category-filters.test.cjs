@@ -19,6 +19,7 @@ class Element {
   addEventListener() {}
   scrollIntoView() {}
   focus() {}
+  closest() { return new Element(); }
   style = { setProperty() {} };
   getBoundingClientRect() { return { left: 100, right: 860 }; }
   setAttribute(name, value) { this.attributes[name] = value; }
@@ -86,10 +87,11 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
   `, context);
   const descendants = node => [node, ...node.children.flatMap(descendants)];
   const locationNodes = () => descendants(element('#heading-location-options'));
-  const stateButton = region => locationNodes().find(node => node.className === 'supplier-location-state' && node.attributes['data-location-state'] === region);
+  const hasClass = (node, name) => String(node.className || '').split(/\s+/).includes(name);
+  const stateButton = region => locationNodes().find(node => hasClass(node, 'supplier-location-state') && node.attributes['data-location-state'] === region);
   return {
     options(id) {
-      if (id === 'heading-location-options') return locationNodes().filter(node => node.className === 'supplier-location-state').map(node => node.textContent);
+      if (id === 'heading-location-options') return locationNodes().filter(node => hasClass(node, 'supplier-location-state')).map(node => node.textContent);
       return element(`#${id}`).children.map(b => b.textContent);
     },
     cities(region) {
@@ -148,7 +150,7 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
 
 test('locations group deduplicated cities within states; only styles split at commas', () => {
   const p = page();
-  assert.deepEqual(p.options('heading-location-options'), ['All Australia', 'New South Wales', 'South Australia']);
+  assert.deepEqual(p.options('heading-location-options'), ['All locations', 'New South Wales', 'South Australia']);
   assert.deepEqual(p.cities('South Australia'), ['Adelaide']);
   assert.deepEqual(p.cities('New South Wales'), ['Sydney']);
   assert.deepEqual(p.options('supplier-style-options'), ['Any style', 'Classic', 'Modern']);
@@ -352,7 +354,7 @@ test('state/city values are trimmed and deduplicated without using display text'
     supplier('C', { 'Location - Suburb/City': 'Glenelg' }),
     supplier('D', { 'Location - State': '', 'Location - Suburb/City': 'Display only' }),
   ] });
-  assert.deepEqual(p.options('heading-location-options'), ['All Australia', 'South Australia']);
+  assert.deepEqual(p.options('heading-location-options'), ['All locations', 'South Australia']);
   assert.deepEqual(p.cities('South Australia'), ['Adelaide', 'Glenelg']);
   p.selectLocation('South Australia', 'Adelaide');
   assert.deepEqual(p.results().map(row => row.id), ['A', 'B']);
@@ -434,14 +436,15 @@ test('statewide and city searches remember separate eligible priority winners', 
   assert.equal(p.highlight(), 'Glenelg');
 });
 
-test('All locations clears only the city and retains the selected state', () => {
+test('All closes the menu, clears only the city and retains the selected state', () => {
   const p = page();
   p.selectLocation('South Australia', 'Adelaide');
-  p.locationAction('← All locations');
+  p.locationAction('All');
   assert.deepEqual(p.selectedLocation(), { state: 'South Australia', city: '' });
-  assert.equal(p.locationPane(), 'locations');
+  assert.equal(p.locationLabel(), 'SA');
   p.selectLocation();
   assert.deepEqual(p.selectedLocation(), { state: '', city: '' });
+  assert.equal(p.locationLabel(), 'Australia');
   assert.equal(p.count(), 4);
 });
 
