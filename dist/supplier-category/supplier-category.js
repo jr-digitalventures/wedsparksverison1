@@ -10,7 +10,7 @@ const images=r=>Array.from({length:10},(_,i)=>safe(val(r,`Image #${i+1}`))).filt
 const normalDate=v=>{const s=clean(v),iso=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/),au=s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);if(iso)return`${iso[1]}-${iso[2].padStart(2,'0')}-${iso[3].padStart(2,'0')}`;if(au)return`${au[3]}-${au[2].padStart(2,'0')}-${au[1].padStart(2,'0')}`;const d=new Date(s);return Number.isNaN(d.getTime())?s:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const filterTriggers=[...document.querySelectorAll('[data-filter-trigger]')],headingTriggers=[...document.querySelectorAll('[data-heading-filter]')];
 const closeAll=()=>[...filterTriggers,...headingTriggers].forEach(t=>{t.setAttribute('aria-expanded','false');const m=document.getElementById(t.dataset.filterTrigger||t.dataset.headingFilter);if(m)m.hidden=true});
-[...filterTriggers,...headingTriggers].forEach(t=>{const m=document.getElementById(t.dataset.filterTrigger||t.dataset.headingFilter);t.addEventListener('click',e=>{e.stopPropagation();const open=m.hidden;closeAll();m.hidden=!open;t.setAttribute('aria-expanded',String(open))})});
+[...filterTriggers,...headingTriggers].forEach(t=>{const m=document.getElementById(t.dataset.filterTrigger||t.dataset.headingFilter);t.addEventListener('click',e=>{e.stopPropagation();const open=m.hidden;closeAll();m.hidden=!open;t.setAttribute('aria-expanded',String(open));if(open&&t.dataset.headingFilter==='heading-location-options')openLocationMenu()})});
 document.addEventListener('click',e=>{if(!e.target.closest('.supplier-filter,.supplier-heading-filter'))closeAll()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
 const label=(t,s,on=true)=>{const x=t?.querySelector('span');if(x)x.textContent=s;t?.classList.toggle('is-selected',on)};
 // Only multi-value fields such as styles are split at commas.
@@ -35,74 +35,124 @@ function locationGroups() {
 }
 
 const locationControls = [];
+const locationUI = { active: '', pane: 'states', groups: [] };
+const stateAbbreviations = {
+  'new south wales': 'NSW',
+  victoria: 'VIC',
+  queensland: 'QLD',
+  'western australia': 'WA',
+  'south australia': 'SA',
+  tasmania: 'TAS',
+  'australian capital territory': 'ACT',
+  'northern territory': 'NT',
+};
 function updateLocationLabel() {
-  const text = state.locationCity ? `${state.locationCity}, ${state.locationState}` : state.locationState;
+  const stateLabel = stateAbbreviations[norm(state.locationState)] || state.locationState;
+  const text = state.locationCity ? `${state.locationCity}, ${stateLabel}` : stateLabel;
   label(document.querySelector('[data-heading-filter="heading-location-options"]'), text || 'LOCATION', !!text);
-  locationControls.forEach(({ button, region, city }) => {
-    button.setAttribute('aria-pressed', String(norm(region) === norm(state.locationState) && norm(city) === norm(state.locationCity)));
+  locationControls.forEach(({ button, region, city, stateRow }) => {
+    const selected = norm(region) === norm(state.locationState) && (stateRow || norm(city) === norm(state.locationCity));
+    button.setAttribute('aria-pressed', String(selected));
   });
 }
 
-function setupLocationMenu() {
+function positionLocationMenu() {
+  const menu = document.getElementById('heading-location-options');
+  if (menu.hidden) return;
+  // Keep the dropdown anchored to its trigger, but within the viewport on wrapped headings.
+  menu.style.setProperty('--location-offset', '0px');
+  const box = menu.getBoundingClientRect();
+  const offset = Math.max(16 - box.left, Math.min(0, window.innerWidth - 16 - box.right));
+  menu.style.setProperty('--location-offset', offset + 'px');
+}
+function openLocationMenu() {
+  locationUI.active = state.locationState || locationUI.groups[0]?.name || '';
+  locationUI.pane = 'states';
+  drawLocationMenu();
+  positionLocationMenu();
+}
+function chooseLocation(region, city = '', close = false) {
+  state.locationState = region;
+  state.locationCity = city;
+  state.page = 0;
+  updateLocationLabel();
+  render();
+  if (close) closeAll();
+}
+function drawLocationMenu() {
   const container = document.getElementById('heading-location-options');
   container.replaceChildren();
+  container.setAttribute('data-pane', locationUI.pane);
   locationControls.length = 0;
-  const hint = document.createElement('span');
-  hint.className = 'supplier-location-hint';
-  hint.textContent = 'Select a state, or expand it to choose a suburb/city.';
-  container.append(hint);
-  const choice = (text, region, city = '') => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = text;
-    button.setAttribute('data-location-state', region);
-    button.setAttribute('data-location-city', city);
-    button.onclick = () => {
-      state.locationState = region;
-      state.locationCity = city;
-      state.page = 0;
-      updateLocationLabel();
-      closeAll();
-      render();
-    };
-    locationControls.push({ button, region, city });
-    return button;
+  const block = (className, text = '') => {
+    const node = document.createElement('span');
+    node.className = className;
+    node.textContent = text;
+    return node;
   };
-  container.append(choice('All locations', ''));
-  locationGroups().forEach((region, index) => {
-    const group = document.createElement('span');
-    group.className = 'supplier-location-group';
-    const row = document.createElement('span');
-    row.className = 'supplier-location-state-row';
-    const stateButton = choice(region.name, region.name);
-    stateButton.setAttribute('aria-label', `All suppliers in ${region.name}`);
-    row.append(stateButton);
-    group.append(row);
-    if (region.cities.length) {
-      const cities = document.createElement('span');
-      cities.className = 'supplier-location-cities';
-      cities.id = `supplier-location-cities-${index}`;
-      cities.hidden = true;
-      cities.setAttribute('role', 'group');
-      cities.setAttribute('aria-label', `Suburbs and cities in ${region.name}`);
-      const expand = document.createElement('button');
-      expand.type = 'button';
-      expand.className = 'supplier-location-expand';
-      expand.setAttribute('aria-label', `Choose a suburb or city in ${region.name}`);
-      expand.setAttribute('aria-controls', cities.id);
-      expand.setAttribute('aria-expanded', 'false');
-      expand.onclick = () => {
-        cities.hidden = !cities.hidden;
-        expand.setAttribute('aria-expanded', String(!cities.hidden));
-      };
-      row.append(expand);
-      region.cities.forEach(city => cities.append(choice(city, region.name, city)));
-      group.append(cities);
-    }
-    container.append(group);
+  const button = (text, action, className = '') => {
+    const node = document.createElement('button');
+    node.type = 'button'; node.textContent = text; node.className = className;
+    node.onclick = event => { event?.stopPropagation(); action(); };
+    return node;
+  };
+  const choice = (text, region, city, stateRow, action) => {
+    const node = button(text, action, stateRow ? 'supplier-location-state' : 'supplier-location-choice');
+    node.setAttribute('data-location-state', region);
+    node.setAttribute('data-location-city', city);
+    locationControls.push({ button: node, region, city, stateRow });
+    return node;
+  };
+  const states = block('supplier-location-states');
+  const heading = block('supplier-location-heading', 'Select a state');
+  heading.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>Select a state</span>';
+  states.append(heading);
+  const stateList = block('supplier-location-state-list');
+  stateList.append(choice('All Australia', '', '', true, () => chooseLocation('', '', true)));
+  locationUI.groups.forEach(region => {
+    const node = choice(region.name, region.name, '', true, () => {
+      locationUI.active = region.name;
+      locationUI.pane = 'locations';
+      chooseLocation(region.name);
+      drawLocationMenu();
+      // On the drill-down view, focus the Back control after replacing the state list.
+      positionLocationMenu();
+      if (window.matchMedia('(max-width: 900px)').matches) locationUI.back.focus();
+      else locationUI.activeButton?.focus();
+    });
+    node.setAttribute('data-active', String(norm(region.name) === norm(locationUI.active)));
+    stateList.append(node);
   });
+  states.append(stateList);
+  container.append(states);
+  const locations = block('supplier-location-detail');
+  const back = button('← Back', () => {
+    locationUI.pane = 'states'; drawLocationMenu(); positionLocationMenu();
+    locationUI.activeButton?.focus();
+  }, 'supplier-location-back');
+  locationUI.back = back;
+  locations.append(back);
+  locations.append(block('supplier-location-heading', locationUI.active || 'Select a state'));
+  const all = button('← All locations', () => { chooseLocation(locationUI.active); positionLocationMenu(); }, 'supplier-location-all');
+  all.setAttribute('aria-label', `All locations in ${locationUI.active}`);
+  all.setAttribute('aria-pressed', String(!state.locationCity && norm(state.locationState) === norm(locationUI.active)));
+  locations.append(all);
+  const cityList = block('supplier-location-city-list');
+  const region = locationUI.groups.find(item => norm(item.name) === norm(locationUI.active));
+  (region?.cities || []).forEach(city => cityList.append(choice(city, region.name, city, false, () => chooseLocation(region.name, city, true))));
+  if (!region?.cities.length) cityList.append(block('supplier-location-empty', 'No suburbs or cities available.'));
+  locations.append(cityList);
+  container.append(locations);
+  locationUI.activeButton = locationControls.find(item => item.stateRow && norm(item.region) === norm(locationUI.active))?.button;
+  locationControls.push({ button: all, region: locationUI.active, city: '', stateRow: false });
   updateLocationLabel();
 }
+function setupLocationMenu() {
+  locationUI.groups = locationGroups();
+  locationUI.active = state.locationState || locationUI.groups[0]?.name || '';
+  drawLocationMenu();
+}
+window.addEventListener('resize', positionLocationMenu);
 
 function setupMenus(){
  const ct=document.querySelector('[data-heading-filter="heading-category-options"]'),st=document.querySelector('[data-filter-trigger="supplier-style-options"]'),pt=document.querySelector('[data-filter-trigger="supplier-price-options"]');

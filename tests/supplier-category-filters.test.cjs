@@ -18,6 +18,9 @@ class Element {
   cloneNode() { return new Element(); }
   addEventListener() {}
   scrollIntoView() {}
+  focus() {}
+  style = { setProperty() {} };
+  getBoundingClientRect() { return { left: 100, right: 860 }; }
   setAttribute(name, value) { this.attributes[name] = value; }
   replaceChildren(...children) { this.children = children; }
   append(child) { this.children.push(child); }
@@ -60,6 +63,7 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
   const context = vm.createContext({
     URL, URLSearchParams, console,
     Math: Object.assign(Object.create(Math), { random: () => typeof random === 'function' ? random() : random }),
+    window: { innerWidth: 1440, addEventListener() {}, matchMedia: () => ({ matches: false }) },
     sessionStorage: session,
     fixtureRows: rows,
     location: { href: 'http://localhost/supplier-category/', search: '' },
@@ -82,33 +86,27 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
   `, context);
   const descendants = node => [node, ...node.children.flatMap(descendants)];
   const locationNodes = () => descendants(element('#heading-location-options'));
-  const locationGroup = region => element('#heading-location-options').children.find(node =>
-    node.className === 'supplier-location-group' && node.children[0].children[0].textContent === region);
+  const stateButton = region => locationNodes().find(node => node.className === 'supplier-location-state' && node.attributes['data-location-state'] === region);
   return {
     options(id) {
-      if (id === 'heading-location-options') return locationNodes().filter(node => node.attributes['data-location-city'] === '').map(node => node.textContent);
+      if (id === 'heading-location-options') return locationNodes().filter(node => node.className === 'supplier-location-state').map(node => node.textContent);
       return element(`#${id}`).children.map(b => b.textContent);
     },
     cities(region) {
-      return descendants(locationGroup(region)).filter(node => node.attributes['data-location-city']).map(node => node.textContent);
+      context.regionName = region;
+      vm.runInContext('locationUI.active = regionName; drawLocationMenu();', context);
+      return locationNodes().filter(node => node.attributes['data-location-city']).map(node => node.textContent);
     },
-    expandLocation(region) {
-      const group = locationGroup(region);
-      assert.ok(group, `Missing state: ${region}`);
-      const expand = group.children[0].children[1];
-      expand.onclick();
-      return { expanded: expand.attributes['aria-expanded'], hidden: group.children[1].hidden };
+    locationPane() { return element('#heading-location-options').attributes['data-pane']; },
+    locationAction(name) {
+      const button = locationNodes().find(node => node.textContent === name);
+      assert.ok(button); button.onclick();
     },
     selectLocation(region = '', city = '') {
-      if (city) {
-        const group = locationGroup(region);
-        assert.ok(group, `Missing state: ${region}`);
-        if (group.children[1].hidden) group.children[0].children[1].onclick();
-      }
-      const button = locationNodes().find(node => node.attributes['data-location-state'] === region && node.attributes['data-location-city'] === city);
+      if (city) stateButton(region).onclick();
+      const button = city ? locationNodes().find(node => node.attributes['data-location-state'] === region && node.attributes['data-location-city'] === city) : stateButton(region);
       assert.ok(button, `Missing location: ${region} / ${city}`);
       button.onclick();
-      assert.equal(button.attributes['aria-pressed'], 'true');
     },
     select(id, text) {
       const button = element(`#${id}`).children.find(b => b.textContent === text);
@@ -137,6 +135,9 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
     selectedLocation() {
       return { state: vm.runInContext('state.locationState', context), city: vm.runInContext('state.locationCity', context) };
     },
+    locationLabel() {
+      return element('[data-heading-filter="heading-location-options"]').querySelector('span').textContent;
+    },
     displayedLocation() { return element('.featured-supplier-card').querySelector('.supplier-location span').textContent; },
     query(search) {
       context.location.search = search;
@@ -147,7 +148,7 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
 
 test('locations group deduplicated cities within states; only styles split at commas', () => {
   const p = page();
-  assert.deepEqual(p.options('heading-location-options'), ['All locations', 'New South Wales', 'South Australia']);
+  assert.deepEqual(p.options('heading-location-options'), ['All Australia', 'New South Wales', 'South Australia']);
   assert.deepEqual(p.cities('South Australia'), ['Adelaide']);
   assert.deepEqual(p.cities('New South Wales'), ['Sydney']);
   assert.deepEqual(p.options('supplier-style-options'), ['Any style', 'Classic', 'Modern']);
@@ -351,7 +352,7 @@ test('state/city values are trimmed and deduplicated without using display text'
     supplier('C', { 'Location - Suburb/City': 'Glenelg' }),
     supplier('D', { 'Location - State': '', 'Location - Suburb/City': 'Display only' }),
   ] });
-  assert.deepEqual(p.options('heading-location-options'), ['All locations', 'South Australia']);
+  assert.deepEqual(p.options('heading-location-options'), ['All Australia', 'South Australia']);
   assert.deepEqual(p.cities('South Australia'), ['Adelaide', 'Glenelg']);
   p.selectLocation('South Australia', 'Adelaide');
   assert.deepEqual(p.results().map(row => row.id), ['A', 'B']);
@@ -371,12 +372,15 @@ test('identically named cities in different states never match each other', () =
   assert.equal(p.highlight(), 'Richmond VIC');
 });
 
-test('expanding a state changes no filters; selecting another state clears the city', () => {
+test('state drill-down applies the state; Back preserves it and changing state clears the city', () => {
   const p = page();
-  assert.deepEqual(p.expandLocation('South Australia'), { expanded: 'true', hidden: false });
-  assert.deepEqual(p.selectedLocation(), { state: '', city: '' });
-  assert.equal(p.count(), 4);
-  assert.deepEqual(p.expandLocation('South Australia'), { expanded: 'false', hidden: true });
+  p.selectLocation('South Australia');
+  assert.equal(p.locationPane(), 'locations');
+  assert.deepEqual(p.selectedLocation(), { state: 'South Australia', city: '' });
+  assert.equal(p.count(), 3);
+  p.locationAction('← Back');
+  assert.equal(p.locationPane(), 'states');
+  assert.deepEqual(p.selectedLocation(), { state: 'South Australia', city: '' });
   p.selectLocation('South Australia', 'Adelaide');
   p.selectLocation('New South Wales');
   assert.deepEqual(p.selectedLocation(), { state: 'New South Wales', city: '' });
@@ -428,4 +432,29 @@ test('statewide and city searches remember separate eligible priority winners', 
   assert.equal(p.highlight(), 'Adelaide');
   p.selectLocation('South Australia');
   assert.equal(p.highlight(), 'Glenelg');
+});
+
+test('All locations clears only the city and retains the selected state', () => {
+  const p = page();
+  p.selectLocation('South Australia', 'Adelaide');
+  p.locationAction('← All locations');
+  assert.deepEqual(p.selectedLocation(), { state: 'South Australia', city: '' });
+  assert.equal(p.locationPane(), 'locations');
+  p.selectLocation();
+  assert.deepEqual(p.selectedLocation(), { state: '', city: '' });
+  assert.equal(p.count(), 4);
+});
+
+test('selected location heading uses state and territory abbreviations', () => {
+  const rows = [
+    supplier('ACT supplier', { 'Location - State': 'Australian Capital Territory', 'Location - Suburb/City': 'Civic' }),
+    supplier('NSW supplier', { 'Location - State': 'New South Wales', 'Location - Suburb/City': 'Sydney' }),
+  ];
+  const p = page({ rows });
+  p.selectLocation('Australian Capital Territory');
+  assert.equal(p.locationLabel(), 'ACT');
+  p.selectLocation('Australian Capital Territory', 'Civic');
+  assert.equal(p.locationLabel(), 'Civic, ACT');
+  p.selectLocation('New South Wales');
+  assert.equal(p.locationLabel(), 'NSW');
 });
