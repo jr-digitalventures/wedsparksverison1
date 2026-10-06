@@ -9,22 +9,29 @@ class Element {
   children = [];
   attributes = {};
   hidden = false;
-  classList = { toggle() {} };
+  classList = { toggle() {}, add() {}, remove() {} };
+  listeners = {};
   nodes = new Map();
   querySelector(selector) {
     if (!this.nodes.has(selector)) this.nodes.set(selector, new Element());
     return this.nodes.get(selector);
   }
+  querySelectorAll(selector) {
+    const className = selector.startsWith('.') ? selector.slice(1) : '';
+    const descendants = node => node.children.flatMap(child => [child, ...descendants(child)]);
+    return descendants(this).filter(node => !className || String(node.className || '').split(/\s+/).includes(className));
+  }
   cloneNode() { return new Element(); }
-  addEventListener() {}
+  addEventListener(type, listener) { this.listeners[type] = listener; }
   scrollIntoView() {}
   focus() {}
   closest() { return new Element(); }
   style = { setProperty() {} };
   getBoundingClientRect() { return { left: 100, right: 860 }; }
   setAttribute(name, value) { this.attributes[name] = value; }
+  getAttribute(name) { return this.attributes[name]; }
   replaceChildren(...children) { this.children = children; }
-  append(child) { this.children.push(child); }
+  append(...children) { this.children.push(...children); }
 }
 
 function storage() {
@@ -141,6 +148,26 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
       return element('[data-heading-filter="heading-location-options"]').querySelector('span').textContent;
     },
     displayedLocation() { return element('.featured-supplier-card').querySelector('.supplier-location span').textContent; },
+    categoryFilterConfig() { return JSON.parse(vm.runInContext('JSON.stringify(categoryFilters)', context)); },
+    categoryFilterDefinitions() {
+      const inner = element('#supplier-category-extra-filters').querySelector('.supplier-category-extra-inner');
+      return inner.children.map(wrapper => ({
+        label: wrapper.attributes['data-category-filter-label'],
+        options: wrapper.children[1].children.map(option => option.textContent),
+      }));
+    },
+    openMoreFilters() {
+      element('.supplier-more-filters-trigger').listeners.click({ stopPropagation() {} });
+    },
+    extraFiltersOpen() { return vm.runInContext('extraFiltersOpen', context); },
+    selectCategoryFilter(label, option) {
+      const inner = element('#supplier-category-extra-filters').querySelector('.supplier-category-extra-inner');
+      const wrapper = inner.children.find(child => child.attributes['data-category-filter-label'] === label);
+      assert.ok(wrapper, `Missing category filter: ${label}`);
+      const optionButton = wrapper.children[1].children.find(child => child.textContent === option);
+      assert.ok(optionButton, `Missing category option: ${option}`);
+      optionButton.onclick({ stopPropagation() {} });
+    },
     query(search) {
       context.location.search = search;
       vm.runInContext('initialQuery(); render();', context);
@@ -460,4 +487,31 @@ test('selected location heading uses state and territory abbreviations', () => {
   assert.equal(p.locationLabel(), 'Civic, ACT');
   p.selectLocation('New South Wales');
   assert.equal(p.locationLabel(), 'NSW');
+});
+
+test('category-specific More Filters are config-driven and remain presentation-only', () => {
+  const rows = [
+    supplier('Photographer', { 'Wedding Vendor Type': 'Photographer' }),
+    supplier('Venue', { 'Wedding Vendor Type': 'Venue' }),
+  ];
+  const p = page({ rows });
+  const config = p.categoryFilterConfig();
+  assert.equal(Object.keys(config).length, 15);
+  assert.deepEqual(config.photographer.map(filter => filter.label), ['Photography Style', 'Coverage']);
+  assert.deepEqual(config.venue[2], { label: 'Ceremony On-site', options: ['Yes', 'No'] });
+
+  p.select('heading-category-options', 'Photographer');
+  assert.deepEqual(p.categoryFilterDefinitions(), [
+    { label: 'Photography Style', options: ['Documentary', 'Editorial', 'Traditional', 'Fine art', 'Mixed'] },
+    { label: 'Coverage', options: ['Up to 4 hours', '4–8 hours', '8+ hours'] },
+  ]);
+  p.openMoreFilters();
+  assert.equal(p.extraFiltersOpen(), true);
+  const resultsBefore = p.results().map(row => row.id);
+  p.selectCategoryFilter('Photography Style', 'Editorial');
+  assert.deepEqual(p.results().map(row => row.id), resultsBefore);
+
+  p.select('heading-category-options', 'Venue');
+  assert.equal(p.extraFiltersOpen(), true);
+  assert.deepEqual(p.categoryFilterDefinitions().map(filter => filter.label), ['Venue Type', 'Guest Capacity', 'Ceremony On-site']);
 });
