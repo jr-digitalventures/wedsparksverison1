@@ -1,7 +1,7 @@
 const SB='https://vfdtyxcfrqnqdyuimtho.supabase.co',KEY='sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd',PAGE=15;
 const list=document.querySelector('.supplier-results-list'),pager=document.querySelector('.supplier-pagination'),featured=document.querySelector('.featured-supplier-card'),count=document.querySelector('#supplier-results-title>span:first-child');
 const template=list?.querySelector('.supplier-listing-card')?.cloneNode(true),spark='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5L12 2Z"/></svg>';
-const state={rows:[],category:'',locationState:'',locationCity:'',price:'',style:'',date:'',page:0};
+const state={rows:[],category:'',locationState:'',locationCity:'',locationNational:false,price:'',style:'',date:'',page:0};
 const val=(r,k)=>r?.[k]??'',clean=v=>String(v??'').trim(),norm=v=>clean(v).toLowerCase(),split=v=>clean(v).split(/[,;|\n]+/).map(x=>x.trim()).filter(Boolean);
 const safe=v=>{try{const u=new URL(clean(v),location.href);return /^https?:$/.test(u.protocol)?u.href:''}catch{return''}};
 const money=v=>{const s=clean(v),n=Number(s.replace(/[^0-9.]/g,''));return s&&Number.isFinite(n)?new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0}).format(n):s};
@@ -48,7 +48,7 @@ const stateAbbreviations = {
 };
 function updateLocationLabel() {
   const stateLabel = stateAbbreviations[norm(state.locationState)] || state.locationState;
-  const text = state.locationCity ? `${state.locationCity}, ${stateLabel}` : stateLabel;
+  const text = state.locationCity ? `${state.locationCity}, ${stateLabel}` : stateLabel || (state.locationNational ? 'Australia' : '');
   label(document.querySelector('[data-heading-filter="heading-location-options"]'), text || 'LOCATION', !!text);
   locationControls.forEach(({ button, region, city, stateRow }) => {
     const selected = norm(region) === norm(state.locationState) && (stateRow || norm(city) === norm(state.locationCity));
@@ -59,10 +59,22 @@ function updateLocationLabel() {
 function positionLocationMenu() {
   const menu = document.getElementById('heading-location-options');
   if (menu.hidden) return;
-  // Keep the dropdown anchored to its trigger, but within the viewport on wrapped headings.
+  // Keep the desktop panel aligned to the start of “IN”, regardless of label length.
   menu.style.setProperty('--location-offset', '0px');
+  const filter = menu.closest('.supplier-heading-filter');
+  const anchor = document.querySelector('.supplier-location-anchor');
+  const anchorOffset = window.matchMedia('(min-width: 901px)').matches && filter && anchor
+    ? anchor.getBoundingClientRect().left - filter.getBoundingClientRect().left
+    : 0;
+  if (anchorOffset) {
+    const available = window.innerWidth - 16 - (filter.getBoundingClientRect().left + anchorOffset);
+    menu.style.setProperty('--location-width', Math.min(760, Math.max(320, available)) + 'px');
+  } else {
+    menu.style.setProperty('--location-width', 'min(380px, calc(100vw - 32px))');
+  }
+  menu.style.setProperty('--location-offset', anchorOffset + 'px');
   const box = menu.getBoundingClientRect();
-  const offset = Math.max(16 - box.left, Math.min(0, window.innerWidth - 16 - box.right));
+  const offset = anchorOffset + Math.max(16 - box.left, 0);
   menu.style.setProperty('--location-offset', offset + 'px');
 }
 function openLocationMenu() {
@@ -71,9 +83,10 @@ function openLocationMenu() {
   drawLocationMenu();
   positionLocationMenu();
 }
-function chooseLocation(region, city = '', close = false) {
+function chooseLocation(region, city = '', close = false, national = false) {
   state.locationState = region;
   state.locationCity = city;
+  state.locationNational = national;
   state.page = 0;
   updateLocationLabel();
   render();
@@ -108,7 +121,9 @@ function drawLocationMenu() {
   heading.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>Select a state</span>';
   states.append(heading);
   const stateList = block('supplier-location-state-list');
-  stateList.append(choice('All Australia', '', '', true, () => chooseLocation('', '', true)));
+  const national = choice('All locations', '', '', true, () => chooseLocation('', '', true, true));
+  national.className += ' supplier-location-national';
+  stateList.append(national);
   locationUI.groups.forEach(region => {
     const node = choice(region.name, region.name, '', true, () => {
       locationUI.active = region.name;
@@ -133,7 +148,7 @@ function drawLocationMenu() {
   locationUI.back = back;
   locations.append(back);
   locations.append(block('supplier-location-heading', locationUI.active || 'Select a state'));
-  const all = button('← All locations', () => { chooseLocation(locationUI.active); positionLocationMenu(); }, 'supplier-location-all');
+  const all = button('All', () => chooseLocation(locationUI.active, '', true), 'supplier-location-all');
   all.setAttribute('aria-label', `All locations in ${locationUI.active}`);
   all.setAttribute('aria-pressed', String(!state.locationCity && norm(state.locationState) === norm(locationUI.active)));
   locations.append(all);

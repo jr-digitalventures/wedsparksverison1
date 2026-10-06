@@ -166,8 +166,8 @@
 
 /* Location-only two-panel selector; the surrounding heading and filters retain their layout. */
 #heading-location-options {
-  left: auto; right: 0; transform: translateX(var(--location-offset, 0px));
-  display: grid; grid-template-columns: 45% 55%; width: min(760px, calc(100vw - 32px)); min-width: 0;
+  left: 0; right: auto; transform: translateX(var(--location-offset, 0px));
+  display: grid; grid-template-columns: 45% 55%; width: var(--location-width, min(760px, calc(100vw - 32px))); min-width: 0;
   max-height: min(480px, 75dvh); overflow: hidden; padding: 8px;
   border: 1px solid #e0dfdb; border-radius: 10px; background: #fff;
   box-shadow: 0 8px 24px rgba(16,62,51,.08);
@@ -198,6 +198,7 @@
   content: ''; width: 6px; height: 6px; flex-shrink: 0;
   border-right: 1px solid #103e33; border-top: 1px solid #103e33; transform: rotate(45deg);
 }
+#heading-location-options .supplier-location-national::after { display: none; }
 #heading-location-options .supplier-location-all { flex-shrink: 0; border-bottom: 1px solid #e0dfdb; }
 #heading-location-options .supplier-location-empty { display: block; padding: 16px; }
 #heading-location-options .supplier-location-back,
