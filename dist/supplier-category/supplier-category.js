@@ -17,6 +17,73 @@ const label=(t,s,on=true)=>{const x=t?.querySelector('span');if(x)x.textContent=
 const unique=(k,multiple=false)=>[...new Set(state.rows.flatMap(r=>multiple?split(val(r,k)):[clean(val(r,k))]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'en-AU'));
 const menu=(id,items,all,fn)=>{const m=document.getElementById(id);m?.replaceChildren();[all,...items].forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.textContent=x;b.onclick=()=>fn(i?x:'');m?.append(b)})};
 
+// Presentation-only definitions. They are not used by result matching or Supabase.
+const categoryFilters = {
+  'bar service': [
+    { label: 'Service Type', options: ['Mobile bar', 'Bartending service', 'Full beverage service'] },
+    { label: 'Alcohol Supply', options: ['Vendor supplied', 'BYO', 'Both'] },
+  ],
+  cake: [
+    { label: 'Product Type', options: ['Wedding cake', 'Cupcakes', 'Dessert table', 'Alternative cake'] },
+    { label: 'Dietary Options', options: ['Standard', 'Gluten-free available', 'Vegan available', 'Other dietary options available'] },
+  ],
+  catering: [
+    { label: 'Service Style', options: ['Plated', 'Buffet', 'Shared feast', 'Canapés', 'Grazing', 'Food truck'] },
+    { label: 'Cuisine', options: ['Australian', 'Asian', 'European', 'Mediterranean', 'Middle Eastern', 'Indian', 'Mexican', 'Mixed/Other'] },
+    { label: 'Dietary Options', options: ['Standard', 'Vegetarian available', 'Vegan available', 'Gluten-free available', 'Other dietary options available'] },
+  ],
+  celebrant: [
+    { label: 'Ceremony Type', options: ['Wedding ceremony', 'Elopement', 'Commitment ceremony', 'Cultural ceremony'] },
+    { label: 'MC Services', options: ['Available', 'Not available'] },
+  ],
+  florist: [
+    { label: 'Service Scope', options: ['Personal flowers only', 'Ceremony', 'Reception', 'Full wedding'] },
+    { label: 'Flower Type', options: ['Fresh', 'Dried', 'Artificial', 'Mixed'] },
+  ],
+  'hair stylist': [
+    { label: 'Service Location', options: ['Mobile', 'Salon', 'Both'] },
+    { label: 'Trial Available', options: ['Yes', 'No'] },
+  ],
+  hireage: [
+    { label: 'Hire Type', options: ['Furniture', 'Tableware', 'Linen', 'Décor', 'Lighting', 'Structures', 'Signage', 'Mixed hire'] },
+    { label: 'Setup Service', options: ['Hire only', 'Delivery', 'Delivery + setup'] },
+  ],
+  'live entertainment': [
+    { label: 'Entertainment Type', options: ['DJ', 'Soloist', 'Duo', 'Band', 'Instrumentalist', 'Ensemble'] },
+    { label: 'Wedding Stage', options: ['Ceremony', 'Reception', 'Both'] },
+  ],
+  'make-up': [
+    { label: 'Service Location', options: ['Mobile', 'Studio', 'Both'] },
+    { label: 'Trial Available', options: ['Yes', 'No'] },
+  ],
+  photographer: [
+    { label: 'Photography Style', options: ['Documentary', 'Editorial', 'Traditional', 'Fine art', 'Mixed'] },
+    { label: 'Coverage', options: ['Up to 4 hours', '4–8 hours', '8+ hours'] },
+  ],
+  stationary: [
+    { label: 'Product Type', options: ['Invitations', 'Save the dates', 'On-the-day stationery', 'Signage', 'Full suite'] },
+    { label: 'Format', options: ['Printed', 'Digital', 'Both'] },
+    { label: 'Customisation', options: ['Template', 'Semi-custom', 'Fully custom'] },
+  ],
+  transport: [
+    { label: 'Vehicle Type', options: ['Classic car', 'Luxury car', 'Limousine', 'Bus/Coach', 'Van', 'Vintage vehicle', 'Specialty vehicle'] },
+    { label: 'Passenger Capacity', options: ['1–4', '5–8', '9–20', '21+'] },
+  ],
+  venue: [
+    { label: 'Venue Type', options: ['Hotel', 'Estate', 'Winery', 'Restaurant', 'Garden', 'Beach', 'Barn', 'Warehouse', 'Function centre', 'Private property', 'Other'] },
+    { label: 'Guest Capacity', options: ['Under 50', '50–100', '101–150', '151–200', '200+'] },
+    { label: 'Ceremony On-site', options: ['Yes', 'No'] },
+  ],
+  videographer: [
+    { label: 'Video Style', options: ['Cinematic', 'Documentary', 'Editorial', 'Traditional', 'Mixed'] },
+    { label: 'Coverage', options: ['Up to 4 hours', '4–8 hours', '8+ hours'] },
+  ],
+  'wedding dress': [
+    { label: 'Purchase Type', options: ['Made to order', 'Ready to wear', 'Sample', 'Hire', 'Pre-loved'] },
+    { label: 'Size Offering', options: ['Standard sizing', 'Plus size available', 'Inclusive sizing'] },
+  ],
+};
+
 // The display-only Location column is never used to build or match search options.
 function locationGroups() {
   const regions = new Map();
@@ -169,9 +236,112 @@ function setupLocationMenu() {
 }
 window.addEventListener('resize', positionLocationMenu);
 
+const extraFilters = document.getElementById('supplier-category-extra-filters');
+const extraFiltersInner = extraFilters?.querySelector('.supplier-category-extra-inner');
+const moreFiltersTrigger = document.querySelector('.supplier-more-filters-trigger');
+const extraSelections = new Map();
+let extraFiltersOpen = false;
+
+function filtersForCategory(category = state.category) {
+  const aliases = {
+    entertainment: 'live entertainment',
+    makeup: 'make-up',
+    'make up': 'make-up',
+    stationery: 'stationary',
+  };
+  const key = aliases[norm(category)] || norm(category);
+  return categoryFilters[key] || [];
+}
+
+function closeCategoryFilterMenus(except = null) {
+  extraFiltersInner?.querySelectorAll('.supplier-category-filter-trigger').forEach(trigger => {
+    if (trigger === except) return;
+    trigger.setAttribute('aria-expanded', 'false');
+    const menuElement = document.getElementById(trigger.getAttribute('aria-controls'));
+    if (menuElement) menuElement.hidden = true;
+  });
+}
+
+function setExtraFiltersOpen(open) {
+  const available = filtersForCategory().length > 0;
+  extraFiltersOpen = !!open && available;
+  moreFiltersTrigger?.setAttribute('aria-expanded', String(extraFiltersOpen));
+  moreFiltersTrigger?.setAttribute('aria-disabled', String(!available));
+  extraFilters?.classList.toggle('is-open', extraFiltersOpen);
+  extraFilters?.setAttribute('aria-hidden', String(!extraFiltersOpen));
+  if (!extraFiltersOpen) closeCategoryFilterMenus();
+}
+
+function renderCategoryFilters() {
+  if (!extraFiltersInner) return;
+  const definitions = filtersForCategory();
+  extraFiltersInner.replaceChildren();
+  definitions.forEach((definition, index) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'supplier-filter supplier-category-extra-filter';
+    wrapper.setAttribute('data-category-filter-label', definition.label);
+    const id = `supplier-category-filter-${index}`;
+    const trigger = document.createElement('button');
+    trigger.className = 'supplier-filter-pill supplier-category-filter-trigger';
+    trigger.type = 'button';
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-controls', id);
+    const selectionKey = `${norm(state.category)}:${definition.label}`;
+    const selected = extraSelections.get(selectionKey);
+    const text = document.createElement('span');
+    text.textContent = selected || definition.label;
+    const chevron = document.createElement('i');
+    chevron.setAttribute('aria-hidden', 'true');
+    trigger.append(text, chevron);
+    trigger.classList.toggle('is-selected', !!selected);
+    const optionMenu = document.createElement('div');
+    optionMenu.className = 'supplier-filter-menu';
+    optionMenu.id = id;
+    optionMenu.hidden = true;
+    definition.options.forEach(option => {
+      const optionButton = document.createElement('button');
+      optionButton.type = 'button';
+      optionButton.textContent = option;
+      optionButton.setAttribute('data-category-filter-option', option);
+      optionButton.onclick = event => {
+        event.stopPropagation();
+        extraSelections.set(selectionKey, option);
+        text.textContent = option;
+        trigger.classList.add('is-selected');
+        trigger.setAttribute('aria-expanded', 'false');
+        optionMenu.hidden = true;
+      };
+      optionMenu.append(optionButton);
+    });
+    trigger.onclick = event => {
+      event.stopPropagation();
+      const open = optionMenu.hidden;
+      closeCategoryFilterMenus(trigger);
+      optionMenu.hidden = !open;
+      trigger.setAttribute('aria-expanded', String(open));
+    };
+    wrapper.append(trigger, optionMenu);
+    extraFiltersInner.append(wrapper);
+  });
+  moreFiltersTrigger?.setAttribute('aria-disabled', String(!definitions.length));
+  if (!definitions.length) setExtraFiltersOpen(false);
+  else if (extraFiltersOpen) extraFiltersInner.animate?.([{ opacity: .45 }, { opacity: 1 }], { duration: 180, easing: 'ease-out' });
+}
+
+moreFiltersTrigger?.addEventListener('click', event => {
+  event.stopPropagation();
+  setExtraFiltersOpen(!extraFiltersOpen);
+});
+document.addEventListener('click', event => {
+  if (!event.target.closest('.supplier-category-extra-filter')) closeCategoryFilterMenus();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeCategoryFilterMenus();
+});
+
 function setupMenus(){
  const ct=document.querySelector('[data-heading-filter="heading-category-options"]'),st=document.querySelector('[data-filter-trigger="supplier-style-options"]'),pt=document.querySelector('[data-filter-trigger="supplier-price-options"]');
- menu('heading-category-options',unique('Wedding Vendor Type'),'All wedding categories',v=>{state.category=v;state.page=0;label(ct,v||'WEDDING CATEGORY',!!v);closeAll();render()});
+ menu('heading-category-options',unique('Wedding Vendor Type'),'All wedding categories',v=>{state.category=v;state.page=0;label(ct,v||'WEDDING CATEGORY',!!v);closeAll();renderCategoryFilters();render()});
  setupLocationMenu();
  menu('supplier-style-options',unique('Vendor Style',true),'Any style',v=>{state.style=v;state.page=0;label(st,v||'Style',!!v);closeAll();render()});
  document.querySelectorAll('#supplier-price-options button').forEach(b=>b.onclick=()=>{state.price=b.textContent==='Any price'?'':b.textContent;state.page=0;label(pt,state.price||'Starting Price',!!state.price);closeAll();render()});
@@ -250,6 +420,7 @@ function initialQuery() {
     state.category = matchedCategory;
     label(document.querySelector('[data-heading-filter="heading-category-options"]'), matchedCategory, true);
   }
+  renderCategoryFilters();
   const groups = locationGroups();
   // Keep older city/state links usable, including Australian state abbreviations.
   const aliases = { nsw:'new south wales', vic:'victoria', qld:'queensland', sa:'south australia', wa:'western australia', tas:'tasmania', act:'australian capital territory', nt:'northern territory' };
