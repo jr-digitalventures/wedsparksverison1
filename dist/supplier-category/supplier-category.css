@@ -114,7 +114,7 @@
 .supplier-listing-content .supplier-profile-button{color:#fff;font-size:14px;font-weight:500}
 @media(min-width:701px){
   .supplier-listing-content{display:grid;min-height:0;padding:30px 30px 74px;grid-template-rows:auto minmax(0,1fr) auto auto minmax(0,1fr);row-gap:0;align-content:stretch;overflow:hidden}
-  .supplier-listing-heading{grid-row:1;align-self:start;display:grid;grid-template-columns:minmax(0,1fr) max-content;column-gap:30px}
+  .supplier-listing-heading{grid-row:1;align-self:start;display:grid;grid-template-columns:minmax(0,1fr) max-content;column-gap:20px}
   .supplier-listing-heading .supplier-card-topline{display:contents;min-height:0}
   .supplier-listing-heading .supplier-type{grid-column:1;grid-row:1;margin:0}
   .supplier-listing-heading .supplier-card-price-block{position:static;grid-column:2;grid-row:1/4;align-self:start}
