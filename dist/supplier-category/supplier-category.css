@@ -218,6 +218,13 @@
 /* Keep the universal controls stable while category controls reveal beside them. */
 .supplier-filter-list > .supplier-filter { flex-shrink: 0; }
 .supplier-filter-pill { white-space: nowrap; }
+.supplier-filter-list { position: relative; z-index: 50; }
+.supplier-category-extra-filter > .supplier-filter-menu {
+  z-index: 100;
+  background: #fff;
+  opacity: 1;
+  isolation: isolate;
+}
 @media(min-width:901px) {
   .supplier-category-extra {
     flex: 0 0 0;
@@ -226,8 +233,9 @@
   .supplier-category-extra.is-open {
     flex-basis: var(--category-extra-width, 394px);
     max-width: var(--category-extra-width, 394px);
-    overflow: visible;
+    overflow: hidden;
   }
+  .supplier-category-extra.is-open.is-settled { overflow: visible; }
   .supplier-category-extra-inner {
     width: max-content;
   }
