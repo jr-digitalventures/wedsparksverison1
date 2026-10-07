@@ -160,6 +160,7 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
       element('.supplier-more-filters-trigger').listeners.click({ stopPropagation() {} });
     },
     extraFiltersOpen() { return vm.runInContext('extraFiltersOpen', context); },
+    moreFiltersHidden() { return vm.runInContext('moreFiltersWrapper.hidden', context); },
     selectCategoryFilter(label, option) {
       const inner = element('#supplier-category-extra-filters').querySelector('.supplier-category-extra-inner');
       const wrapper = inner.children.find(child => child.attributes['data-category-filter-label'] === label);
@@ -495,12 +496,14 @@ test('category-specific More Filters are config-driven and remain presentation-o
     supplier('Venue', { 'Wedding Vendor Type': 'Venue' }),
   ];
   const p = page({ rows });
+  assert.equal(p.moreFiltersHidden(), true);
   const config = p.categoryFilterConfig();
   assert.equal(Object.keys(config).length, 15);
   assert.deepEqual(config.photographer.map(filter => filter.label), ['Photography Style', 'Coverage']);
   assert.deepEqual(config.venue[2], { label: 'Ceremony On-site', options: ['Yes', 'No'] });
 
   p.select('heading-category-options', 'Photographer');
+  assert.equal(p.moreFiltersHidden(), false);
   assert.deepEqual(p.categoryFilterDefinitions(), [
     { label: 'Photography Style', options: ['Documentary', 'Editorial', 'Traditional', 'Fine art', 'Mixed'] },
     { label: 'Coverage', options: ['Up to 4 hours', '4–8 hours', '8+ hours'] },
