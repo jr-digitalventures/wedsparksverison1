@@ -239,6 +239,8 @@ window.addEventListener('resize', positionLocationMenu);
 const extraFilters = document.getElementById('supplier-category-extra-filters');
 const extraFiltersInner = extraFilters?.querySelector('.supplier-category-extra-inner');
 const moreFiltersTrigger = document.querySelector('.supplier-more-filters-trigger');
+const moreFiltersWrapper = moreFiltersTrigger?.closest('.supplier-more-filters');
+if (moreFiltersWrapper) moreFiltersWrapper.hidden = true;
 const extraSelections = new Map();
 let extraFiltersOpen = false;
 
@@ -265,8 +267,8 @@ function closeCategoryFilterMenus(except = null) {
 function setExtraFiltersOpen(open) {
   const available = filtersForCategory().length > 0;
   extraFiltersOpen = !!open && available;
+  extraFilters?.classList.remove('is-settled');
   moreFiltersTrigger?.setAttribute('aria-expanded', String(extraFiltersOpen));
-  moreFiltersTrigger?.setAttribute('aria-disabled', String(!available));
   extraFilters?.classList.toggle('is-open', extraFiltersOpen);
   extraFilters?.setAttribute('aria-hidden', String(!extraFiltersOpen));
   if (!extraFiltersOpen) closeCategoryFilterMenus();
@@ -323,7 +325,7 @@ function renderCategoryFilters() {
     wrapper.append(trigger, optionMenu);
     extraFiltersInner.append(wrapper);
   });
-  moreFiltersTrigger?.setAttribute('aria-disabled', String(!definitions.length));
+  if (moreFiltersWrapper) moreFiltersWrapper.hidden = !definitions.length;
   if (!definitions.length) setExtraFiltersOpen(false);
   else if (extraFiltersOpen) extraFiltersInner.animate?.([{ opacity: .45 }, { opacity: 1 }], { duration: 180, easing: 'ease-out' });
 }
@@ -331,6 +333,9 @@ function renderCategoryFilters() {
 moreFiltersTrigger?.addEventListener('click', event => {
   event.stopPropagation();
   setExtraFiltersOpen(!extraFiltersOpen);
+});
+extraFilters?.addEventListener('transitionend', event => {
+  if (event.target === extraFilters && extraFiltersOpen) extraFilters.classList.add('is-settled');
 });
 document.addEventListener('click', event => {
   if (!event.target.closest('.supplier-category-extra-filter')) closeCategoryFilterMenus();
