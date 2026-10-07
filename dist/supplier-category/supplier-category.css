@@ -51,7 +51,7 @@
 .featured-supplier-content,.supplier-listing-content{position:relative;display:flex;flex-direction:column;padding:30px}
 .supplier-card-topline{display:block;min-height:0}
 .supplier-card-price-block{position:absolute;top:30px;right:30px}
-.supplier-card-titleline{margin-top:7px;padding-right:230px}
+.supplier-card-titleline{margin-top:7px;padding-right:250px}
 .featured-supplier-content .supplier-card-titleline{padding-right:186px}
 .supplier-card-titleline h2{font-size:30px}
 .supplier-location{margin-top:10px}
