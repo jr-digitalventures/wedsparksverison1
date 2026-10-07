@@ -277,6 +277,7 @@ function setExtraFiltersOpen(open) {
 function renderCategoryFilters() {
   if (!extraFiltersInner) return;
   const definitions = filtersForCategory();
+  extraFilters?.style.setProperty('--category-extra-width', `${definitions.length * 190 + Math.max(0, definitions.length - 1) * 14}px`);
   extraFiltersInner.replaceChildren();
   definitions.forEach((definition, index) => {
     const wrapper = document.createElement('div');
