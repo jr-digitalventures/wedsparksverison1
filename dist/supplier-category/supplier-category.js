@@ -243,6 +243,7 @@ const moreFiltersWrapper = moreFiltersTrigger?.closest('.supplier-more-filters')
 if (moreFiltersWrapper) moreFiltersWrapper.hidden = true;
 const extraSelections = new Map();
 let extraFiltersOpen = false;
+let extraFiltersSettleTimer = 0;
 
 function filtersForCategory(category = state.category) {
   const aliases = {
@@ -267,11 +268,17 @@ function closeCategoryFilterMenus(except = null) {
 function setExtraFiltersOpen(open) {
   const available = filtersForCategory().length > 0;
   extraFiltersOpen = !!open && available;
+  if (typeof window.clearTimeout === 'function') window.clearTimeout(extraFiltersSettleTimer);
   extraFilters?.classList.remove('is-settled');
   moreFiltersTrigger?.setAttribute('aria-expanded', String(extraFiltersOpen));
   extraFilters?.classList.toggle('is-open', extraFiltersOpen);
   extraFilters?.setAttribute('aria-hidden', String(!extraFiltersOpen));
   if (!extraFiltersOpen) closeCategoryFilterMenus();
+  else if (typeof window.setTimeout === 'function') {
+    extraFiltersSettleTimer = window.setTimeout(() => {
+      if (extraFiltersOpen) extraFilters?.classList.add('is-settled');
+    }, 460);
+  } else extraFilters?.classList.add('is-settled');
 }
 
 function renderCategoryFilters() {
