@@ -214,3 +214,26 @@
   #heading-location-options[data-pane="locations"] .supplier-location-states { display: none; }
   #heading-location-options .supplier-location-back { display: flex; flex-shrink: 0; }
 }
+
+/* Keep the universal controls stable while category controls reveal beside them. */
+.supplier-filter-list > .supplier-filter { flex-shrink: 0; }
+.supplier-filter-pill { white-space: nowrap; }
+@media(min-width:901px) {
+  .supplier-category-extra {
+    flex: 0 0 0;
+    max-width: 0;
+  }
+  .supplier-category-extra.is-open {
+    flex-basis: var(--category-extra-width, 394px);
+    max-width: var(--category-extra-width, 394px);
+    overflow: visible;
+  }
+  .supplier-category-extra-inner {
+    width: max-content;
+  }
+  .supplier-category-extra-filter {
+    flex: 0 0 190px;
+    width: 190px;
+    min-width: 190px;
+  }
+}
