@@ -40,6 +40,9 @@ function seoLabel(){
 function updateRouteMetadata(){
   const title=`${seoLabel()} | WedSparks`;
   document.title=title;
+  const heroTitle=document.querySelector('.marketplace-title');
+  const category=ROUTES?.categoryByValue(state.category);
+  if(heroTitle)heroTitle.textContent=category?.label||'Find Wedding Suppliers';
   const description=document.querySelector('meta[name="description"]');
   if(description)description.content=`Discover ${seoLabel().toLowerCase()} and compare wedding services, packages and profiles on WedSparks.`;
   let canonical=document.querySelector('link[rel="canonical"]');
