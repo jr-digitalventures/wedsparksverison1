@@ -46,15 +46,15 @@ const render = page => {
     .replace(/<title>[^<]*<\/title>/, `<title>${label} | WedSparks</title>`)
     .replace('href="../styles.css?v=55"', `href="${prefix}styles.css?v=55"`)
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
-    .replace('href="supplier-category.css?v=42"', `href="${prefix}supplier-category/supplier-category.css?v=42"`)
+    .replace('href="supplier-category.css?v=43"', `href="${prefix}supplier-category/supplier-category.css?v=43"`)
     .replace('src="../marketplace-search/marketplace.js?v=17"', `src="${prefix}marketplace-search/marketplace.js?v=17"`)
     .replace('src="supplier-routes.js?v=1"', `src="${prefix}supplier-category/supplier-routes.js?v=1"`)
-    .replace('src="supplier-category.js?v=28"', `src="${prefix}supplier-category/supplier-category.js?v=28"`)
+    .replace('src="supplier-category.js?v=29"', `src="${prefix}supplier-category/supplier-category.js?v=29"`)
     .replaceAll('href="../marketplace-search/"', `href="${prefix}marketplace-search/"`)
     .replaceAll('href="../wedding-suppliers/" aria-current="page"', `href="${prefix}wedding-suppliers/" aria-current="page"`)
     .replace('href="../" aria-label="WedSparks home"', `href="${prefix}" aria-label="WedSparks home"`)
     .replace('<h1 class="marketplace-title">Find Wedding Suppliers</h1>', `<h1 class="marketplace-title">${heroLabel}</h1>`)
-    .replace("--supplier-hero-image:url('https://vfdtyxcfrqnqdyuimtho.supabase.co/storage/v1/object/public/Misc%20Website%20Pictures/main%20page.png')", `--supplier-hero-image:url('${heroImage}')`)
+    .replace(/--supplier-hero-image:url\('[^']+'\);background-image:linear-gradient\(180deg,rgba\(9,24,20,\.2\),rgba\(9,24,20,\.08\)\),url\('[^']+'\)/, `--supplier-hero-image:url('${heroImage}');background-image:linear-gradient(180deg,rgba(9,24,20,.2),rgba(9,24,20,.08)),url('${heroImage}')`)
     .replace('<body class="marketplace-search-page supplier-category-page">', `<body class="marketplace-search-page supplier-category-page" data-supplier-route="${routePath}">`);
   return html;
 };
