@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jr-digitalventures.github.io/wedsparksverison1/sitemap.xml

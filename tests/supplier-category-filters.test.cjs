@@ -3,6 +3,7 @@ const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const supplierRoutes = require('../dist/supplier-category/supplier-routes.js');
 
 // Exercise the page's actual dropdown callbacks and render selection without a network request.
 class Element {
@@ -62,19 +63,22 @@ const defaultRows = () => [
   supplier('Regular Adelaide Venue', { 'Wedding Vendor Type': 'Venue', 'Highlighted Record': false }),
 ];
 
-function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
+function page({ rows = defaultRows(), random = 0, session = storage(), pathname = '/supplier-category/' } = {}) {
   const elements = new Map();
   const element = key => {
     if (!elements.has(key)) elements.set(key, new Element());
     return elements.get(key);
   };
+  const currentLocation = { href: `http://localhost${pathname}`, origin: 'http://localhost', pathname, search: '' };
+  const history = { pushState(_state, _title, next) { const url = new URL(next, currentLocation.href); Object.assign(currentLocation, { href: url.href, pathname: url.pathname, search: url.search }); }, replaceState(_state, _title, next) { this.pushState(_state, _title, next); } };
   const context = vm.createContext({
     URL, URLSearchParams, console,
     Math: Object.assign(Object.create(Math), { random: () => typeof random === 'function' ? random() : random }),
-    window: { innerWidth: 1440, addEventListener() {}, matchMedia: () => ({ matches: false }) },
+    window: { innerWidth: 1440, addEventListener() {}, matchMedia: () => ({ matches: false }), WEDSPARKS_SUPPLIER_ROUTES: supplierRoutes },
     sessionStorage: session,
     fixtureRows: rows,
-    location: { href: 'http://localhost/supplier-category/', search: '' },
+    location: currentLocation,
+    history,
     document: {
       querySelector: element,
       querySelectorAll: () => [],
@@ -173,6 +177,13 @@ function page({ rows = defaultRows(), random = 0, session = storage() } = {}) {
       context.location.search = search;
       vm.runInContext('initialQuery(); render();', context);
     },
+    navigate(nextPath, search = '') {
+      context.location.pathname = nextPath;
+      context.location.href = `http://localhost${nextPath}${search}`;
+      context.location.search = search;
+      vm.runInContext('initialQuery(); render();', context);
+    },
+    path() { return context.location.pathname; },
   };
 }
 
@@ -517,4 +528,29 @@ test('category-specific More Filters are config-driven and remain presentation-o
   p.select('heading-category-options', 'Venue');
   assert.equal(p.extraFiltersOpen(), true);
   assert.deepEqual(p.categoryFilterDefinitions().map(filter => filter.label), ['Venue Type', 'Guest Capacity', 'Ceremony On-site']);
+});
+
+test('clean supplier paths restore filters and selections write clean paths', () => {
+  const rows = [
+    supplier('Sydney Venue', { 'Wedding Vendor Type': 'Venue', 'Location - State': 'New South Wales', 'Location - Suburb/City': 'Sydney' }),
+    supplier('Adelaide Venue', { 'Wedding Vendor Type': 'Venue', 'Location - State': 'South Australia', 'Location - Suburb/City': 'Adelaide' }),
+  ];
+  const p = page({ rows, pathname: '/wedsparksverison1/wedding-suppliers/wedding-venues/nsw/' });
+  p.navigate('/wedsparksverison1/wedding-suppliers/wedding-venues/nsw/');
+  assert.deepEqual(p.selectedLocation(), { state: 'New South Wales', city: '' });
+  assert.equal(p.count(), 1);
+  p.selectLocation('New South Wales', 'Sydney');
+  assert.equal(p.path(), '/wedsparksverison1/wedding-suppliers/wedding-venues/sydney-nsw/');
+});
+
+test('non-major suburb query URLs restore the structured location', () => {
+  const rows = [supplier('Paddington Celebrant', {
+    'Wedding Vendor Type': 'Celebrant',
+    'Location - State': 'New South Wales',
+    'Location - Suburb/City': 'Paddington',
+  })];
+  const p = page({ rows, pathname: '/wedsparksverison1/wedding-suppliers/wedding-celebrants/' });
+  p.navigate('/wedsparksverison1/wedding-suppliers/wedding-celebrants/', '?location=paddington-nsw');
+  assert.deepEqual(p.selectedLocation(), { state: 'New South Wales', city: 'Paddington' });
+  assert.equal(p.count(), 1);
 });
