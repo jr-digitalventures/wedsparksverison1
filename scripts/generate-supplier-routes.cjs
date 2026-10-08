@@ -36,6 +36,7 @@ const render = page => {
   const prefix = '../'.repeat(depth);
   const label = pageLabel(page);
   const heroLabel = page.category?.label || 'Find Wedding Suppliers';
+  const heroImage = page.category?.hero || routes.mainHero;
   const description = `Discover ${label.toLowerCase()} and compare wedding services, packages and profiles on WedSparks.`;
   const routePath = `/wedsparksverison1/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
   const canonical = `${liveRoot}/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
@@ -45,14 +46,15 @@ const render = page => {
     .replace(/<title>[^<]*<\/title>/, `<title>${label} | WedSparks</title>`)
     .replace('href="../styles.css?v=55"', `href="${prefix}styles.css?v=55"`)
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
-    .replace('href="supplier-category.css?v=41"', `href="${prefix}supplier-category/supplier-category.css?v=41"`)
+    .replace('href="supplier-category.css?v=42"', `href="${prefix}supplier-category/supplier-category.css?v=42"`)
     .replace('src="../marketplace-search/marketplace.js?v=17"', `src="${prefix}marketplace-search/marketplace.js?v=17"`)
     .replace('src="supplier-routes.js?v=1"', `src="${prefix}supplier-category/supplier-routes.js?v=1"`)
-    .replace('src="supplier-category.js?v=27"', `src="${prefix}supplier-category/supplier-category.js?v=27"`)
+    .replace('src="supplier-category.js?v=28"', `src="${prefix}supplier-category/supplier-category.js?v=28"`)
     .replaceAll('href="../marketplace-search/"', `href="${prefix}marketplace-search/"`)
     .replaceAll('href="../wedding-suppliers/" aria-current="page"', `href="${prefix}wedding-suppliers/" aria-current="page"`)
     .replace('href="../" aria-label="WedSparks home"', `href="${prefix}" aria-label="WedSparks home"`)
     .replace('<h1 class="marketplace-title">Find Wedding Suppliers</h1>', `<h1 class="marketplace-title">${heroLabel}</h1>`)
+    .replace("--supplier-hero-image:url('https://vfdtyxcfrqnqdyuimtho.supabase.co/storage/v1/object/public/Misc%20Website%20Pictures/main%20page.png')", `--supplier-hero-image:url('${heroImage}')`)
     .replace('<body class="marketplace-search-page supplier-category-page">', `<body class="marketplace-search-page supplier-category-page" data-supplier-route="${routePath}">`);
   return html;
 };

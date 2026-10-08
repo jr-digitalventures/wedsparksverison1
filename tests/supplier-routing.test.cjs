@@ -36,8 +36,15 @@ test('generated routes have specific metadata, canonical URLs and working relati
   assert.match(html, /<title>Wedding Venues in New South Wales \| WedSparks<\/title>/);
   assert.match(html, /<h1 class="marketplace-title">Wedding Venues<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/jr-digitalventures\.github\.io\/wedsparksverison1\/wedding-suppliers\/wedding-venues\/nsw\/"/);
-  assert.match(html, /href="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-category\.css\?v=41"/);
+  assert.match(html, /href="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-category\.css\?v=42"/);
   assert.match(html, /src="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-routes\.js\?v=1"/);
+  assert.match(html, /--supplier-hero-image:url\('https:\/\/vfdtyxcfrqnqdyuimtho\.supabase\.co\/storage\/v1\/object\/public\/Misc%20Website%20Pictures\/venue\.png'\)/);
+});
+
+test('every configured supplier category has a dedicated hero image', () => {
+  routes.categories.forEach(category => assert.match(category.hero, /^https:\/\/vfdtyxcfrqnqdyuimtho\.supabase\.co\//));
+  const entertainment = fs.readFileSync(page('wedding-entertainment'), 'utf8');
+  assert.match(entertainment, /live%20entertainment\.png/);
 });
 
 test('location-only pages retain the generic supplier heading', () => {

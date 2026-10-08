@@ -43,6 +43,8 @@ function updateRouteMetadata(){
   const heroTitle=document.querySelector('.marketplace-title');
   const category=ROUTES?.categoryByValue(state.category);
   if(heroTitle)heroTitle.textContent=category?.label||'Find Wedding Suppliers';
+  const hero=document.querySelector('.marketplace-hero');
+  if(hero&&ROUTES)hero.style.setProperty('--supplier-hero-image',`url("${category?.hero||ROUTES.mainHero}")`);
   const description=document.querySelector('meta[name="description"]');
   if(description)description.content=`Discover ${seoLabel().toLowerCase()} and compare wedding services, packages and profiles on WedSparks.`;
   let canonical=document.querySelector('link[rel="canonical"]');
