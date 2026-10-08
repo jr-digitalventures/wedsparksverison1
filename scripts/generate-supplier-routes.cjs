@@ -37,6 +37,8 @@ const render = page => {
   const label = pageLabel(page);
   const heroLabel = page.category?.label || 'Find Wedding Suppliers';
   const heroImage = page.category?.hero || routes.mainHero;
+  const heroPosition = page.category?.heroPosition || (!page.category && routes.mainHeroPosition) || 'center calc(50% - 50px)';
+  const mobileHeroPosition = page.category?.heroPosition || (!page.category && routes.mainHeroPosition) || '62% center';
   const description = `Discover ${label.toLowerCase()} and compare wedding services, packages and profiles on WedSparks.`;
   const routePath = `/wedsparksverison1/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
   const canonical = `${liveRoot}/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
@@ -46,15 +48,15 @@ const render = page => {
     .replace(/<title>[^<]*<\/title>/, `<title>${label} | WedSparks</title>`)
     .replace('href="../styles.css?v=55"', `href="${prefix}styles.css?v=55"`)
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
-    .replace('href="supplier-category.css?v=43"', `href="${prefix}supplier-category/supplier-category.css?v=43"`)
+    .replace('href="supplier-category.css?v=44"', `href="${prefix}supplier-category/supplier-category.css?v=44"`)
     .replace('src="../marketplace-search/marketplace.js?v=17"', `src="${prefix}marketplace-search/marketplace.js?v=17"`)
-    .replace('src="supplier-routes.js?v=1"', `src="${prefix}supplier-category/supplier-routes.js?v=1"`)
-    .replace('src="supplier-category.js?v=29"', `src="${prefix}supplier-category/supplier-category.js?v=29"`)
+    .replace('src="supplier-routes.js?v=2"', `src="${prefix}supplier-category/supplier-routes.js?v=2"`)
+    .replace('src="supplier-category.js?v=30"', `src="${prefix}supplier-category/supplier-category.js?v=30"`)
     .replaceAll('href="../marketplace-search/"', `href="${prefix}marketplace-search/"`)
     .replaceAll('href="../wedding-suppliers/" aria-current="page"', `href="${prefix}wedding-suppliers/" aria-current="page"`)
     .replace('href="../" aria-label="WedSparks home"', `href="${prefix}" aria-label="WedSparks home"`)
     .replace('<h1 class="marketplace-title">Find Wedding Suppliers</h1>', `<h1 class="marketplace-title">${heroLabel}</h1>`)
-    .replace(/--supplier-hero-image:url\('[^']+'\);background-image:linear-gradient\(180deg,rgba\(9,24,20,\.2\),rgba\(9,24,20,\.08\)\),url\('[^']+'\)/, `--supplier-hero-image:url('${heroImage}');background-image:linear-gradient(180deg,rgba(9,24,20,.2),rgba(9,24,20,.08)),url('${heroImage}')`)
+    .replace(/--supplier-hero-image:url\('[^']+'\);--supplier-hero-position:[^;]+;--supplier-hero-mobile-position:[^;]+;background-image:linear-gradient\(180deg,rgba\(9,24,20,\.2\),rgba\(9,24,20,\.08\)\),url\('[^']+'\);background-position:[^\"]+/, `--supplier-hero-image:url('${heroImage}');--supplier-hero-position:${heroPosition};--supplier-hero-mobile-position:${mobileHeroPosition};background-image:linear-gradient(180deg,rgba(9,24,20,.2),rgba(9,24,20,.08)),url('${heroImage}');background-position:${heroPosition}`)
     .replace('<body class="marketplace-search-page supplier-category-page">', `<body class="marketplace-search-page supplier-category-page" data-supplier-route="${routePath}">`);
   return html;
 };

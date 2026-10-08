@@ -46,9 +46,14 @@ function updateRouteMetadata(){
   const hero=document.querySelector('.marketplace-hero');
   if(hero&&ROUTES){
     const heroImage=category?.hero||ROUTES.mainHero;
+    const heroPosition=category?.heroPosition||(!category&&ROUTES.mainHeroPosition)||'center calc(50% - 50px)';
+    const mobileHeroPosition=category?.heroPosition||(!category&&ROUTES.mainHeroPosition)||'62% center';
     const heroUrl=`url("${heroImage}")`;
     hero.style.setProperty('--supplier-hero-image',heroUrl);
+    hero.style.setProperty('--supplier-hero-position',heroPosition);
+    hero.style.setProperty('--supplier-hero-mobile-position',mobileHeroPosition);
     hero.style.backgroundImage=`linear-gradient(180deg,rgba(9,24,20,.2),rgba(9,24,20,.08)),${heroUrl}`;
+    hero.style.backgroundPosition=heroPosition;
   }
   const description=document.querySelector('meta[name="description"]');
   if(description)description.content=`Discover ${seoLabel().toLowerCase()} and compare wedding services, packages and profiles on WedSparks.`;

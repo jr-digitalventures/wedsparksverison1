@@ -6,22 +6,23 @@
   const imageRoot = 'https://vfdtyxcfrqnqdyuimtho.supabase.co/storage/v1/object/public/Misc%20Website%20Pictures/';
   const hero = name => `${imageRoot}${encodeURIComponent(name)}.png`;
   const mainHero = hero('main page');
+  const mainHeroPosition = 'center top';
   const categories = [
     { value: 'Bar Service', slug: 'bar-services', label: 'Bar Services', hero: hero('bar service') },
-    { value: 'Cake', slug: 'wedding-cakes', label: 'Wedding Cakes', hero: hero('cake') },
+    { value: 'Cake', slug: 'wedding-cakes', label: 'Wedding Cakes', hero: hero('cake'), heroPosition: 'center top' },
     { value: 'Catering', slug: 'wedding-caterers', label: 'Wedding Caterers', hero: hero('catering') },
-    { value: 'Celebrant', slug: 'wedding-celebrants', label: 'Wedding Celebrants', hero: hero('celebrant') },
-    { value: 'Florist', slug: 'wedding-florists', label: 'Wedding Florists', hero: hero('florist') },
-    { value: 'Hair Stylist', slug: 'wedding-hair-stylists', label: 'Wedding Hair Stylists', hero: hero('hair stylist') },
-    { value: 'Hireage', slug: 'wedding-hire', label: 'Wedding Hire', hero: hero('hireage') },
-    { value: 'Live Entertainment', slug: 'wedding-entertainment', label: 'Wedding Entertainment', hero: hero('live entertainment') },
-    { value: 'Make-up', slug: 'wedding-makeup-artists', label: 'Wedding Makeup Artists', hero: hero('makeup') },
+    { value: 'Celebrant', slug: 'wedding-celebrants', label: 'Wedding Celebrants', hero: hero('celebrant'), heroPosition: 'center top' },
+    { value: 'Florist', slug: 'wedding-florists', label: 'Wedding Florists', hero: hero('florist'), heroPosition: 'center bottom' },
+    { value: 'Hair Stylist', slug: 'wedding-hair-stylists', label: 'Wedding Hair Stylists', hero: hero('hair stylist'), heroPosition: 'center top' },
+    { value: 'Hireage', slug: 'wedding-hire', label: 'Wedding Hire', hero: hero('hireage'), heroPosition: 'center top' },
+    { value: 'Live Entertainment', slug: 'wedding-entertainment', label: 'Wedding Entertainment', hero: hero('live entertainment'), heroPosition: 'center top' },
+    { value: 'Make-up', slug: 'wedding-makeup-artists', label: 'Wedding Makeup Artists', hero: hero('makeup'), heroPosition: 'center top' },
     { value: 'Photographer', slug: 'wedding-photographers', label: 'Wedding Photographers', hero: hero('photographer') },
     { value: 'Stationary', slug: 'wedding-stationery', label: 'Wedding Stationery', hero: hero('stationary') },
     { value: 'Transport', slug: 'wedding-transport', label: 'Wedding Transport', hero: hero('transport') },
     { value: 'Venue', slug: 'wedding-venues', label: 'Wedding Venues', hero: hero('venue') },
     { value: 'Videographer', slug: 'wedding-videographers', label: 'Wedding Videographers', hero: hero('videographer') },
-    { value: 'Wedding Dress', slug: 'wedding-dresses', label: 'Wedding Dresses', hero: hero('wedding dress') },
+    { value: 'Wedding Dress', slug: 'wedding-dresses', label: 'Wedding Dresses', hero: hero('wedding dress'), heroPosition: 'center top' },
   ];
   const states = [
     { value: 'New South Wales', slug: 'nsw', abbreviation: 'NSW' },
@@ -49,5 +50,5 @@
   const locationBySlug = slug => states.find(item => item.slug === normalise(slug)) || cities.find(item => item.slug === normalise(slug));
   const stateByValue = value => states.find(item => normalise(item.value) === normalise(value));
   const cityByValues = (city, state) => cities.find(item => normalise(item.value) === normalise(city) && normalise(item.state) === normalise(state));
-  return { mainHero, categories, states, cities, categoryBySlug, categoryByValue, locationBySlug, stateByValue, cityByValues };
+  return { mainHero, mainHeroPosition, categories, states, cities, categoryBySlug, categoryByValue, locationBySlug, stateByValue, cityByValues };
 }));

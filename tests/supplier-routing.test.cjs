@@ -36,8 +36,8 @@ test('generated routes have specific metadata, canonical URLs and working relati
   assert.match(html, /<title>Wedding Venues in New South Wales \| WedSparks<\/title>/);
   assert.match(html, /<h1 class="marketplace-title">Wedding Venues<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/jr-digitalventures\.github\.io\/wedsparksverison1\/wedding-suppliers\/wedding-venues\/nsw\/"/);
-  assert.match(html, /href="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-category\.css\?v=43"/);
-  assert.match(html, /src="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-routes\.js\?v=1"/);
+  assert.match(html, /href="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-category\.css\?v=44"/);
+  assert.match(html, /src="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-routes\.js\?v=2"/);
   assert.match(html, /--supplier-hero-image:url\('https:\/\/vfdtyxcfrqnqdyuimtho\.supabase\.co\/storage\/v1\/object\/public\/Misc%20Website%20Pictures\/venue\.png'\)/);
   assert.match(html, /background-image:linear-gradient\(180deg,rgba\(9,24,20,\.2\),rgba\(9,24,20,\.08\)\),url\('https:\/\/vfdtyxcfrqnqdyuimtho\.supabase\.co\/storage\/v1\/object\/public\/Misc%20Website%20Pictures\/venue\.png'\)/);
 });
@@ -46,6 +46,15 @@ test('every configured supplier category has a dedicated hero image', () => {
   routes.categories.forEach(category => assert.match(category.hero, /^https:\/\/vfdtyxcfrqnqdyuimtho\.supabase\.co\//));
   const entertainment = fs.readFileSync(page('wedding-entertainment'), 'utf8');
   assert.match(entertainment, /live%20entertainment\.png/);
+});
+
+test('supplier hero focal points preserve exclusions and frame requested edges', () => {
+  assert.equal(routes.categoryByValue('Cake').heroPosition, 'center top');
+  assert.equal(routes.categoryByValue('Florist').heroPosition, 'center bottom');
+  assert.equal(routes.categoryByValue('Transport').heroPosition, undefined);
+  assert.match(fs.readFileSync(page('wedding-florists'), 'utf8'), /--supplier-hero-position:center bottom/);
+  assert.match(fs.readFileSync(page('wedding-cakes'), 'utf8'), /--supplier-hero-position:center top/);
+  assert.match(fs.readFileSync(page('wedding-transport'), 'utf8'), /--supplier-hero-position:center calc\(50% - 50px\)/);
 });
 
 test('location-only pages retain the generic supplier heading', () => {
