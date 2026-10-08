@@ -34,9 +34,17 @@ test('generator creates every category, state, city and combination route', () =
 test('generated routes have specific metadata, canonical URLs and working relative assets', () => {
   const html = fs.readFileSync(page('wedding-venues', 'nsw'), 'utf8');
   assert.match(html, /<title>Wedding Venues in New South Wales \| WedSparks<\/title>/);
+  assert.match(html, /<h1 class="marketplace-title">Wedding Venues<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/jr-digitalventures\.github\.io\/wedsparksverison1\/wedding-suppliers\/wedding-venues\/nsw\/"/);
   assert.match(html, /href="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-category\.css\?v=41"/);
   assert.match(html, /src="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-routes\.js\?v=1"/);
+});
+
+test('location-only pages retain the generic supplier heading', () => {
+  const statePage = fs.readFileSync(page('nsw'), 'utf8');
+  const cityPage = fs.readFileSync(page('sydney-nsw'), 'utf8');
+  assert.match(statePage, /<h1 class="marketplace-title">Find Wedding Suppliers<\/h1>/);
+  assert.match(cityPage, /<h1 class="marketplace-title">Find Wedding Suppliers<\/h1>/);
 });
 
 test('sitemap contains all generated supplier routes', () => {

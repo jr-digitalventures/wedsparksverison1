@@ -35,6 +35,7 @@ const render = page => {
   const depth = 1 + page.segments.length;
   const prefix = '../'.repeat(depth);
   const label = pageLabel(page);
+  const heroLabel = page.category?.label || 'Find Wedding Suppliers';
   const description = `Discover ${label.toLowerCase()} and compare wedding services, packages and profiles on WedSparks.`;
   const routePath = `/wedsparksverison1/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
   const canonical = `${liveRoot}/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
@@ -47,11 +48,11 @@ const render = page => {
     .replace('href="supplier-category.css?v=41"', `href="${prefix}supplier-category/supplier-category.css?v=41"`)
     .replace('src="../marketplace-search/marketplace.js?v=17"', `src="${prefix}marketplace-search/marketplace.js?v=17"`)
     .replace('src="supplier-routes.js?v=1"', `src="${prefix}supplier-category/supplier-routes.js?v=1"`)
-    .replace('src="supplier-category.js?v=26"', `src="${prefix}supplier-category/supplier-category.js?v=26"`)
+    .replace('src="supplier-category.js?v=27"', `src="${prefix}supplier-category/supplier-category.js?v=27"`)
     .replaceAll('href="../marketplace-search/"', `href="${prefix}marketplace-search/"`)
     .replaceAll('href="../wedding-suppliers/" aria-current="page"', `href="${prefix}wedding-suppliers/" aria-current="page"`)
     .replace('href="../" aria-label="WedSparks home"', `href="${prefix}" aria-label="WedSparks home"`)
-    .replace('<h1 class="marketplace-title">Vendor Category</h1>', `<h1 class="marketplace-title">${label}</h1>`)
+    .replace('<h1 class="marketplace-title">Find Wedding Suppliers</h1>', `<h1 class="marketplace-title">${heroLabel}</h1>`)
     .replace('<body class="marketplace-search-page supplier-category-page">', `<body class="marketplace-search-page supplier-category-page" data-supplier-route="${routePath}">`);
   return html;
 };

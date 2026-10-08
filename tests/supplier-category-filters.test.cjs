@@ -184,6 +184,7 @@ function page({ rows = defaultRows(), random = 0, session = storage(), pathname 
       vm.runInContext('initialQuery(); render();', context);
     },
     path() { return context.location.pathname; },
+    heroTitle() { return element('.marketplace-title').textContent; },
   };
 }
 
@@ -539,8 +540,16 @@ test('clean supplier paths restore filters and selections write clean paths', ()
   p.navigate('/wedsparksverison1/wedding-suppliers/wedding-venues/nsw/');
   assert.deepEqual(p.selectedLocation(), { state: 'New South Wales', city: '' });
   assert.equal(p.count(), 1);
+  assert.equal(p.heroTitle(), 'Wedding Venues');
   p.selectLocation('New South Wales', 'Sydney');
   assert.equal(p.path(), '/wedsparksverison1/wedding-suppliers/wedding-venues/sydney-nsw/');
+  assert.equal(p.heroTitle(), 'Wedding Venues');
+});
+
+test('location-only searches keep the generic hero title', () => {
+  const p = page({ pathname: '/wedsparksverison1/wedding-suppliers/nsw/' });
+  p.navigate('/wedsparksverison1/wedding-suppliers/nsw/');
+  assert.equal(p.heroTitle(), 'Find Wedding Suppliers');
 });
 
 test('non-major suburb query URLs restore the structured location', () => {
