@@ -36,7 +36,7 @@ export function safeReturnPath(value) {
       'supplier-category/index.html'
     ];
 
-    return allowed.includes(relative)
+    return (allowed.includes(relative) || /^wedding-suppliers(?:\/[a-z0-9-]+){0,2}\/?$/.test(relative))
       ? target.pathname + target.search + target.hash
       : null;
   } catch {
