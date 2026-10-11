@@ -1,0 +1,99 @@
+﻿<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Choose a new password — WedSparks</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../auth.css">
+  <script>
+  // Capture recovery intent before the SDK consumes the URL fragment.
+  // Only a token fingerprint is retained, never the raw token.
+  window.wedsparksRecoveryLink = (async () => {
+    const fragment = new URLSearchParams(location.hash.slice(1));
+    const query = new URLSearchParams(location.search);
+    const token = fragment.get('access_token');
+
+    let fingerprint = null;
+
+    if (token) {
+      const digest = await crypto.subtle.digest(
+        'SHA-256', new TextEncoder().encode(token)
+      );
+
+      fingerprint = Array.from(new Uint8Array(digest))
+        .map(value => value.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    return {
+      recovery: fragment.get('type') === 'recovery',
+      error: fragment.has('error') || query.has('error'),
+      fingerprint
+    };
+  })();
+</script>
+  <script type="module" src="../shared/reset-password.js"></script>
+  <script type="module" src="../shared/header-auth.js"></script>
+</head>
+<body class="auth-page">
+  <header class="site-header">
+    <nav class="header-side header-left" aria-label="Primary navigation">
+      <a class="header-nav-link" href="../marketplace-search/">Search Marketplace</a>
+      <a class="header-nav-link" href="../supplier-category/">Category Search</a>
+      <button type="button" disabled>Option 3</button>
+    </nav>
+    <a class="brand" href="../" aria-label="WedSparks home"><svg viewBox="0 0 52 46" aria-hidden="true"><path d="M23 39 5 20C-4 5 14-3 23 8M29 39 47 20C56 5 38-3 29 8M26 8C9-4 8 21 26 36 44 21 43-4 26 8Z"/></svg><span>WedSparks</span></a>
+    <nav class="header-side header-right" aria-label="Account navigation">
+      <button type="button" disabled>Option 4</button>
+      <button class="header-action login" type="button" disabled>Log In</button>
+      <button class="header-action signup" type="button" disabled>Sign Up</button>
+    </nav>
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="mobile-nav-panel" id="mobile-navigation" aria-label="Mobile navigation" hidden><a class="header-nav-link" href="../marketplace-search/">Search Marketplace</a><a class="header-nav-link" href="../supplier-category/">Category Search</a><button type="button" disabled>Option 3</button><button type="button" disabled>Option 4</button><div class="mobile-account-actions"><button type="button" disabled>Log In</button><button type="button" disabled>Sign Up</button></div></nav>
+  </header>
+  <main class="auth-content">
+    <p class="auth-eyebrow">WedSparks</p>
+    <h1>Choose a new password</h1>
+    <p class="auth-intro" id="reset-intro">
+  Checking your reset link…
+</p>
+
+<form id="reset-form" hidden>
+  <div class="auth-field">
+    <label for="new-password">New password</label>
+
+    <div class="auth-password">
+      <input id="new-password" name="password" type="password"
+        autocomplete="new-password" minlength="8"
+        aria-describedby="new-password-help" required>
+
+      <button type="button" id="show-new-password"
+        aria-controls="new-password" aria-pressed="false"
+        aria-label="Show password">
+        Show
+      </button>
+    </div>
+
+    <p class="auth-help" id="new-password-help">
+      Use at least 8 characters.
+    </p>
+  </div>
+
+  <button class="auth-primary" type="submit">
+    Save new password
+  </button>
+</form>
+
+<p class="auth-status" id="reset-status"
+  role="status" aria-live="polite"></p>
+
+<p class="auth-login-footer">
+  <a id="reset-action" href="../forgot-password/" hidden>
+    Request a new reset link
+  </a>
+</p>
+  </main>
+</body>
+</html>

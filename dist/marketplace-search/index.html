@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en-AU">
 <head>
   <meta charset="utf-8">
@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="../styles.css?v=54">
   <link rel="stylesheet" href="marketplace.css?v=33">
   <script src="marketplace.js?v=17" defer></script>
+<link rel="stylesheet" href="../auth.css">
+<script type="module" src="../shared/header-auth.js"></script>
 </head>
 <body class="marketplace-search-page">
   <a class="skip-link" href="#marketplace-search">Skip to supplier search</a>
@@ -41,9 +43,9 @@
         <span class="marketplace-search-divider" aria-hidden="true"></span>
         <div class="marketplace-search-field">
           <button class="marketplace-search-value" type="button" aria-expanded="false" aria-controls="marketplace-budget-options" data-marketplace-trigger="marketplace-budget-options"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M14.5 8.5c-.6-.7-1.4-1-2.5-1-1.4 0-2.5.8-2.5 2s1.1 1.8 2.7 2.2c1.5.4 2.5.9 2.5 2.4s-1.2 2.4-2.8 2.4c-1.2 0-2.2-.4-2.9-1.2M12 5.5v13"/></svg><span class="marketplace-search-text"><small>Vendor Budget</small><strong>Choose your budget</strong></span><i class="marketplace-chevron" aria-hidden="true"></i></button>
-          <div class="marketplace-dropdown" id="marketplace-budget-options" hidden><button type="button">Any budget</button><button type="button">Under $2,000</button><button type="button">$2,000–$4,000</button><button type="button">$4,000–$6,000</button><button type="button">$6,000–$10,000</button><button type="button">$10,000+</button></div>
+          <div class="marketplace-dropdown" id="marketplace-budget-options" hidden><button type="button">Any budget</button><button type="button">Under $2,000</button><button type="button">$2,000â€“$4,000</button><button type="button">$4,000â€“$6,000</button><button type="button">$6,000â€“$10,000</button><button type="button">$10,000+</button></div>
         </div>
-        <button class="marketplace-edit-search" type="button">Find My Spark <span aria-hidden="true">→</span></button>
+        <button class="marketplace-edit-search" type="button">Find My Spark <span aria-hidden="true">â†’</span></button>
       </div>
     </section>
     <section class="marketplace-categories" aria-labelledby="marketplace-categories-title">
@@ -52,15 +54,15 @@
         <p>Explore wedding suppliers by category and find the right people for every part of your day.</p>
       </div>
       <div class="marketplace-category-grid" id="marketplace-category-grid">
-        <a class="marketplace-category-card marketplace-category-featured" href="#" style="--category-x:7.52%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-        <a class="marketplace-category-card" href="#" style="--category-x:18.12%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-        <a class="marketplace-category-card" href="#" style="--category-x:28.78%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-        <a class="marketplace-category-card" href="#" style="--category-x:39.43%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-        <a class="marketplace-category-card" href="#" style="--category-x:50.03%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-        <a class="marketplace-category-card" href="#" style="--category-x:60.68%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-        <a class="marketplace-category-card" href="#" style="--category-x:71.33%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+        <a class="marketplace-category-card marketplace-category-featured" href="#" style="--category-x:7.52%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+        <a class="marketplace-category-card" href="#" style="--category-x:18.12%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+        <a class="marketplace-category-card" href="#" style="--category-x:28.78%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+        <a class="marketplace-category-card" href="#" style="--category-x:39.43%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+        <a class="marketplace-category-card" href="#" style="--category-x:50.03%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+        <a class="marketplace-category-card" href="#" style="--category-x:60.68%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+        <a class="marketplace-category-card" href="#" style="--category-x:71.33%"><span><strong>Card Label</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
       </div>
-      <button class="marketplace-show-categories" id="marketplace-show-categories" type="button" aria-expanded="false" aria-controls="marketplace-expanded-categories" hidden>Show all categories <span aria-hidden="true">→</span></button>
+      <button class="marketplace-show-categories" id="marketplace-show-categories" type="button" aria-expanded="false" aria-controls="marketplace-expanded-categories" hidden>Show all categories <span aria-hidden="true">â†’</span></button>
       <div class="marketplace-expanded-grid" id="marketplace-expanded-categories" hidden></div>
       <button class="marketplace-hide-categories" id="marketplace-hide-categories" type="button" aria-controls="marketplace-expanded-categories" hidden>Hide all categories</button>
     </section>
@@ -71,12 +73,12 @@
       </div>
       <div class="marketplace-locations-carousel">
         <div class="marketplace-location-track" id="marketplace-location-track">
-          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Sydney Opera House and Harbour Bridge"><span><strong>Sydney</strong><small>1,200+ suppliers</small><b aria-hidden="true">→</b></span></a>
-          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1514395462725-fb4566210144?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Melbourne city skyline"><span><strong>Melbourne</strong><small>980+ suppliers</small><b aria-hidden="true">→</b></span></a>
-          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1524293581917-878a6d017c71?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Brisbane city and river"><span><strong>Brisbane</strong><small>640+ suppliers</small><b aria-hidden="true">→</b></span></a>
-          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Vineyard near Adelaide"><span><strong>Adelaide</strong><small>420+ suppliers</small><b aria-hidden="true">→</b></span></a>
-          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1529108190281-9a4f620bc2d8?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Western Australian coastline near Perth"><span><strong>Perth</strong><small>380+ suppliers</small><b aria-hidden="true">→</b></span></a>
-          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Coastal landscape near Byron Bay"><span><strong>Byron Bay</strong><small>360+ suppliers</small><b aria-hidden="true">→</b></span></a>
+          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Sydney Opera House and Harbour Bridge"><span><strong>Sydney</strong><small>1,200+ suppliers</small><b aria-hidden="true">â†’</b></span></a>
+          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1514395462725-fb4566210144?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Melbourne city skyline"><span><strong>Melbourne</strong><small>980+ suppliers</small><b aria-hidden="true">â†’</b></span></a>
+          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1524293581917-878a6d017c71?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Brisbane city and river"><span><strong>Brisbane</strong><small>640+ suppliers</small><b aria-hidden="true">â†’</b></span></a>
+          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Vineyard near Adelaide"><span><strong>Adelaide</strong><small>420+ suppliers</small><b aria-hidden="true">â†’</b></span></a>
+          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1529108190281-9a4f620bc2d8?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Western Australian coastline near Perth"><span><strong>Perth</strong><small>380+ suppliers</small><b aria-hidden="true">â†’</b></span></a>
+          <a class="marketplace-location-card" href="#"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Coastal landscape near Byron Bay"><span><strong>Byron Bay</strong><small>360+ suppliers</small><b aria-hidden="true">â†’</b></span></a>
         </div>
         <div class="marketplace-location-pagination" aria-label="Wedding location carousel pages"></div>
       </div>
@@ -101,7 +103,7 @@
         <p class="marketplace-account-banner-eyebrow">YOUR FOREVER STARTS HERE</p>
         <h2 id="marketplace-account-banner-title">DISCOVER THE RIGHT SPARK FOR YOUR WEDDING</h2>
         <p class="marketplace-account-banner-copy">Create the wedding you have envisioned, book your favourite suppliers, and keep all your planning in one, easy to manage place.</p>
-        <a class="marketplace-account-banner-button" href="#">Create your free account <span aria-hidden="true">→</span></a>
+        <a class="marketplace-account-banner-button" href="#">Create your free account <span aria-hidden="true">â†’</span></a>
       </div>
     </section>
     <section class="supplier-explorer" aria-labelledby="marketplace-supplier-explorer-title">
@@ -109,15 +111,15 @@
         <div class="supplier-explorer-copy">
           <h2 id="marketplace-supplier-explorer-title"><span>DISCOVER YOUR</span><span>WEDDING STYLE</span></h2>
           <p>Explore popular wedding styles and themes, from modern and minimalist to romantic, rustic, coastal and garden-inspired.<br><br>Find the look that feels right for your day and discover suppliers who can bring your wedding vision to life.</p>
-          <a class="supplier-explorer-cta" href="https://www.google.com/">Find your look <span aria-hidden="true">→</span></a>
+          <a class="supplier-explorer-cta" href="https://www.google.com/">Find your look <span aria-hidden="true">â†’</span></a>
         </div>
         <div class="supplier-carousel-wrap">
           <div class="supplier-carousel" id="marketplace-supplier-carousel" tabindex="0" aria-label="Popular wedding supplier categories">
-            <a class="supplier-card" href="#" style="--crop-x:7.52%"><span><strong>Venues</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="#" style="--crop-x:18.12%"><span><strong>Photography</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="#" style="--crop-x:28.78%"><span><strong>Florists</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="#" style="--crop-x:39.43%"><span><strong>Catering</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
-            <a class="supplier-card" href="#" style="--crop-x:71.28%"><span><strong>Entertainment</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:7.52%"><span><strong>Venues</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:18.12%"><span><strong>Photography</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:28.78%"><span><strong>Florists</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:39.43%"><span><strong>Catering</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
+            <a class="supplier-card" href="#" style="--crop-x:71.28%"><span><strong>Entertainment</strong><small>Explore <b aria-hidden="true">â†’</b></small></span></a>
           </div>
           <div class="supplier-pagination marketplace-supplier-pagination" aria-label="Supplier carousel pages"></div>
         </div>
@@ -126,9 +128,9 @@
     <section class="marketplace-business-cta" aria-labelledby="marketplace-business-cta-title">
       <div class="marketplace-business-cta-content">
         <p class="marketplace-business-cta-eyebrow">FOR WEDDING BUSINESSES</p>
-        <h2 id="marketplace-business-cta-title">JOIN AUSTRALIA’S PREMIUM WEDDING MARKETPLACE</h2>
+        <h2 id="marketplace-business-cta-title">JOIN AUSTRALIAâ€™S PREMIUM WEDDING MARKETPLACE</h2>
         <p class="marketplace-business-cta-copy">Create your supplier profile, showcase your work and connect with couples searching for businesses like yours.</p>
-        <a class="marketplace-business-cta-button" href="#">Join as a Supplier <span aria-hidden="true">→</span></a>
+        <a class="marketplace-business-cta-button" href="#">Join as a Supplier <span aria-hidden="true">â†’</span></a>
       </div>
       <div class="marketplace-business-cta-media">
         <img src="https://vfdtyxcfrqnqdyuimtho.supabase.co/storage/v1/object/public/Misc%20Website%20Pictures/Wedding-Planner-Red-Flags-Getty-Images-Main-ea2d14e54ac544d4857cbd5dd14c0901%20(1).webp" alt="Wedding professional arranging flowers">
@@ -161,8 +163,9 @@
           <p>Manage your wedding budget, tasks, bookings and details using practical planning tools in one place.</p>
         </article>
       </div>
-      <a class="planning-cta" href="#marketplace-search">Start Planning <span aria-hidden="true">→</span></a>
+      <a class="planning-cta" href="#marketplace-search">Start Planning <span aria-hidden="true">â†’</span></a>
     </section>
   </main>
 </body>
 </html>
+

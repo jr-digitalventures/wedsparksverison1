@@ -120,3 +120,27 @@
   .supplier-listing-content>.supplier-features{grid-row:4;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 28px;margin:15px 0 0}
   .supplier-listing-content>.supplier-profile-button{position:absolute;right:30px;bottom:30px;left:30px;width:auto;height:44px;margin:0}
 }
+
+/* Real supplier pagination fix */
+.supplier-pagination {
+  position:static !important;
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  margin:32px 0;
+  transform:none !important;
+  clear:both;
+}
+.supplier-pagination button {
+  width:auto;
+  min-width:100px;
+  min-height:44px;
+  padding:10px 20px;
+}
+.supplier-pagination button:disabled {
+  opacity:.45;
+  cursor:default;
+}
+#real-featured-supplier {
+  margin-bottom:28px;
+}
