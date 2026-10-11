@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#103e33">
+  <title>Create your account — WedSparks</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../auth.css">
+  <script type="module" src="./signup.js"></script>
+<script type="module" src="../shared/header-auth.js"></script>
+</head>
+<body class="auth-page">
+  <a class="skip-link" href="#signup-content">Skip to signup</a>
+  <header class="site-header">
+    <nav class="header-side header-left" aria-label="Primary navigation">
+      <a class="header-nav-link" href="../marketplace-search/">Search Marketplace</a>
+      <a class="header-nav-link" href="../supplier-category/">Category Search</a>
+      <button type="button" disabled>Option 3</button>
+    </nav>
+    <a class="brand" href="../" aria-label="WedSparks home"><svg viewBox="0 0 52 46" aria-hidden="true"><path d="M23 39 5 20C-4 5 14-3 23 8M29 39 47 20C56 5 38-3 29 8M26 8C9-4 8 21 26 36 44 21 43-4 26 8Z"/></svg><span>WedSparks</span></a>
+    <nav class="header-side header-right" aria-label="Account navigation">
+      <button type="button" disabled>Option 4</button>
+      <button class="header-action login" type="button" disabled>Log In</button>
+      <button class="header-action signup" type="button" disabled>Sign Up</button>
+    </nav>
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="mobile-nav-panel" id="mobile-navigation" aria-label="Mobile navigation" hidden><a class="header-nav-link" href="../marketplace-search/">Search Marketplace</a><a class="header-nav-link" href="../supplier-category/">Category Search</a><button type="button" disabled>Option 3</button><button type="button" disabled>Option 4</button><div class="mobile-account-actions"><button type="button" disabled>Log In</button><button type="button" disabled>Sign Up</button></div></nav>
+  </header>
+  <main class="auth-layout">
+    <aside class="auth-image" aria-label="Wedding inspiration">
+      <p>Create your day, your way.</p>
+    </aside>
+
+    <section class="auth-content" id="signup-content">
+      <p class="auth-eyebrow">Join WedSparks</p>
+      <h1 id="signup-heading">Start planning your day</h1>
+      <p class="auth-intro">
+        Create one account for planning your wedding,
+        running a supplier business, or both.
+      </p>
+
+      <form id="signup-form">
+        <fieldset class="auth-choices">
+          <legend>What brings you to WedSparks?</legend>
+
+          <label class="auth-choice">
+            <input type="radio" name="initial_experience"
+              value="couple" required>
+            <span>
+              <strong>Planning my wedding</strong>
+              <small>
+                Discover suppliers, shortlist favourites
+                and organise your day.
+              </small>
+            </span>
+          </label>
+
+          <label class="auth-choice">
+            <input type="radio" name="initial_experience"
+              value="supplier" required>
+            <span>
+              <strong>Growing my wedding business</strong>
+              <small>
+                Showcase your business and connect with couples.
+              </small>
+            </span>
+          </label>
+        </fieldset>
+
+        <div class="auth-name-row">
+          <label class="auth-field" for="first-name">
+            First name
+            <input id="first-name" name="first_name"
+              autocomplete="given-name" maxlength="100" required>
+          </label>
+
+          <label class="auth-field" for="last-name">
+            Last name
+            <input id="last-name" name="last_name"
+              autocomplete="family-name" maxlength="100" required>
+          </label>
+        </div>
+
+        <label class="auth-field" for="signup-email">
+          Email address
+          <input id="signup-email" name="email" type="email"
+            autocomplete="email" maxlength="254" required>
+        </label>
+
+        <div class="auth-field">
+          <label for="signup-password">Password</label>
+          <div class="auth-password">
+            <input id="signup-password" name="password"
+              type="password" autocomplete="new-password"
+              minlength="8" required aria-describedby="password-help">
+            <button id="toggle-password" type="button"
+              aria-controls="signup-password" aria-pressed="false">
+              Show
+            </button>
+          </div>
+          <p class="auth-help" id="password-help">
+            Use at least 8 characters.
+          </p>
+        </div>
+
+        <p class="auth-status" id="signup-status"
+          role="status" aria-live="polite"></p>
+
+        <button class="auth-primary" type="submit" disabled
+          id="signup-submit">
+          Create my account
+        </button>
+      </form>
+<p class="auth-login-footer">Already have an account? <a href="../login/">Log in</a></p>
+    </section>
+  </main>
+</body>
+</html>
+
