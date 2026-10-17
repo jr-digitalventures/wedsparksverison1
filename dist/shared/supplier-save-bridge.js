@@ -1,4 +1,5 @@
-﻿import { supabase } from './supabase-client.js';
+import './supplier-chat.js';
+import { supabase } from './supabase-client.js';
 import { verifiedUser, loadAccount, siteUrl, onSessionChange } from './auth.js';
 
 const message = document.createElement('p');

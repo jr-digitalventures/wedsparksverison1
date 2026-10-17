@@ -1,4 +1,4 @@
-﻿import { supabase } from './supabase-client.js';
+import { supabase } from './supabase-client.js';
 import {
   verifiedUser, loadAccount, siteUrl, safeReturnPath,
   onSessionChange, logout
@@ -28,13 +28,50 @@ if (header) {
     announcement.hidden = !message;
   }
 
+  let labelUserId = null;
+  let accountLabel = 'Dashboard';
+  let labelRevision = 0;
+
   function render(nextUser) {
     user = nextUser?.email_confirmed_at ? nextUser : null;
+
+    if (!user) {
+      labelUserId = null;
+      accountLabel = 'Dashboard';
+      labelRevision++;
+    } else if (labelUserId !== user.id) {
+      labelUserId = user.id;
+      accountLabel = 'Dashboard';
+      const owner = user.id;
+      const version = ++labelRevision;
+
+      // Database work runs outside the auth callback.
+      setTimeout(async () => {
+        try {
+          const { data, error } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', owner);
+
+          if (version !== labelRevision || user?.id !== owner) return;
+
+          accountLabel = !error && data?.some(row => row.role === 'couple')
+            ? 'Your Wedding'
+            : !error && data?.some(row => row.role === 'supplier')
+              ? 'Supplier Dashboard'
+              : 'Dashboard';
+
+          render(user);
+        } catch {
+          // Keep the neutral dashboard link available.
+        }
+      }, 0);
+    }
 
     controls.forEach(button => {
       const primary = button.dataset.authControl === 'login';
       button.textContent = user
-        ? primary ? 'My account' : 'Log Out'
+        ? primary ? accountLabel : 'Log Out'
         : primary ? 'Log In' : 'Sign Up';
       button.disabled = busy;
     });
@@ -154,3 +191,149 @@ if (header) {
     });
   }
 }
+
+// Shared popup close crosses
+{
+  const style = document.createElement('style');
+  style.textContent = `
+    dialog.ws-cross-dialog {
+      padding-top:52px!important;
+    }
+    dialog .ws-popup-cross {
+      position:absolute!important;
+      top:8px!important;
+      right:8px!important;
+      bottom:auto!important;
+      left:auto!important;
+      display:grid!important;
+      place-items:center!important;
+      width:44px!important;
+      height:44px!important;
+      min-width:44px!important;
+      min-height:44px!important;
+      padding:0!important;
+      margin:0!important;
+      border:0!important;
+      border-radius:50%!important;
+      background:transparent!important;
+      color:#214c3e!important;
+      box-shadow:none!important;
+      font:normal 30px/1 Arial,sans-serif!important;
+      cursor:pointer;
+      z-index:2;
+    }
+    dialog .ws-popup-cross:hover {
+      background:#f1efeb!important;
+    }
+    dialog .ws-popup-cross:focus-visible {
+      outline:3px solid #ad7542!important;
+      outline-offset:2px;
+    }
+    dialog .ws-popup-cross:disabled {
+      opacity:.4;
+      cursor:wait;
+    }
+  `;
+  document.head.append(style);
+
+  function updatePopupCloseButtons() {
+    for (const modal of document.querySelectorAll('dialog')) {
+      const existing = modal.querySelector('.ws-popup-cross');
+      if (existing) continue;
+
+      const buttons = [...modal.querySelectorAll('button')]
+        .filter(button => button.closest('dialog') === modal);
+      const close = buttons.find(button =>
+        /^close$/i.test(button.textContent.trim())
+      ) || buttons.find(button =>
+        /^close\b/i.test(button.getAttribute('aria-label') || '')
+      ) || buttons.find(button =>
+        /^cancel$/i.test(button.textContent.trim())
+      );
+
+      if (!close) continue;
+      modal.classList.add('ws-cross-dialog');
+      close.classList.add('ws-popup-cross');
+      close.setAttribute('aria-label','Close dialog');
+      close.title = 'Close';
+      close.textContent = '×';
+    }
+  }
+
+  updatePopupCloseButtons();
+  new MutationObserver(updatePopupCloseButtons).observe(document.body,{
+    childList:true,
+    subtree:true
+  });
+}
+
+// Shared delete bin icons
+(() => {
+  const icon=`<svg aria-hidden="true" focusable="false" width="20" height="20"
+    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>
+  </svg>`;
+  const style=document.createElement('style');
+  style.textContent=`
+    button.ws-delete-bin,a.ws-delete-bin{
+      display:inline-flex!important;align-items:center;justify-content:center;
+      width:44px!important;min-width:44px!important;height:44px!important;
+      padding:0!important
+    }
+    .ws-delete-bin:focus-visible{outline:3px solid #ad7542;outline-offset:2px}
+    .ws-delete-bin svg{pointer-events:none}
+  `;
+  document.head.append(style);
+  function update(){
+    for(const button of document.querySelectorAll('button,a[role="button"]')){
+      const text=button.textContent.trim();
+      if(/^Delete$/i.test(text)){
+        const label=button.getAttribute('aria-label')||'Delete';
+        button.dataset.wsDeleteLabel=label;
+        button.setAttribute('aria-label',label);
+        button.title=label;
+        button.classList.add('ws-delete-bin');
+        button.innerHTML=icon;
+      }else if(button.classList.contains('ws-delete-bin')&&text){
+        // Preserve visible confirmation and progress messages.
+        button.classList.remove('ws-delete-bin');
+        const label=/^Confirm delete$/i.test(text)
+          ?'Confirm: '+(button.dataset.wsDeleteLabel||'Delete')
+          :text;
+        button.setAttribute('aria-label',label);
+        button.title=label;
+      }
+    }
+  }
+  update();
+  new MutationObserver(update).observe(document.body,{
+    childList:true,subtree:true,characterData:true
+  });
+})();
+
+// Borderless edit and delete icons
+(() => {
+  const style=document.createElement('style');
+  style.textContent=`
+    button.ws-delete-bin,a.ws-delete-bin,
+    .ws-dashboard-shell button.ws-edit-icon,
+    .ws-dashboard-shell a.ws-edit-icon{
+      border:0!important;
+      background:transparent!important;
+      box-shadow:none!important;
+      color:#214c3e!important;
+    }
+    button.ws-delete-bin:hover,a.ws-delete-bin:hover,
+    .ws-dashboard-shell .ws-edit-icon:hover{
+      color:#98632f!important;
+      background:transparent!important;
+    }
+    button.ws-delete-bin:focus-visible,a.ws-delete-bin:focus-visible,
+    .ws-dashboard-shell .ws-edit-icon:focus-visible{
+      outline:2px solid #ad7542!important;
+      outline-offset:2px!important;
+    }
+  `;
+  document.head.append(style);
+})();

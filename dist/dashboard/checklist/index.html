@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Checklist &amp; Calendar — WedSparks</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../../auth.css">
+  <script type="module" src="../../shared/checklist.js"></script>
+<script type="module" src="../../shared/header-auth.js"></script>
+  <link rel="stylesheet" href="../dashboard.css">
+  <script type="module" src="../../shared/dashboard-navigation.js"></script>
+</head>
+<body class="auth-page" data-account="couple" data-page="checklist">
+  <header class="site-header">
+    <nav class="header-side header-left" aria-label="Primary navigation">
+      <a class="header-nav-link" href="../../marketplace-search/">Search Marketplace</a>
+      <a class="header-nav-link" href="../../supplier-category/">Category Search</a>
+      <button type="button" disabled>Option 3</button>
+    </nav>
+    <a class="brand" href="../../" aria-label="WedSparks home"><svg viewBox="0 0 52 46" aria-hidden="true"><path d="M23 39 5 20C-4 5 14-3 23 8M29 39 47 20C56 5 38-3 29 8M26 8C9-4 8 21 26 36 44 21 43-4 26 8Z"/></svg><span>WedSparks</span></a>
+    <nav class="header-side header-right" aria-label="Account navigation">
+      <button type="button" disabled>Option 4</button>
+      <button class="header-action login" type="button" disabled>Log In</button>
+      <button class="header-action signup" type="button" disabled>Sign Up</button>
+    </nav>
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="mobile-nav-panel" id="mobile-navigation" aria-label="Mobile navigation" hidden><a class="header-nav-link" href="../../marketplace-search/">Search Marketplace</a><a class="header-nav-link" href="../../supplier-category/">Category Search</a><button type="button" disabled>Option 3</button><button type="button" disabled>Option 4</button><div class="mobile-account-actions"><button type="button" disabled>Log In</button><button type="button" disabled>Sign Up</button></div></nav>
+  </header>
+  <main class="auth-content ct-page">
+  <h1>Checklist &amp; Calendar</h1>
+  <p id="ct-loading" role="status">Loading your checklist…</p>
+  <section id="ct-content" hidden>
+    <div class="ct-heading">
+      <div><h2>One step closer to your day</h2><p>Your tasks and deadlines, together in one place.</p></div>
+      <button id="ct-add" class="ct-primary" type="button">+ Add a task</button>
+    </div>
+    <dl class="ct-stats">
+      <div><dt>Pending</dt><dd id="ct-pending">—</dd></div>
+      <div><dt>Overdue</dt><dd id="ct-overdue">—</dd></div>
+      <div><dt>Completed</dt><dd id="ct-completed">—</dd></div>
+    </dl>
+    <div class="ct-progress-row"><span id="ct-progress-label">Your progress</span><progress id="ct-progress" max="100" value="0" aria-labelledby="ct-progress-label"></progress></div>
+    <div class="ct-toolbar">
+      <div class="ct-toggle" role="group" aria-label="Task view">
+        <button id="ct-list-view" type="button" aria-pressed="true">Checklist</button>
+        <button id="ct-calendar-view" type="button" aria-pressed="false">Calendar</button>
+      </div>
+      <button id="ct-refresh" type="button">Refresh tasks</button>
+    </div>
+    <div class="ct-filters">
+      <label>Search tasks<input id="ct-search" type="search" maxlength="200" placeholder="Find a task…"></label>
+      <label>Status<select id="ct-filter-status"><option value="pending">Pending</option><option value="all">All tasks</option><option value="todo">To do</option><option value="in_progress">In progress</option><option value="completed">Completed</option><option value="overdue">Overdue</option></select></label>
+      <label>Category<select id="ct-filter-category"><option value="">All categories</option></select></label>
+    </div>
+    <p id="ct-status" class="ct-status" role="status" aria-live="polite"></p>
+    <div id="ct-list-panel"><ul id="ct-list" class="ct-list"></ul><button id="ct-more" type="button" hidden>Show more tasks</button></div>
+    <section id="ct-calendar-panel" hidden aria-label="Task deadlines calendar">
+      <div class="ct-toolbar">
+        <h2 id="ct-month"></h2>
+        <div class="ct-actions"><button id="ct-month-previous" type="button" aria-label="Previous month">←</button><button id="ct-month-today" type="button">This month</button><button id="ct-month-next" type="button" aria-label="Next month">→</button></div>
+      </div>
+      <div class="ct-calendar-scroll"><table class="ct-calendar" aria-labelledby="ct-month"><thead><tr><th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th><th scope="col">Thu</th><th scope="col">Fri</th><th scope="col">Sat</th><th scope="col">Sun</th></tr></thead><tbody id="ct-days"></tbody></table></div>
+      <ul id="ct-agenda" class="ct-list ct-agenda" aria-label="This month’s deadlines"></ul>
+      <p id="ct-undated" class="ct-help"></p>
+    </section>
+    <div id="ct-empty" class="ct-empty" hidden>
+      <span aria-hidden="true">✓</span><h2 id="ct-empty-title">Your plans start here</h2>
+      <p id="ct-empty-copy">Add your first task. Give it a due date to see it on your calendar too.</p>
+      <button id="ct-empty-add" type="button" class="ct-primary">Add your first task</button>
+      <button id="ct-clear-filters" type="button" hidden>Clear filters</button>
+    </div>
+  </section>
+  <dialog id="ct-dialog" aria-labelledby="ct-editor-heading">
+    <form id="ct-form">
+      <h2 id="ct-editor-heading">Add a task</h2>
+      <fieldset id="ct-fields">
+        <label>Task title<input name="title" required maxlength="200" placeholder="e.g. Book the photographer"></label>
+        <div class="ct-form-grid">
+          <label>Category<input name="category" required maxlength="80" list="ct-categories" value="General"></label>
+          <datalist id="ct-categories"><option value="General"></option><option value="Venue"></option><option value="Photography"></option><option value="Catering"></option><option value="Attire"></option><option value="Flowers & styling"></option><option value="Music & entertainment"></option><option value="Guests"></option><option value="Ceremony"></option><option value="Transport"></option><option value="Budget & payments"></option></datalist>
+          <label>Due date (optional)<input name="due_date" type="date" min="1900-01-01" max="9999-12-31"></label>
+          <label>Status<select name="status"><option value="todo">To do</option><option value="in_progress">In progress</option><option value="completed">Completed</option></select></label>
+          <label>Priority<select name="priority"><option value="normal">Normal</option><option value="high">High</option></select></label>
+        </div>
+        <label>Linked supplier (optional)<select name="linked_supplier_id"><option value="">No supplier linked</option></select></label>
+        <p id="ct-supplier-help" class="ct-help">Choose from your saved suppliers.</p>
+        <label>Notes (optional)<textarea name="notes" rows="3" maxlength="5000"></textarea></label>
+      </fieldset>
+      <p id="ct-form-status" class="ct-status" role="status" aria-live="polite"></p>
+      <div class="ct-actions"><button id="ct-save" type="submit" class="ct-primary">Save task</button><button id="ct-cancel" type="button">Cancel</button></div>
+    </form>
+  </dialog>
+</main>
+
+</body>
+</html>

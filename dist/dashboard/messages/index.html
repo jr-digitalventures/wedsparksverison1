@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Messages - WedSparks</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../../auth.css">
+  <link rel="stylesheet" href="../../dashboard/dashboard.css">
+  <script type="module" src="../../shared/messages.js"></script>
+  <script type="module" src="../../shared/header-auth.js"></script>
+  <script type="module" src="../../shared/dashboard-navigation.js"></script>
+</head>
+<body class="auth-page" data-page="messages" data-account="couple">
+<header class="site-header">
+    <nav class="header-side header-left" aria-label="Primary navigation">
+      <a class="header-nav-link" href="../../marketplace-search/">Search Marketplace</a>
+      <a class="header-nav-link" href="../../supplier-category/">Category Search</a>
+      <button type="button" disabled>Option 3</button>
+    </nav>
+    <a class="brand" href="../../" aria-label="WedSparks home"><svg viewBox="0 0 52 46" aria-hidden="true"><path d="M23 39 5 20C-4 5 14-3 23 8M29 39 47 20C56 5 38-3 29 8M26 8C9-4 8 21 26 36 44 21 43-4 26 8Z"/></svg><span>WedSparks</span></a>
+    <nav class="header-side header-right" aria-label="Account navigation">
+      <button type="button" disabled>Option 4</button>
+      <button class="header-action login" type="button" disabled>Log In</button>
+      <button class="header-action signup" type="button" disabled>Sign Up</button>
+    </nav>
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="mobile-nav-panel" id="mobile-navigation" aria-label="Mobile navigation" hidden><a class="header-nav-link" href="../../marketplace-search/">Search Marketplace</a><a class="header-nav-link" href="../../supplier-category/">Category Search</a><button type="button" disabled>Option 3</button><button type="button" disabled>Option 4</button><div class="mobile-account-actions"><button type="button" disabled>Log In</button><button type="button" disabled>Sign Up</button></div></nav>
+  </header>
+<main class="auth-content">
+  <h1>Messages</h1>
+
+  <p id="messages-loading" role="status">Loading your conversations...</p>
+  <section id="messages-root" data-message-role="couple" hidden></section>
+</main>
+</body>
+</html>

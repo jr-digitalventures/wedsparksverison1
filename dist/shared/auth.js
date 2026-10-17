@@ -1,4 +1,4 @@
-﻿import { supabase } from './supabase-client.js';
+import { supabase } from './supabase-client.js';
 
 export const siteBase = new URL('../', import.meta.url);
 
@@ -29,6 +29,10 @@ export function safeReturnPath(value) {
 
     const relative = target.pathname.slice(siteBase.pathname.length);
     const allowed = [
+      'dashboard/messages', 'dashboard/messages/',
+      'dashboard/messages/index.html',
+      'supplier-account/messages', 'supplier-account/messages/',
+      'supplier-account/messages/index.html',
       '', 'index.html',
       'marketplace-search', 'marketplace-search/',
       'marketplace-search/index.html',

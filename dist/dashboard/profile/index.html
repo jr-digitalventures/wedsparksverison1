@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Profile &amp; Settings — WedSparks</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../../auth.css">
+  <script type="module" src="../../shared/profile-settings.js"></script>
+<script type="module" src="../../shared/header-auth.js"></script>
+  <link rel="stylesheet" href="../dashboard.css">
+  <script type="module" src="../../shared/dashboard-navigation.js"></script>
+</head>
+<body class="auth-page" data-account="couple" data-page="profile">
+  <header class="site-header">
+    <nav class="header-side header-left" aria-label="Primary navigation">
+      <a class="header-nav-link" href="../../marketplace-search/">Search Marketplace</a>
+      <a class="header-nav-link" href="../../supplier-category/">Category Search</a>
+      <button type="button" disabled>Option 3</button>
+    </nav>
+    <a class="brand" href="../../" aria-label="WedSparks home"><svg viewBox="0 0 52 46" aria-hidden="true"><path d="M23 39 5 20C-4 5 14-3 23 8M29 39 47 20C56 5 38-3 29 8M26 8C9-4 8 21 26 36 44 21 43-4 26 8Z"/></svg><span>WedSparks</span></a>
+    <nav class="header-side header-right" aria-label="Account navigation">
+      <button type="button" disabled>Option 4</button>
+      <button class="header-action login" type="button" disabled>Log In</button>
+      <button class="header-action signup" type="button" disabled>Sign Up</button>
+    </nav>
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="mobile-nav-panel" id="mobile-navigation" aria-label="Mobile navigation" hidden><a class="header-nav-link" href="../../marketplace-search/">Search Marketplace</a><a class="header-nav-link" href="../../supplier-category/">Category Search</a><button type="button" disabled>Option 3</button><button type="button" disabled>Option 4</button><div class="mobile-account-actions"><button type="button" disabled>Log In</button><button type="button" disabled>Sign Up</button></div></nav>
+  </header>
+  <main class="auth-content">
+  <p id="profile-loading" class="auth-intro" role="status">
+    Loading your wedding details…
+  </p>
+
+  <section id="profile-content" hidden>
+    <p class="auth-eyebrow">Your wedding, your details</p>
+    <h1>Profile &amp; Settings</h1>
+    <p class="auth-intro ws-profile-intro">
+      Review your wedding details together. Change what you need
+      without repeating onboarding.
+    </p>
+
+    <form id="wedding-profile-form" class="ws-profile-section">
+      <h2>Your wedding</h2>
+      <p>
+        Plans can change. Choose “Not decided yet” when you’re unsure,
+        or “Not answered yet” to leave a detail unanswered.
+      </p>
+
+      <div id="wedding-profile-fields" class="ws-profile-grid"></div>
+
+      <div class="ws-profile-actions">
+        <button id="save-wedding-details"
+          class="auth-primary" type="submit">
+          Save wedding details
+        </button>
+        <button id="cancel-wedding-changes"
+          class="text-button" type="button">
+          Cancel changes
+        </button>
+      </div>
+
+      <p id="profile-save-status" class="ws-profile-status"
+        role="status" aria-live="polite"></p>
+    </form>
+
+    <section class="ws-profile-section ws-profile-security">
+      <h2>Password &amp; security</h2>
+      <p>Use a secure email link to reset your password.</p>
+      <a id="profile-password-reset">Request a password reset</a>
+    </section>
+
+    <p class="auth-login-footer">
+      <a id="profile-back">Back to your dashboard</a>
+    </p>
+  </section>
+</main>
+</body>
+</html>

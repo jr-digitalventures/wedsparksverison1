@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="../auth.css">
   <script type="module" src="../shared/account-page.js"></script>
 <script type="module" src="../shared/header-auth.js"></script>
+  <link rel="stylesheet" href="dashboard.css">
+  <script type="module" src="../shared/dashboard-navigation.js"></script>
 </head>
 <body class="auth-page" data-account="couple">
   <header class="site-header">
@@ -28,25 +30,146 @@
   </header>
   <main class="auth-content">
   <p class="auth-intro" id="account-status" role="status">
-    Loading your account…
+    Loading your wedding details…
   </p>
-  <section id="private-content" hidden>
-    <p class="auth-eyebrow">WedSparks</p>
-    <h1>Your Wedding Dashboard</h1>
-    <p class="auth-intro">
-      Your account is ready. Your planning dashboard is coming next.
+  <section id="private-content" class="ws-overview-v2" hidden>
+    <h1>Your Wedding Overview</h1>
+
+    <div class="wo-top">
+      <section class="wo-wedding" aria-labelledby="wo-wedding-heading">
+        <div class="wo-heading-row">
+          <h2 id="wo-wedding-heading">Your day at a glance</h2>
+          <a id="edit-wedding-details" data-overview-link="dashboard/profile/">Edit details</a>
+        </div>
+        <strong id="wo-countdown" class="wo-countdown">Your day awaits</strong>
+        <dl class="wo-facts">
+          <div><dt>Date</dt><dd data-wedding-value="wedding_date">—</dd></div>
+          <div><dt>Location</dt><dd data-wedding-value="wedding_location">—</dd></div>
+          <div><dt>Guest estimate</dt><dd data-wedding-value="guest_count">—</dd></div>
+        </dl>
+        <p id="profile-completion" class="wo-small"></p>
+      </section>
+
+      <section class="wo-activity" aria-labelledby="wo-activity-heading"
+               aria-describedby="wo-tracking-note">
+        <h2 id="wo-activity-heading">Your planning pulse</h2>
+        <dl class="wo-metrics">
+          <div><dt>Unread messages</dt><dd><a id="overview-message-count" data-overview-link="dashboard/messages/" aria-live="polite">—</a></dd></div>
+          <div><dt>Pending tasks</dt><dd id="overview-task-count" aria-live="polite">—</dd></div>
+          <div><dt>Pending payments</dt><dd aria-label="Not available">—</dd></div>
+          <div><dt>Guests attending</dt><dd id="overview-guests-rate" aria-live="polite">—</dd></div>
+        </dl>
+        <p id="wo-tracking-note" class="wo-small">
+          Messages, tasks, payments and RSVPs update automatically.
+        </p>
+      </section>
+    </div>
+
+    <section class="ws-credits wo-rewards" id="wedding-credits"
+             aria-labelledby="credits-heading">
+      <p class="ws-credits-eyebrow">THE WEDSPARKS DIFFERENCE</p>
+      <h2 id="credits-heading">Your wedding spending gives back.</h2>
+      <p>Earn <strong>$1,000 in free wedding credits</strong>
+         for every <strong>$10,000 of eligible spending.</strong></p>
+
+
+
+      <div class="wo-reward-grid">
+        <div class="wo-wallet wo-potential-card">
+  <p class="wo-potential-heading">Your budget could give you</p>
+  <strong id="wo-potential">Add your budget</strong>
+  <p class="wo-potential-caption">in wedding credits</p>
+  <p class="wo-budget-context">
+    Based on your wedding budget of
+    <strong data-wedding-value="wedding_budget">—</strong>
+    <span>AUD</span>
+  </p>
+  <p id="wo-estimate-note">
+    Set your budget in Profile &amp; settings to see an illustration.
+  </p>
+</div>
+
+        <div class="wo-milestone">
+<div class="wo-live-credits"><dl>
+            <div class="wo-available">
+              <dt>Available credits</dt>
+              <dd aria-label="Not available">—</dd>
+            </div>
+            <div><dt>Total earned</dt><dd aria-label="Not available">—</dd></div>
+            <div><dt>Credits used</dt><dd aria-label="Not available">—</dd></div>
+          </dl></div>
+          <div class="wo-heading-row">
+            <h3>Next credit milestone</h3>
+            <strong>$1,000</strong>
+          </div>
+          <div class="wo-track" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="wo-track-labels">
+            <span>Eligible spend: —</span>
+            <span>Goal: $10,000</span>
+          </div>
+          <p class="wo-remaining">Remaining to next reward: <strong>—</strong></p>
+
+        </div>
+      </div>
+      <p class="wo-credit-note">
+        Credit balances and milestone progress are not connected yet.
+        The budget illustration is separate from credits earned.
+      </p>
+    </section>
+
+    <div class="wo-updates">
+      <section class="wo-update">
+        <h2>Latest messages</h2>
+        <p id="overview-message-status" role="status">Loading conversations…</p>
+        <ul id="overview-message-list"></ul>
+        <a id="overview-message-link" class="overview-task-link" data-overview-link="dashboard/messages/">Open Messages →</a>
+      </section>
+      <section class="wo-update">
+  <h2>Next on your list</h2>
+  <p id="overview-task-status" role="status" aria-live="polite">Loading tasks…</p>
+  <ul id="overview-task-list" class="overview-task-list"></ul>
+  <button id="overview-task-retry" type="button" class="text-button" hidden>
+    Try again
+  </button>
+  <a id="overview-checklist-link" class="overview-task-link">
+    Open checklist &amp; calendar →
+  </a>
+</section>
+      <section class="wo-update">
+        <h2>Upcoming payments</h2>
+        <p>Keep track of deposits, balances and their due dates.</p>
+        <span class="wo-coming">Payment tracking coming soon</span>
+      </section>
+      <section class="wo-update">
+  <h2>Guests &amp; RSVPs</h2>
+  <p id="overview-guests-status" role="status" aria-live="polite">Loading guests…</p>
+  <dl class="wo-facts">
+    <div><dt>Guests added</dt><dd id="overview-guests-total">—</dd></div>
+    <div><dt>Attending</dt><dd id="overview-guests-attending">—</dd></div>
+    <div><dt>Declined</dt><dd id="overview-guests-declined">—</dd></div>
+    <div><dt>Invited · awaiting reply</dt><dd id="overview-guests-awaiting">—</dd></div>
+  </dl>
+  <button id="overview-guests-retry" type="button" class="text-button" hidden>Try again</button>
+  <a id="overview-guests-link" class="overview-task-link">Open guest list →</a>
+</section>
+    </div>
+
+    <p class="wo-shortlist">
+      <a data-overview-link="dashboard/shortlist/">Open your supplier shortlist →</a>
     </p>
-    <p class="auth-intro" id="profile-completion"></p>
-<p class="auth-login-footer">
-  <a id="complete-profile" hidden>Complete your wedding profile</a>
-</p>
-<a class="auth-account-link" id="explore-suppliers">
-      Explore wedding suppliers
-    </a>
+    <section class="ws-overview-discover">
+      <div>
+        <p class="ws-overview-label">BRING YOUR DAY TO LIFE</p>
+        <h2>Your next great find</h2>
+        <p>Discover suppliers who can help create a day that feels like you.</p>
+        <a id="explore-suppliers" class="ws-overview-button">
+          Explore wedding suppliers
+        </a>
+      </div>
+    </section>
   </section>
 </main>
-<script type="module" src="../shared/favourites-panel.js"></script></body>
+</body>
 </html>
-
-
-
