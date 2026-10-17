@@ -1,4 +1,4 @@
-﻿import { supabase } from './supabase-client.js';
+import { supabase } from './supabase-client.js';
 import { siteUrl } from './auth.js';
 
 const heading = document.querySelector('h1');
@@ -130,8 +130,8 @@ form.addEventListener('submit', async event => {
   event.preventDefault();
   if (busy || !form.reportValidity()) return;
 
-  if (password.value.length < 8) {
-    status.textContent = 'Use a password with at least 8 characters.';
+  if (password.value.length < 10) {
+    status.textContent = 'Use a password with at least 10 characters.';
     return;
   }
 

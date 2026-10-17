@@ -11,7 +11,7 @@ if (main && !document.querySelector('.ws-dashboard-shell')) {
   const summary = document.createElement('summary');
   const profilePage = document.body.dataset.page === 'profile';
   summary.textContent =
-    `${document.body.dataset.page === 'messages' ? 'Messages' : document.body.dataset.page === 'budget' ? 'Budget & payments' : document.body.dataset.page === 'guests' ? 'Guests & RSVPs' : document.body.dataset.page === 'checklist' ? 'Checklist & calendar' : profilePage ? 'Profile & settings' : document.body.dataset.page === 'shortlist' ? 'Supplier shortlist' : document.body.dataset.page === 'documents' ? 'Documents' : document.body.dataset.page === 'wedding-day' ? 'Wedding day' : 'Overview'} · Change section`;
+    `${document.body.dataset.page === 'messages' ? 'Messages' : document.body.dataset.page === 'budget' ? 'Budget & payments' : document.body.dataset.page === 'guests' ? 'Guests & RSVPs' : document.body.dataset.page === 'checklist' ? 'Checklist & calendar' : profilePage ? 'Profile Settings' : document.body.dataset.page === 'shortlist' ? 'Supplier shortlist' : document.body.dataset.page === 'documents' ? 'Documents' : document.body.dataset.page === 'wedding-day' ? 'Wedding day' : 'Overview'} · Change section`;
 
   const nav = document.createElement('nav');
   nav.setAttribute('aria-label', 'Wedding dashboard');
@@ -25,7 +25,7 @@ if (main && !document.querySelector('.ws-dashboard-shell')) {
     ['Budget & payments', 'dashboard/budget/', document.body.dataset.page === 'budget'],
     ['Documents', 'dashboard/documents/', document.body.dataset.page === 'documents'],
     ['Wedding day', 'dashboard/wedding-day/', document.body.dataset.page === 'wedding-day'],
-    ['Profile & settings', 'dashboard/profile/', profilePage]
+    ['Profile Settings', 'dashboard/profile/', profilePage]
   ];
 
   for (const [label, path, active] of sections) {
@@ -184,7 +184,7 @@ if (main && !document.querySelector('.ws-dashboard-shell')) {
       });
 
       navigation.querySelector('summary').textContent =
-        `${route.key === 'messages' ? 'Messages' : route.key === 'budget' ? 'Budget & payments' : route.key === 'guests' ? 'Guests & RSVPs' : route.key === 'checklist' ? 'Checklist & calendar' : route.key === 'profile' ? 'Profile & settings' : route.key === 'shortlist' ? 'Supplier shortlist' : route.key === 'documents' ? 'Documents' : route.key === 'wedding-day' ? 'Wedding day' : 'Overview'} · Change section`;
+        `${route.key === 'messages' ? 'Messages' : route.key === 'budget' ? 'Budget & payments' : route.key === 'guests' ? 'Guests & RSVPs' : route.key === 'checklist' ? 'Checklist & calendar' : route.key === 'profile' ? 'Profile Settings' : route.key === 'shortlist' ? 'Supplier shortlist' : route.key === 'documents' ? 'Documents' : route.key === 'wedding-day' ? 'Wedding day' : 'Overview'} · Change section`;
 
       if (matchMedia('(max-width:700px)').matches) {
         navigation.open = false;

@@ -908,6 +908,7 @@ function safeSupplierUrl(value) {
   if (!value || typeof value !== 'string' || !value.trim()) return '';
   try {
     const url = new URL(value,siteUrl(''));
+    if(url.origin==='https://jr-digitalventures.github.io'&&url.pathname==='/wedsparksverison1/supplier/')return siteUrl('supplier/'+url.search);
     return ['http:','https:'].includes(url.protocol) ? url.href : '';
   } catch { return ''; }
 }

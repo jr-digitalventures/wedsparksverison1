@@ -29,18 +29,20 @@ export function safeReturnPath(value) {
 
     const relative = target.pathname.slice(siteBase.pathname.length);
     const allowed = [
+      'dashboard/profile','dashboard/profile/','dashboard/profile/index.html',
       'dashboard/messages', 'dashboard/messages/',
       'dashboard/messages/index.html',
       'supplier-account/messages', 'supplier-account/messages/',
       'supplier-account/messages/index.html',
       '', 'index.html',
+      'supplier','supplier/','supplier/index.html',
       'marketplace-search', 'marketplace-search/',
       'marketplace-search/index.html',
       'supplier-category', 'supplier-category/',
       'supplier-category/index.html'
     ];
 
-    return (allowed.includes(relative) || /^supplier-account(?:\/(?:messages|bookings|availability|storefront|reviews|pricing-packages|account-settings|profile-health|settings))?(?:\/(?:index\.html)?)?$/.test(relative) || /^wedding-suppliers(?:\/[a-z0-9-]+){0,2}\/?$/.test(relative))
+    return (allowed.includes(relative) || /^supplier-account(?:\/(?:messages|bookings|availability|storefront|reviews|pricing-packages|account-settings|profile-health|settings|profile|leads))?(?:\/(?:index\.html)?)?$/.test(relative) || /^wedding-suppliers(?:\/[a-z0-9-]+){0,2}\/?$/.test(relative))
       ? target.pathname + target.search + target.hash
       : null;
   } catch {

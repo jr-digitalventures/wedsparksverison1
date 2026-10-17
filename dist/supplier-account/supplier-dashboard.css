@@ -1,3 +1,4 @@
+@import url('../shared/supplier-workspace.css');
 /* Supplier dashboard uses the shared couple-dashboard layout and colours. */
 body[data-account="supplier"] .ws-dashboard-shell{grid-template-columns:220px minmax(0,1fr)}
 body[data-account="supplier"] .ws-dashboard-navigation a{display:flex;align-items:center;gap:11px;padding:12px 10px;font-size:14px}
@@ -55,3 +56,5 @@ body[data-account="supplier"] .ws-dashboard-navigation .sd-nav-group{margin:28px
 @media(max-width:850px){.sd-grid{grid-template-columns:1fr}.sd-storefront{grid-template-columns:130px minmax(0,1fr)}}
 @media(max-width:700px){body[data-account="supplier"] .ws-dashboard-shell{display:block}.sd-intro{padding:23px}.sd-details{grid-template-columns:1fr}}
 @media(max-width:420px){.sd-storefront{grid-template-columns:1fr}.sd-storefront img{max-width:180px}}
+
+.sd-page [data-supplier-content] > .sd-card + .sd-card{margin-top:22px}

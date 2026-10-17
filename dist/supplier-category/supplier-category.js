@@ -3,7 +3,8 @@ const list=document.querySelector('.supplier-results-list'),pager=document.query
 const template=list?.querySelector('.supplier-listing-card')?.cloneNode(true),spark='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5L12 2Z"/></svg>';
 const state={rows:[],category:'',locationState:'',locationCity:'',locationNational:false,price:'',style:'',date:'',page:0};
 const val=(r,k)=>r?.[k]??'',clean=v=>String(v??'').trim(),norm=v=>clean(v).toLowerCase(),split=v=>clean(v).split(/[,;|\n]+/).map(x=>x.trim()).filter(Boolean);
-const safe=v=>{try{const u=new URL(clean(v),location.href);return /^https?:$/.test(u.protocol)?u.href:''}catch{return''}};
+const supplierPageUrl=new URL('../supplier/',document.currentScript?.src||new URL('supplier-category.js',location.href));
+const safe=v=>{try{const u=new URL(clean(v),location.href);if(u.origin==='https://jr-digitalventures.github.io'&&u.pathname==='/wedsparksverison1/supplier/'){const local=new URL(supplierPageUrl);local.search=u.search;return local.href;}return /^https?:$/.test(u.protocol)?u.href:''}catch{return''}};
 const money=v=>{const s=clean(v),n=Number(s.replace(/[^0-9.]/g,''));return s&&Number.isFinite(n)?new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0}).format(n):s};
 const trunc=(v,n)=>{const s=clean(v);if(s.length<=n)return s;const cut=s.slice(0,n-3),i=cut.lastIndexOf(' ');return`${cut.slice(0,i>0?i:cut.length).trimEnd()}...`};
 const images=r=>Array.from({length:10},(_,i)=>safe(val(r,`Image #${i+1}`))).filter(Boolean),yes=r=>['yes','true','1'].includes(norm(val(r,'Highlighted Record')??val(r,'Highlighted Record Column')));

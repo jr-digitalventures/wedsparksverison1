@@ -1,12 +1,14 @@
+import {mountAccountSecurity} from './account-security.js';
+import {mountSupplierTool,mountSupplierLeads} from './supplier-workspace-ui.js';
 import {supabase} from './supabase-client.js';
 import {requireUser,loadAccount,siteUrl,onSessionChange} from './auth.js';
 import {
-  supplierSections,supplierPageCopy,supplierIcons,supplierRouteFor,supplierSafeUrl
+  supplierSections,supplierPageCopy,supplierIcons,supplierRouteFor
 } from './supplier-dashboard-config.js';
 
 const firstMain=document.querySelector('main[data-supplier-page]');
 let owner=null,account=null,revoked=false,activePage=null,navigationBusy=false;
-let businessPromise=null,inboxBusy=false,inboxDirty=false,inboxChannel=null,inboxTimer=null;
+let inboxBusy=false,inboxDirty=false,inboxChannel=null,inboxTimer=null;
 const pages=new Map();
 const node=(tag,text,className)=>{
   const el=document.createElement(tag);
@@ -38,56 +40,11 @@ function card(title){
   if(title)box.append(node('h2',title));
   return box;
 }
-function emptyCard(content,key,title,description,note){
-  const box=card();
-  box.classList.add('sd-empty');
-  const mark=node('span',null,'sd-empty-icon');mark.append(icon(key));
-  box.append(mark,node('h2',title),node('p',description));
-  if(note)box.append(node('p',note,'sd-note'));
-  content.append(box);
-}
-async function business(){
-  if(businessPromise)return businessPromise;
-  const current=owner;
-  businessPromise=(async()=>{
-    const mapping=await supabase.from('supplier_vendor_accounts')
-      .select('vendor_id').eq('user_id',current).maybeSingle();
-    if(mapping.error)throw new Error();
-    if(!mapping.data)return null;
-    const result=await supabase.from('Vendor Public Profiles')
-      .select('vendor_id,"Name of Wedding Vendor","Wedding Vendor Type","Image #1","Location","About Paragraph","Destination URL"')
-      .eq('vendor_id',mapping.data.vendor_id).maybeSingle();
-    if(result.error)throw new Error();
-    return result.data;
-  })().catch(error=>{businessPromise=null;throw error;});
-  return businessPromise;
-}
-function detailsCard(title,fields){
-  const box=card(title),list=node('dl',null,'sd-details');
-  for(const [label,value] of fields){
-    const row=node('div');
-    row.append(node('dt',label),node('dd',value||'Not added yet'));list.append(row);
-  }
-  box.append(list);return box;
-}
-function showBusinessError(content,route){
-  const box=card('Your business details');
-  box.append(node('p','We could not load your business details. Please try again.'));
-  const retry=node('button','Try again','sd-retry');retry.type='button';
-  retry.addEventListener('click',()=>void renderPage(content,route));
-  box.append(retry);content.append(box);
-}
 async function renderPage(content,route){
   if(revoked)return;
   content.replaceChildren();intro(content,route.key);
-  const placeholders={
-    bookings:['book','Your booking space','Confirmed bookings and the details that matter will live here.','Booking tools are coming next.'],
-    availability:['calendar','A calendar made for your business','Keep track of the dates you can offer couples and the days you want to keep free.','Availability tools are coming next.'],
-    reviews:['review','Kind words, all together','This will be a home for feedback from the couples you have helped celebrate.','Review tools are coming next.'],
-    'pricing-packages':['tag','Packages that tell your story','Bring your services, inclusions and pricing together so couples can find their fit.','Package tools are coming next.']
-  };
-  if(placeholders[route.key]){
-    emptyCard(content,...placeholders[route.key]);return;
+  if(['storefront','bookings','availability','reviews','pricing-packages'].includes(route.key)){
+    await mountSupplierTool(content,route.key,owner);return;
   }
   if(route.key==='overview'){
     const grid=node('div',null,'sd-grid');
@@ -101,7 +58,7 @@ async function renderPage(content,route){
     pulse.append(metrics);
     const next=card('Make yourself at home');
     const quick=node('div',null,'sd-quick-links');
-    for(const key of ['messages','storefront','availability','profile-health']){
+    for(const key of ['messages','storefront','availability','profile']){
       const section=supplierSections.find(item=>item.key===key);
       const link=makeLink('' ,section.path);
       link.append(icon(section.icon),node('span',section.label),node('span','→'));
@@ -116,69 +73,11 @@ async function renderPage(content,route){
     void refreshInbox();
     return;
   }
-  if(route.key==='settings'){
-    content.append(detailsCard('Your personal account',[
-      ['First name',account.profile.first_name],
-      ['Last name',account.profile.last_name],
-      ['Email',account.user.email]
-    ]));
-    const note=node('p','Your sign-in and notification preferences will live here.','sd-note');
-    note.style.marginTop='20px';content.append(note);return;
+  if(route.key==='profile'){
+    mountAccountSecurity(content,account);return;
   }
-  const waiting=node('p','Loading your business details…','sd-note');content.append(waiting);
-  let vendor;
-  try{vendor=await business();}catch{if(!revoked){waiting.remove();showBusinessError(content,route);}return;}
-  if(revoked)return;
-  waiting.remove();
-  if(!vendor){
-    emptyCard(content,'store','Your business, ready to take shape',
-      'Your storefront and business details will appear here once your supplier profile is set up.');
-    return;
-  }
-  const name=vendor['Name of Wedding Vendor']||'Your business';
-  const profileUrl=supplierSafeUrl(vendor['Destination URL'],siteUrl(''));
-  if(route.key==='storefront'){
-    const box=card();box.classList.add('sd-storefront');
-    const imageUrl=supplierSafeUrl(vendor['Image #1'],siteUrl(''));
-    if(imageUrl){
-      const img=node('img');img.src=imageUrl;img.alt=name;img.addEventListener('error',()=>img.remove());box.append(img);
-    }
-    const copy=node('div');
-    copy.append(node('p',vendor['Wedding Vendor Type']||'Wedding supplier','sd-category'),node('h2',name));
-    if(vendor.Location)copy.append(node('p',vendor.Location));
-    if(vendor['About Paragraph'])copy.append(node('p',vendor['About Paragraph']));
-    if(profileUrl){const link=node('a','View your public profile','sd-primary');link.href=profileUrl;link.target='_blank';link.rel='noopener';copy.append(link);}
-    box.append(copy);content.append(box);return;
-  }
-  if(route.key==='account-settings'){
-    content.append(detailsCard('Your supplier account',[
-      ['Business name',name],['Supplier category',vendor['Wedding Vendor Type']],
-      ['Location',vendor.Location],['Account email',account.user.email]
-    ]));return;
-  }
-  if(route.key==='profile-health'){
-    const fields=[
-      ['Business name',vendor['Name of Wedding Vendor']],
-      ['Supplier category',vendor['Wedding Vendor Type']],
-      ['Main image',supplierSafeUrl(vendor['Image #1'],siteUrl(''))],
-      ['About your business',vendor['About Paragraph']],
-      ['Location',vendor.Location]
-    ];
-    const complete=fields.filter(([,value])=>String(value||'').trim()).length;
-    const box=card('Your storefront essentials');
-    box.append(node('p',complete+' of '+fields.length+' essentials added'));
-    const bar=node('div',null,'sd-health-bar');
-    bar.setAttribute('role','progressbar');bar.setAttribute('aria-label','Storefront essentials');
-    bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax',String(fields.length));bar.setAttribute('aria-valuenow',String(complete));
-    const fill=node('span');fill.style.width=(complete/fields.length*100)+'%';bar.append(fill);
-    const list=node('ul',null,'sd-health');
-    for(const [label,value] of fields){
-      const done=!!String(value||'').trim(),row=node('li');
-      row.append(node('span',done?'✓':'○','sd-check'+(done?' is-complete':'')),
-        node('span',label),node('small',done?'Added':'To add','sd-note'));list.append(row);
-    }
-    box.append(bar,list,makeLink('Open your storefront','supplier-account/storefront/','sd-primary'));
-    content.append(box);
+  if(route.key==='leads'){
+    mountSupplierLeads(content);return;
   }
 }
 function overviewVisible(){
@@ -339,7 +238,7 @@ if(firstMain){
   });
   onSessionChange(({user})=>{
     if(owner&&user?.id!==owner){
-      revoked=true;owner=null;account=null;businessPromise=null;stopInbox();
+      revoked=true;owner=null;account=null;stopInbox();
       for(const page of pages.values()){
         page.main.hidden=true;page.main.querySelector('[data-supplier-private]')?.replaceChildren();
       }
