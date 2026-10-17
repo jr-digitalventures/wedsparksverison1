@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Your RSVP — WedSparks</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#faf8f5;color:#173e33;font:16px/1.6 Arial,sans-serif}
+    header{padding:18px 24px;background:#103e33;color:white;text-align:center;
+      font:bold 30px Georgia,serif}
+    .hero{padding:48px 24px;color:white;text-align:center;background:
+      linear-gradient(90deg,rgba(10,35,26,.88),rgba(10,35,26,.55)),
+      url('../assets/background.jpg') center 65%/cover}
+    h1{font:normal 42px/1.15 Georgia,serif;margin:0 0 14px}
+    .hero p{margin:0}
+    main{max-width:740px;margin:30px auto;padding:0 20px 50px}
+    fieldset{min-width:0;border:0;margin:0;padding:0}
+    .guest{background:white;border:1px solid #dedbd6;border-radius:14px;
+      padding:22px;margin:20px 0}
+    .guest legend{float:left;width:100%;font:normal 26px Georgia,serif;
+      padding:0;margin-bottom:20px;overflow-wrap:anywhere}
+    .guest label{clear:both;display:block;font-weight:bold;margin-top:16px}
+    select,textarea{display:block;width:100%;margin-top:8px;padding:12px;
+      border:1px solid #bdc8be;border-radius:7px;background:white;color:#173e33;
+      font:16px/1.5 Arial,sans-serif}
+    textarea{resize:vertical}
+    button{padding:13px 20px;border:1px solid #103e33;border-radius:8px;
+      font:bold 15px Arial,sans-serif;cursor:pointer;background:white;color:#103e33}
+    button.primary{background:#103e33;color:white}
+    button:disabled{opacity:.55;cursor:wait}
+    :focus-visible{outline:3px solid #b78b32;outline-offset:3px}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+    #status{padding:16px;border-radius:9px;background:#edf2ec;overflow-wrap:anywhere}
+    #status[data-error="true"]{background:#fff0e8;color:#832e20}
+    .help{font-size:14px;color:#536158}
+    [hidden]{display:none!important}
+    @media(max-width:500px){h1{font-size:34px}.hero{padding:32px 20px}}
+  </style>
+  <script type="module" src="./rsvp.js"></script>
+</head>
+<body>
+  <header>WedSparks</header>
+  <section class="hero">
+    <h1>We’d love to celebrate with you</h1>
+    <p>Let the couple know whether you can join them.</p>
+  </section>
+  <main>
+    <p id="status" role="status" aria-live="polite">Loading your invitation…</p>
+    <form id="rsvp-form" hidden>
+      <p>Reply for each person below. You can leave someone awaiting a reply
+        and return later using the same link.</p>
+      <fieldset id="rsvp-fields">
+        <div id="guests"></div>
+        <p class="help">Dietary requirements will be shared with the couple.
+          Your changes are saved only when you submit.</p>
+        <button class="primary" type="submit">Submit RSVP</button>
+      </fieldset>
+    </form>
+    <div class="actions">
+      <button id="reload" type="button" hidden>Reload latest replies</button>
+    </div>
+  </main>
+</body>
+</html>
