@@ -1,0 +1,57 @@
+/* Supplier dashboard uses the shared couple-dashboard layout and colours. */
+body[data-account="supplier"] .ws-dashboard-shell{grid-template-columns:220px minmax(0,1fr)}
+body[data-account="supplier"] .ws-dashboard-navigation a{display:flex;align-items:center;gap:11px;padding:12px 10px;font-size:14px}
+body[data-account="supplier"] .ws-dashboard-navigation svg{width:19px;height:19px;flex:none}
+body[data-account="supplier"] .ws-dashboard-navigation .sd-nav-group{margin:28px 10px 7px;color:#667269;font:11px/1.4 var(--sans);letter-spacing:.09em;text-transform:uppercase}
+.sd-page [hidden]{display:none!important}
+.sd-page{font:15px/1.6 var(--sans);color:var(--ink)}
+.sd-intro{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:25px 27px;margin-bottom:24px;border-radius:14px;background:var(--green);color:white}
+.sd-intro h2{font:400 clamp(26px,2.5vw,34px)/1.2 var(--serif);color:white;margin:0 0 9px}
+.sd-intro p{margin:0;color:#edf0e9;max-width:680px;font-size:15px}
+.sd-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.sd-card{padding:25px 27px;border:1px solid var(--line);border-radius:14px;background:white;min-width:0}
+.sd-card h2,.sd-card h3{margin:0 0 12px;font:400 26px/1.25 var(--serif);color:var(--green)}
+.sd-card p{margin:0 0 16px;color:#59645d}
+.sd-card a{color:var(--green)}
+.sd-card .sd-primary,.sd-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border:0;border-radius:8px;background:var(--green);color:white;text-decoration:none;font:600 14px/1.4 var(--sans)}
+.sd-primary:hover{background:#305547;color:white}
+.sd-card a:focus-visible,.sd-page button:focus-visible{outline:3px solid #ad7542;outline-offset:3px}
+.sd-empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:42px 26px;min-height:230px;justify-content:center}
+.sd-empty-icon{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;background:#f8f4eb;color:var(--green);margin-bottom:18px}
+.sd-empty-icon svg{width:30px;height:30px}
+.sd-empty p{max-width:500px}
+.sd-note{font-size:13px;color:#667269}
+.sd-metrics{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:0}
+.sd-metrics dt{font-size:13px;color:#59645d}
+.sd-metrics dd{margin:9px 0 0;font:36px/1.2 var(--serif);color:var(--green)}
+.sd-metrics a{text-decoration:none;color:inherit}
+.sd-metrics a:hover{text-decoration:underline}
+.sd-quick-links{list-style:none;padding:0;margin:0;display:grid;gap:0}
+.sd-quick-links a{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.sd-quick-links a:last-child{border-bottom:0}
+.sd-quick-links svg{width:22px;height:22px}
+.sd-recent-list{list-style:none;padding:0;margin:0 0 18px}
+.sd-recent-list li{padding:12px 0;border-bottom:1px solid var(--line)}
+.sd-recent-list a{display:block;text-decoration:none}
+.sd-recent-list a:hover strong{text-decoration:underline}
+.sd-recent-list span,.sd-recent-list small{display:block}
+.sd-recent-list span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sd-recent-list small{font-size:12px;color:#667269}
+.sd-span-all{grid-column:1/-1}
+.sd-storefront{display:grid;grid-template-columns:190px minmax(0,1fr);gap:26px;align-items:start}
+.sd-storefront img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px}
+.sd-storefront .sd-category{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#8a683a}
+.sd-details{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:0}
+.sd-details dt{font-size:13px;color:#667269;margin-bottom:5px}
+.sd-details dd{margin:0;overflow-wrap:anywhere}
+.sd-health{padding:0;list-style:none;margin:18px 0 0;display:grid;gap:12px}
+.sd-health li{display:flex;align-items:center;gap:10px}
+.sd-health .sd-check{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#f1eee6;color:#69746a}
+.sd-health .sd-check.is-complete{background:#e1ecdf;color:#214c3e}
+.sd-health-bar{height:10px;border-radius:10px;background:#f0eee6;overflow:hidden;margin:14px 0}
+.sd-health-bar span{display:block;height:100%;background:#79946d;border-radius:inherit}
+.sd-retry{border:0;background:transparent;padding:5px 0;text-decoration:underline;color:var(--green);font:inherit;cursor:pointer}
+@media(max-width:1100px){body[data-account="supplier"] .ws-dashboard-shell{grid-template-columns:190px minmax(0,1fr)}.sd-grid{gap:18px}.sd-card{padding:23px}}
+@media(max-width:850px){.sd-grid{grid-template-columns:1fr}.sd-storefront{grid-template-columns:130px minmax(0,1fr)}}
+@media(max-width:700px){body[data-account="supplier"] .ws-dashboard-shell{display:block}.sd-intro{padding:23px}.sd-details{grid-template-columns:1fr}}
+@media(max-width:420px){.sd-storefront{grid-template-columns:1fr}.sd-storefront img{max-width:180px}}

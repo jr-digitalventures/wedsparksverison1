@@ -19,3 +19,7 @@ Existing repository limitations: the older `tests/*.test.cjs` supplier tests fai
 3. Set up SendGrid and Stripe toward the end, including email delivery and payment integration checks.
 
 See `docs/database/README.md` for the scope and order of the SQL scripts saved with this checkpoint.
+
+## Supplier dashboard shell
+
+Supplier accounts now use the couple dashboard design, with Overview, Inbox & Enquiries, Booking Centre, Availability, Your Storefront, Reviews, Pricing Packages, Account Settings, Profile Health and a separate Settings section. Existing messaging remains active. Overview reads live conversation totals, and storefront/account/profile-health views read the linked supplier profile. Booking, availability, review and package tools remain placeholders for later work.

@@ -4,14 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>Your supplier account — WedSparks</title>
+  <title>Overview — WedSparks</title>
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../auth.css">
-  <script type="module" src="../shared/account-page.js"></script>
-<script type="module" src="../shared/header-auth.js"></script>
+  <link rel="stylesheet" href="../dashboard/dashboard.css">
+  <link rel="stylesheet" href="supplier-dashboard.css">
+  <script type="module" src="../shared/header-auth.js"></script>
+  <script type="module" src="../shared/supplier-dashboard.js"></script>
 </head>
-<body class="auth-page" data-account="supplier">
-  <header class="site-header">
+<body class="auth-page" data-account="supplier" data-page="overview">
+<header class="site-header">
     <nav class="header-side header-left" aria-label="Primary navigation">
       <a class="header-nav-link" href="../marketplace-search/">Search Marketplace</a>
       <a class="header-nav-link" href="../supplier-category/">Category Search</a>
@@ -26,22 +28,13 @@
     <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
     <nav class="mobile-nav-panel" id="mobile-navigation" aria-label="Mobile navigation" hidden><a class="header-nav-link" href="../marketplace-search/">Search Marketplace</a><a class="header-nav-link" href="../supplier-category/">Category Search</a><button type="button" disabled>Option 3</button><button type="button" disabled>Option 4</button><div class="mobile-account-actions"><button type="button" disabled>Log In</button><button type="button" disabled>Sign Up</button></div></nav>
   </header>
-  <main class="auth-content">
-  <p class="auth-intro" id="account-status" role="status">
-    Loading your account…
-  </p>
-  <section id="private-content" hidden>
-    <p class="auth-eyebrow">WedSparks</p>
-    <h1>Your supplier account</h1>
-    <p class="auth-intro">
-      Your account is ready. Supplier business setup is coming soon.
-    </p>
-    <p><a class="auth-account-link" id="supplier-messages-link" href="messages/">Open Messages</a></p>
-    <a class="auth-account-link" id="explore-suppliers">
-      Explore wedding suppliers
-    </a>
-  </section>
+<main class="auth-content sd-page" data-supplier-page="overview">
+  <h1>Overview</h1>
+  <p data-supplier-loading role="status">Loading your supplier dashboard…</p>
+  <div data-supplier-private hidden>
+    <div data-supplier-content></div>
+
+  </div>
 </main>
 </body>
 </html>
-
