@@ -1,3 +1,4 @@
+import {mountAccountSecurity} from './account-security.js';
 import { supabase } from './supabase-client.js';
 import {
   requireUser, loadAccount, siteUrl, onSessionChange
@@ -269,8 +270,7 @@ async function start() {
 
     renderFields();
     document.querySelector('#profile-back').href = siteUrl('dashboard/');
-    document.querySelector('#profile-password-reset').href =
-      siteUrl('forgot-password/');
+    mountAccountSecurity(document.querySelector('[data-account-security]'),account);
 
     loading.hidden = true;
     content.hidden = false;

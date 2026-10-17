@@ -30,6 +30,7 @@ function safeUrl(value) {
   if (typeof value !== 'string' || !value.trim()) return null;
   try {
     const url = new URL(value, siteUrl());
+    if(url.origin==='https://jr-digitalventures.github.io'&&url.pathname==='/wedsparksverison1/supplier/')return siteUrl('supplier/'+url.search);
     return ['https:', 'http:'].includes(url.protocol) ? url.href : null;
   } catch { return null; }
 }

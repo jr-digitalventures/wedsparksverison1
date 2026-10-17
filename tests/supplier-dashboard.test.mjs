@@ -5,7 +5,7 @@ import {supplierSections,supplierPageCopy,supplierIcons,supplierRouteFor,supplie
 const base='https://example.com/wedsparks/';
 assert.deepEqual(supplierSections.map(item=>item.label),[
  'Overview','Inbox & Enquiries','Booking Centre','Availability','Your Storefront','Reviews',
- 'Pricing Packages','Account Settings','Profile Health','Settings'
+ 'Pricing Packages','Couple Leads','Profile Settings'
 ]);
 for(const section of supplierSections){
  assert.equal(supplierRouteFor(base+section.path,base)?.key,section.key);
@@ -19,7 +19,7 @@ for(const section of supplierSections){
 assert.equal(supplierRouteFor('https://other.example/supplier-account/',base),null);
 assert.equal(supplierRouteFor(base+'supplier-account/unrecognised/',base),null);
 assert.equal(supplierSafeUrl('javascript:alert(1)',base),'');
-console.log('PASS: all ten tabs, labels, routes and role-gated page templates.');
+console.log('PASS: all nine tabs, labels, routes and role-gated page templates.');
 
 const auth=fs.readFileSync(new URL('../dist/shared/auth.js',import.meta.url),'utf8');
 const authContext={siteBase:new URL(base),URL};
@@ -85,6 +85,8 @@ async function app(initialKey='overview',role='supplier',mobile=false){
   importNode:el=>el,addEventListener:(event,handler)=>docEvents.set(event,handler),title:''};
  const context={
   supplierSections,supplierPageCopy,supplierIcons,supplierRouteFor,supplierSafeUrl,
+  mountAccountSecurity(){},
+  mountSupplierTool:async()=>{},mountSupplierLeads(){},
   document:doc,window:{addEventListener:(event,handler)=>winEvents.set(event,handler),dispatchEvent:event=>winEvents.get(event.type)?.(event)},
   matchMedia:()=>({matches:mobile,addEventListener(){}}),
   location,history:{pushState(state,title,url){location.href=url;location.pathname=new URL(url).pathname;}},
@@ -125,8 +127,8 @@ await supplier.navigate('messages');
 assert.equal(supplier.messageMounts(),1);
 assert.equal(supplier.doc.body.dataset.page,'messages');
 await supplier.navigate('storefront');
-await supplier.navigate('profile-health');
-await supplier.navigate('settings');
+await supplier.navigate('storefront');
+await supplier.navigate('profile');
 await supplier.navigate('overview');
 assert.equal(supplier.first.hidden,false);
 supplier.session()({user:null});

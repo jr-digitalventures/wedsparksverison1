@@ -6,9 +6,8 @@ export const supplierSections = [
   {key:'storefront',label:'Your Storefront',path:'supplier-account/storefront/',icon:'store'},
   {key:'reviews',label:'Reviews',path:'supplier-account/reviews/',icon:'review'},
   {key:'pricing-packages',label:'Pricing Packages',path:'supplier-account/pricing-packages/',icon:'tag'},
-  {key:'account-settings',label:'Account Settings',path:'supplier-account/account-settings/',icon:'account'},
-  {key:'profile-health',label:'Profile Health',path:'supplier-account/profile-health/',icon:'health'},
-  {key:'settings',label:'Settings',path:'supplier-account/settings/',icon:'settings',group:'user'}
+  {key:'leads',label:'Couple Leads',path:'supplier-account/leads/',icon:'leads'},
+  {key:'profile',label:'Profile Settings',path:'supplier-account/profile/',icon:'account'}
 ];
 export const supplierPageCopy = {
   overview:['Your business at a glance','Stay close to your enquiries and keep your wedding business moving.'],
@@ -17,11 +16,11 @@ export const supplierPageCopy = {
   storefront:['Show couples what makes you special','Bring your business to life with a storefront that feels like you.'],
   reviews:['Let your couples tell your story','A home for the kind words and experiences couples share.'],
   'pricing-packages':['Find the right fit for every couple','Present your services and packages clearly, in your own style.'],
-  'account-settings':['Your business details, together','Keep the essentials for your supplier account in one place.'],
-  'profile-health':['Make a great first impression','A little care for your storefront goes a long way.'],
-  settings:['Your account, your preferences','Your personal account details and settings.']
+  leads:['Meet couples looking for you','Connect with couples who have chosen to hear from relevant suppliers.'],
+  profile:['Your profile, your preferences','Manage your account details and keep your sign-in secure.']
 };
 export const supplierIcons = {
+ leads:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0M17 3a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.9',
  overview:'M3 3h7v7H3zM14 3h7v4h-7zM14 11h7v10h-7zM3 14h7v7H3z',
  inbox:'M4 4h16v16H4zM4 13h5l2 3h2l2-3h5M12 7v6M9 10l3 3 3-3',
  book:'M5 3h14v18H5zM9 3v8l3-2 3 2V3',
@@ -40,7 +39,12 @@ export function supplierRouteFor(value,base) {
     if(url.origin!==origin.origin)return null;
     let path=url.pathname.replace(/index\.html$/,'');
     if(!path.endsWith('/'))path+='/';
-    return supplierSections.find(section=>new URL(section.path,origin).pathname===path)||null;
+    const section=supplierSections.find(section=>new URL(section.path,origin).pathname===path);
+    if(section)return section;
+    const legacy=['account-settings','profile-health','settings'];
+    if(legacy.some(key=>new URL('supplier-account/'+key+'/',origin).pathname===path))
+      return supplierSections.find(item=>item.key==='profile');
+    return null;
   }catch{return null;}
 }
 export function supplierSafeUrl(value,base) {
