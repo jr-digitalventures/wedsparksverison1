@@ -34,7 +34,7 @@ async function start() {
     }
 
     document.querySelector('#explore-suppliers').href =
-      siteUrl('marketplace-search/');
+      siteUrl('wedding-suppliers/');
 
     if (!supplierPage) {
       renderWeddingOverview(account);

@@ -17,7 +17,7 @@ export async function loginDestination(returnTo) {
   const safeReturn = safeReturnPath(returnTo);
   const destination = new URL(accountDestination(account));
 
-  if (destination.pathname.endsWith('/onboarding/')) {
+  if ((destination.pathname.endsWith('/onboarding/') || destination.pathname.endsWith('/supplier-onboarding/'))) {
     if (safeReturn) destination.searchParams.set('returnTo', safeReturn);
     return destination.href;
   }

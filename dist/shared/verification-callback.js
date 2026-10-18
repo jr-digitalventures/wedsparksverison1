@@ -48,7 +48,7 @@ async function finishVerification() {
     const account = await loadAccount(user);
     const destination = new URL(accountDestination(account));
 
-    if (destination.pathname.endsWith('/onboarding/')) {
+    if ((destination.pathname.endsWith('/onboarding/') || destination.pathname.endsWith('/supplier-onboarding/'))) {
       if (returnTo) destination.searchParams.set('returnTo', returnTo);
       location.replace(destination.href);
       return;
@@ -63,7 +63,7 @@ async function finishVerification() {
       ? 'Continue exploring'
       : 'Explore wedding suppliers';
 
-    action.href = returnTo || siteUrl('marketplace-search/');
+    action.href = returnTo || siteUrl('wedding-suppliers/');
     action.hidden = false;
 
     try {

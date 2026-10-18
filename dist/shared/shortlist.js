@@ -307,7 +307,7 @@ async function start() {
 
     owner = user.id;
     document.querySelector('#shortlist-browse').href =
-      siteUrl('marketplace-search/');
+      siteUrl('wedding-suppliers/');
     loadingText.hidden = true;
     content.hidden = false;
 

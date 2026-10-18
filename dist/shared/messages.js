@@ -52,6 +52,8 @@ style.textContent = [
   '#messages-root .msg-contact small{display:block;font-weight:400;margin-top:4px}',
   '#messages-root .ws-popup-cross{position:absolute;right:12px;top:10px;width:44px;height:44px;background:transparent;border:0;color:#213e34;font-size:30px}',
   '#messages-root #msg-contacts{margin-top:12px}',
+  '#messages-root .msg-credit-reminder{margin:12px 0 20px;padding:12px 15px;border-left:3px solid #b9a17a;border-radius:5px;background:#f6f3e8;color:#213e34;font:13px/1.6 var(--sans)}',
+  '#messages-root .msg-credit-reminder a{color:inherit;font-weight:600;white-space:nowrap}',
   'body[data-page=messages] main.auth-content{max-width:1250px}',
   '@media(max-width:850px){#messages-root .msg-workspace{grid-template-columns:1fr}#messages-root .msg-inbox{border-right:0;border-bottom:1px solid #dedbd6}#messages-root #msg-inbox-list{max-height:220px}#messages-root .msg-heading{align-items:flex-start;flex-wrap:wrap}#messages-root .msg-thread{padding:16px}#messages-root .msg-bubble{max-width:94%}}'
 ].join('\n');
@@ -62,6 +64,7 @@ root.innerHTML = [
   '<div class="msg-workspace"><aside class="msg-inbox" aria-label="Conversations"><div class="msg-toolbar"><h3>Conversations</h3></div>',
   '<p id="msg-inbox-status" class="msg-notice" role="status"></p><ul id="msg-inbox-list"></ul><div class="msg-pager"><button id="msg-prev" class="msg-plain" type="button">Previous</button><button id="msg-next" class="msg-plain" type="button">Next</button></div></aside>',
   '<section class="msg-thread" aria-label="Selected conversation"><p id="msg-welcome" class="msg-empty">Choose a conversation to read and reply.</p><div id="msg-detail" hidden><h3 id="msg-thread-title"></h3><p id="msg-thread-meta"></p>',
+  supplier?'':`<p class="msg-credit-reminder">Make your wedding spending count. Every complete $10,000 paid through WedSparks payments earns $1,000 in free wedding credits. <a href="${siteUrl('wedding-credits/')}">How credits work ↗</a></p>`,
   '<button id="msg-earlier" class="msg-plain" type="button" hidden>Earlier messages</button><p id="msg-thread-status" class="msg-notice" role="status"></p>',
   '<div id="msg-scroll" tabindex="0" aria-label="Message history"><ol id="msg-history"></ol></div>',
   '<form id="msg-form"><label class="msg-compose-label" for="msg-body">Your message</label><textarea id="msg-body" maxlength="4000" rows="3" required></textarea><div class="msg-send-row"><small id="msg-count">0 / 4,000</small><button id="msg-send" class="msg-primary" type="submit">Send message</button></div><p id="msg-send-status" class="msg-notice" role="status"></p></form></div></section></div>',

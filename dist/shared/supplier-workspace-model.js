@@ -4,7 +4,7 @@ export const emptyStorefront=()=>({name:'',category:'',tagline:'',about:'',city:
 export const emptyWorkspace=()=>({storefront:emptyStorefront(),packages:[],availability:[],capacity:1,bookings:[],quoteDrafts:[]});
 export function cleanWorkspace(value){
   const base=emptyWorkspace(),v=value&&typeof value==='object'?value:{};
-  return {...base,storefront:{...base.storefront,...v.storefront,images:Array.isArray(v.storefront?.images)?v.storefront.images.slice(0,10):[]},
+  return {...base,...(v.onboarding&&typeof v.onboarding==='object'&&!Array.isArray(v.onboarding)?{onboarding:v.onboarding}:{}),storefront:{...base.storefront,...v.storefront,images:Array.isArray(v.storefront?.images)?v.storefront.images.slice(0,10):[]},
     packages:Array.isArray(v.packages)?v.packages:[],availability:Array.isArray(v.availability)?v.availability:[],
     capacity:Math.min(20,Math.max(1,Number(v.capacity)||1)),bookings:Array.isArray(v.bookings)?v.bookings:[],quoteDrafts:Array.isArray(v.quoteDrafts)?v.quoteDrafts:[]};
 }

@@ -36,6 +36,8 @@ export function safeReturnPath(value) {
       'supplier-account/messages/index.html',
       '', 'index.html',
       'supplier','supplier/','supplier/index.html',
+      'supplier-profile-import','supplier-profile-import/','supplier-profile-import/index.html',
+      'supplier-onboarding','supplier-onboarding/','supplier-onboarding/index.html',
       'marketplace-search', 'marketplace-search/',
       'marketplace-search/index.html',
       'supplier-category', 'supplier-category/',
@@ -116,7 +118,7 @@ export function accountDestination(account) {
     );
   }
 
-  return siteUrl('supplier-account/');
+  return siteUrl('supplier-onboarding/?entry=1');
 }
 
 export function profileCompletion(account) {
