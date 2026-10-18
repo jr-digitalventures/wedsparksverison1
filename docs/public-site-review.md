@@ -84,3 +84,12 @@ Verification: automated suite plus desktop/mobile visual checks. Screenshots are
 - Every generated public page now has the common top photo banner, including FAQs, Contact, Real Weddings and all five policy documents. Titles are moved into the banner so each page retains one H1.
 - Public section frames use the homepage gutters: 135px on wide screens, 45px on medium screens and 30px on mobile. Contact, policy, About and journal wrappers no longer have independent narrower maximum widths. Dashboard content is excluded.
 - The paste-details textarea has been removed from the separate importer. File uploads remain available, with Review disabled until a supported file has been read. Website-link extraction is still pending; no competitor credentials are requested.
+
+
+### Supplier directory restoration (18 October 2026)
+
+Restored the marketplace search page from merge #24 (`7f781f0`), retaining the current logo, header, footer and shared banner height. Category/location directories retain Jakob's carousels, category photos, location drill-down and spotlight priority/rotation; the introduction and credits panel remain above the filters. Corrected damaged price-range characters and profile fallback links. Empty category routes now correctly show no matches instead of unrelated businesses. Marketplace search carries category, location, date and price to the directory.
+
+Spotlights require a public supplier's highlighted flag. Sugar Lane Cakes is currently the only public supplier and its flag is false; no promotion or database record was changed. More Filters retains the reference implementation's presentation-only category options; those options still need database-backed filtering before launch. Merge #24 contains no separate individual supplier-profile document; it links through each record's Destination URL. Individual supplier pages were left unchanged.
+
+Review locally: `/wedding-suppliers/`, `/supplier-category/`, `/wedding-suppliers/wedding-cakes/`, `/wedding-suppliers/sydney-nsw/`, `/wedding-suppliers/wedding-cakes/sydney-nsw/`, `/marketplace-search/`. Check mobile search overlay, no-match categories/locations, saved suppliers, signup-return links and spotlight rotation with eligible test records. Nothing pushed in this restoration.

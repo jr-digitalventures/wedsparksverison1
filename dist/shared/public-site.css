@@ -179,3 +179,11 @@ body.public-site main>.public-photo-intro,body.public-site main>.public-copy-wra
 body.public-site main>.public-interactive,body.public-site main>.public-tool-card,body.public-site main>.public-end-cta,body.public-site main>.guide-feature-link,body.public-site main>.journal-feature{max-width:none;width:auto;margin-left:var(--public-gutter);margin-right:var(--public-gutter);box-sizing:border-box}
 body.public-site .contact-only .public-tool-card{margin:0}
 body.public-site .journal-heading:empty,body.public-site .simple-page-heading:empty{display:none}
+
+/* The restored marketplace uses the same banner and page gutters as public pages. */
+.marketplace-search-page:not(.supplier-category-page) .marketplace-categories{padding-top:100px}
+.marketplace-search-page:not(.supplier-category-page) .marketplace-search-summary{left:var(--public-gutter);right:var(--public-gutter)}
+@media(max-width:700px){.marketplace-search-page:not(.supplier-category-page) .marketplace-categories{padding-top:220px}}
+
+.marketplace-search-page:not(.supplier-category-page) .marketplace-hero.public-photo-banner{overflow:visible}
+.marketplace-search-page:not(.supplier-category-page) .marketplace-hero.public-photo-banner>img{object-position:center top}

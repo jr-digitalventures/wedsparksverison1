@@ -3,7 +3,9 @@ const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
-const supplierRoutes = require('../dist/supplier-category/supplier-routes.js');
+const routeContext = {module:{exports:{}}};
+vm.runInNewContext(readFileSync(join(__dirname,'../dist/supplier-category/supplier-routes.js'),'utf8'),routeContext);
+const supplierRoutes=routeContext.module.exports;
 
 // Exercise the page's actual dropdown callbacks and render selection without a network request.
 class Element {
@@ -80,7 +82,8 @@ function page({ rows = defaultRows(), random = 0, session = storage(), pathname 
     location: currentLocation,
     history,
     document: {
-      querySelector: element,
+      querySelector: selector => selector === '#featured-card-template' || selector === '#supplier-card-template' ? null : element(selector),
+      currentScript: {src:'http://localhost/supplier-category/supplier-category.js'},
       querySelectorAll: () => [],
       getElementById: id => element(`#${id}`),
       createElement: () => new Element(),
@@ -88,7 +91,7 @@ function page({ rows = defaultRows(), random = 0, session = storage(), pathname 
     },
   });
   const source = readFileSync(join(__dirname, '../dist/supplier-category/supplier-category.js'), 'utf8');
-  vm.runInContext(source.replace(/load\(\);\s*$/, ''), context);
+  vm.runInContext(source.replace(/^load\(\);/m, ''), context);
   vm.runInContext(`
     carousel = () => {};
     makeCard = r => r;
@@ -562,4 +565,20 @@ test('non-major suburb query URLs restore the structured location', () => {
   p.navigate('/wedsparksverison1/wedding-suppliers/wedding-celebrants/', '?location=paddington-nsw');
   assert.deepEqual(p.selectedLocation(), { state: 'New South Wales', city: 'Paddington' });
   assert.equal(p.count(), 1);
+});
+
+ test('legacy highlighted flag works and explicit false remains excluded',()=>{
+  const p=page({rows:[supplier('Legacy',{ 'Highlighted Record':undefined,'Highlighted Record Column':true}),supplier('Disabled',{'Highlighted Record':false,'Highlighted Record Column':true})]});
+  p.select('heading-category-options','Transport');assert.equal(p.highlight(),'Legacy');
+ });
+ test('the actual en-dash price ranges exclude out-of-range suppliers',()=>{
+  const p=page({rows:[supplier('Low',{'Starting Price':500}),supplier('Middle',{'Starting Price':1800}),supplier('High',{'Starting Price':4000})]});
+  p.select('heading-category-options','Transport');p.update({price:'$1,000–$2,500'});assert.equal(p.highlight(),'Middle');assert.equal(p.results().length,0);
+ });
+
+test('empty category routes never show unrelated suppliers',()=>{
+ const p=page();p.navigate('/wedding-suppliers/wedding-cakes/');assert.equal(p.count(),0);assert.ok(p.results().every(row=>!row['Name of Wedding Vendor']));assert.equal(p.heroTitle(),'Wedding Cakes');
+});
+test('marketplace query carries price and date into filtering',()=>{
+ const p=page();p.query('?category=Transport&price=Under%20%241%2C000&date=2026-10-20');assert.equal(p.count(),0);
 });
