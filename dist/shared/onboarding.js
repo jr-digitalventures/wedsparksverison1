@@ -158,7 +158,7 @@ function render() {
       : 'Go to my dashboard';
 
     document.querySelector('#explore-after-onboarding').href =
-      siteUrl('marketplace-search/');
+      siteUrl('wedding-suppliers/');
 
     content.querySelector('h1').focus();
     return;

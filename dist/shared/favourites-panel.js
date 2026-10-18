@@ -21,7 +21,7 @@ const list = panel.querySelector('ul');
 const status = panel.querySelector('[role=status]');
 const more = panel.querySelector('[data-more]');
 const retry = panel.querySelector('[data-retry]');
-panel.querySelector('[data-browse]').href = siteUrl('marketplace-search/');
+panel.querySelector('[data-browse]').href = siteUrl('wedding-suppliers/');
 panel.querySelector('[data-shortlist]').href = siteUrl('dashboard/shortlist/');
 
 let revision = 0;

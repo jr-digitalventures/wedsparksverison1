@@ -75,11 +75,12 @@ async function boot(supplier=false) {
     URL,Date,console,crypto:{randomUUID:()=> 'uuid'}
   };
   vm.createContext(ctx);
-  const code=source.replace(/^import .*\n/gm,'').replace('void start();','globalThis.boot = start();');
+  const code=source.replace(/^import .*\r?\n/gm,'').replace('void start();','globalThis.boot = start();');
   vm.runInContext(code,ctx);
   await ctx.boot;
   for(let i=0;i<12;i++)await Promise.resolve();
   assert.equal(root.hidden,false);
+  assert.equal(root.html.includes('class="msg-credit-reminder"'),!supplier,'Reward reminder is shown to couples only.');
   assert.equal(ids.get('msg-thread-title').textContent,supplier?'Remi':'Sugar Lane Cakes');
   assert(ids.get('msg-history').children.length===1);
   if(!supplier){

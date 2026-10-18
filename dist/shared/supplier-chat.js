@@ -22,12 +22,12 @@ function paintSupplierChats() {
     const vendor = vendors.get(name);
     let link = card.querySelector('.ws-supplier-chat');
 
-    if (!vendor?.vendor_id || !eligible.has(vendor.vendor_id)) {
+    if (!vendor?.vendor_id || (accountOwner && !eligible.has(vendor.vendor_id))) {
       link?.remove();
       continue;
     }
 
-    if (link && link.dataset.vendorId === vendor.vendor_id) continue;
+
 
     const target = new URL(siteUrl('dashboard/messages/'));
     target.searchParams.set('vendor',vendor.vendor_id);
@@ -35,21 +35,27 @@ function paintSupplierChats() {
     if (!link) {
       link = document.createElement('a');
       link.className = 'ws-supplier-chat';
-      link.innerHTML = '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H9l-5 4z"/><path d="M8 8h8M8 12h5"/></svg><span>Chat with supplier</span>';
+      link.innerHTML = '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H9l-5 4z"/><path d="M8 8h8M8 12h5"/></svg><span>Start a chat</span>';
 
       const featuredActions = card.querySelector(
         '.featured-supplier-actions'
       );
       const profile = card.querySelector('.supplier-profile-button');
 
-      if (featuredActions) featuredActions.append(link);
-      else if (profile) profile.after(link);
-      else continue;
+      let row=card.querySelector('.supplier-card-buttons');
+      const profileButton=profile||featuredActions?.querySelector('a:not(.ws-supplier-chat)');
+      if(!row&&profileButton){row=document.createElement('div');row.className='supplier-card-buttons';profileButton.before(row);row.append(profileButton);}
+      if(row)row.append(link);else continue;
     }
 
     link.dataset.vendorId = vendor.vendor_id;
-    link.href = target.href;
-    link.setAttribute('aria-label','Chat with ' + name);
+    const profile=card.querySelector('.supplier-profile-button')||card.querySelector('.featured-supplier-actions a:not(.ws-supplier-chat)')||card.querySelector('.supplier-card-buttons a:not(.ws-supplier-chat)');
+    if(profile&&!profile.dataset.originalProfile)profile.dataset.originalProfile=profile.href;
+    const signup=new URL(siteUrl('signup/'));signup.searchParams.set('experience','couple');
+    const chatSignup=new URL(signup);chatSignup.searchParams.set('returnTo',target.pathname+target.search);
+    link.href=accountOwner?target.href:chatSignup.href;
+    if(profile){if(accountOwner)profile.href=profile.dataset.originalProfile;else{const profileSignup=new URL(signup),destination=new URL(profile.dataset.originalProfile);if(destination.origin===new URL(siteUrl()).origin)profileSignup.searchParams.set('returnTo',destination.pathname+destination.search);profile.href=profileSignup.href;}}
+    link.setAttribute('aria-label','Start a chat with ' + name);
   }
 }
 
@@ -107,7 +113,11 @@ if (results) {
     'a.ws-supplier-chat{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin:12px 0 0;padding:11px 17px;background:#213e34;color:white;border-radius:8px;font:600 14px/1.4 Arial,sans-serif;text-decoration:none}' +
     'a.ws-supplier-chat:hover{background:#305547;color:white}' +
     'a.ws-supplier-chat:focus-visible{outline:3px solid #ad7542;outline-offset:3px}' +
-    '.featured-supplier-actions a.ws-supplier-chat{margin:0;color:white;background:#213e34}';
+    '.featured-supplier-actions a.ws-supplier-chat{margin:0;color:white;background:#213e34}' +
+    '.supplier-listing-content{display:flex!important;flex-direction:column!important;overflow:visible!important;padding-bottom:30px!important;gap:0!important}.supplier-listing-content>.supplier-description{margin-top:25px!important}.supplier-listing-card{height:auto!important;min-height:375px}.supplier-listing-media{height:100%!important;min-height:300px}.supplier-listing-content{min-width:0}.supplier-card-buttons a.supplier-profile-button{position:static!important;inset:auto!important;grid-column:auto!important;grid-row:auto!important;flex:auto!important;width:100%!important;height:auto!important;margin:0!important}.featured-supplier-actions .supplier-card-buttons{grid-column:1/-1}.supplier-listing-content>.supplier-card-buttons{margin-top:auto;padding-top:24px}.supplier-card-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:24px;grid-column:1/-1}' +
+    '.supplier-card-buttons a,.supplier-card-buttons a.ws-supplier-chat,.supplier-card-buttons a.supplier-profile-button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0;min-height:53px;padding:12px 15px;border-radius:8px;background:#213e34;color:white;text-decoration:none;font:600 14px/1.4 Arial,sans-serif;box-sizing:border-box}' +
+    '.supplier-card-buttons a.supplier-profile-button{background:white;border:1px solid #213e34;color:#213e34}' +
+    '@media(max-width:450px){.supplier-card-buttons{gap:8px}.supplier-card-buttons a,.supplier-card-buttons a.ws-supplier-chat{font-size:12px;padding:11px 7px}}';
   document.head.append(style);
 
   new MutationObserver(paintSupplierChats).observe(

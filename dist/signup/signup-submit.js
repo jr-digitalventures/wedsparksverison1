@@ -4,6 +4,11 @@ import { siteUrl, safeReturnPath } from '../shared/auth.js';
 const form = document.querySelector('#signup-form');
 const button = document.querySelector('#signup-submit');
 const status = document.querySelector('#signup-status');
+const signupExperience = new URLSearchParams(location.search).get('experience');
+if (['supplier','couple'].includes(signupExperience)) {
+  const choice = form.querySelector('input[name="initial_experience"][value="'+signupExperience+'"]');
+  if (choice) choice.checked = true;
+}
 
 const returnTo = safeReturnPath(
   new URLSearchParams(location.search).get('returnTo')

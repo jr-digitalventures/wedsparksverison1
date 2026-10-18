@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync('dist/shared/supplier-chat.js','utf8');
+let row=null;
+const profile={href:'https://example.test/supplier/?vendor=cake',dataset:{},before(n){row=n;}};
+const card={querySelector(selector){
+ if(selector==='.supplier-card-titleline h2')return {textContent:'Sugar Lane Cakes'};
+ if(selector==='.ws-supplier-chat')return row?.children.find(n=>n.className==='ws-supplier-chat')||null;
+ if(selector==='.supplier-card-buttons')return row;
+ if(selector==='.supplier-profile-button')return profile;
+ return null;
+}};
+const ctx={URL,window:{wedsparksSupplierPage:{getRows:()=>[{'Name of Wedding Vendor':'Sugar Lane Cakes',vendor_id:'cake'}]}},siteUrl:p=>'https://example.test/'+(p||''),document:{querySelector:()=>({querySelectorAll:()=>[card]}),createElement:()=>({dataset:{},children:[],append(n){this.children.push(n)},setAttribute(){},remove(){}})}};
+vm.createContext(ctx);
+vm.runInContext(source.slice(0,source.indexOf('\nif (results) {')).replace(/^import .*\r?\n/gm,'')+'\npaintSupplierChats();',ctx);
+assert.equal(row.children.length,2);
+let chat=row.children[1];assert(chat.innerHTML.includes('Start a chat'));assert(source.includes('position:static!important'));assert(source.includes('grid-row:auto!important'));
+assert.equal(new URL(profile.href).pathname,'/signup/');assert.equal(new URL(chat.href).pathname,'/signup/');
+assert.equal(new URL(chat.href).searchParams.get('returnTo'),'/dashboard/messages/?vendor=cake');
+vm.runInContext('paintSupplierChats();',ctx);assert.equal(row.children.length,2,'Repainting must not duplicate or relocate actions.');
+vm.runInContext('accountOwner="couple";eligible=new Set(["cake"]);paintSupplierChats();',ctx);
+assert.equal(profile.href,'https://example.test/supplier/?vendor=cake');assert.equal(new URL(chat.href).pathname,'/dashboard/messages/');
+vm.runInContext('accountOwner=null;eligible=new Set();paintSupplierChats();',ctx);
+assert.equal(new URL(profile.href).pathname,'/signup/');assert.equal(new URL(chat.href).pathname,'/signup/');
+console.log('PASS: guest card actions lead to signup with return paths, signed-in couples retain profile/chat access, and repainting is stable.');
