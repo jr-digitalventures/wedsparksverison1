@@ -104,3 +104,10 @@ Added 18 October 2026. This checklist sits at the very end of the to-do list. Su
 - [ ] Complete the individual supplier page review listed above, including storefront/public-profile consistency and publication/unpublication freshness.
 - [ ] Before any GitHub push/live release, check the business partner's latest remote work, review overlaps and ask the user for approval of the concrete integration/release. Do not overwrite or force-push their work.
 - [ ] After an approved deployment, smoke-test the final public URLs and signup returns; record business partner feedback and remaining launch blockers.
+
+
+#### Restored supplier discovery review
+- [ ] Review `/marketplace-search/` and `/wedding-suppliers/`, category pages, location pages and combined category/location routes with the shared photo banner and credits introduction.
+- [ ] Check category/location/price/date/style filtering, empty results, carousel controls, profile/signup links and saved suppliers on desktop/mobile.
+- [ ] With eligible highlighted records in a test environment, check spotlight priority, rotation, persistence and exclusion from regular results.
+- [ ] Connect category-specific More Filters to stored supplier attributes; the restored controls currently remain presentation-only.

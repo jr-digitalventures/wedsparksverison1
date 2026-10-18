@@ -1,5 +1,6 @@
 import {specialPage} from './public-special-pages.mjs';
 import fs from 'node:fs';
+import vm from 'node:vm';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {applyPublicSeo} from './public-seo.mjs';
@@ -58,11 +59,25 @@ export function renderPage(page){
   if(page.kind==='import')html=html.replace(/<section class="public-end-cta">[\s\S]*?<\/section>/,'');
   return html;
 }
+const supplierRouteContext={module:{exports:{}}};
+vm.runInNewContext(fs.readFileSync(new URL('../dist/supplier-category/supplier-routes.js',import.meta.url),'utf8'),supplierRouteContext);
+const supplierRoutes=supplierRouteContext.module.exports;
+function marketplacePresentation(html,prefix){
+  if(!html.includes('class="marketplace-search-page"'))return html;
+  if(!html.includes('public-photo-banner'))html=html.replace('<section class="marketplace-hero" aria-label="Wedding supplier marketplace search">',`<section class="marketplace-hero public-photo-banner" aria-label="Wedding supplier marketplace search"><img src="${supplierRoutes.mainHero}" alt="" width="1536" height="1024" fetchpriority="high"><div class="public-photo-banner-copy"><p class="public-eyebrow">FIND YOUR WEDDING TEAM</p>`).replace('<h1 class="marketplace-title">Search Wedding Suppliers</h1>','<h1 class="marketplace-title">Search Wedding Suppliers</h1></div>');
+  html=html.replace(/(<div class="marketplace-category-grid" id="marketplace-category-grid">)[\s\S]*?(<\/div>)/,()=>`<div class="marketplace-category-grid" id="marketplace-category-grid">${supplierRoutes.categories.map((c,i)=>`<a class="marketplace-category-card has-data-image${i===0?' marketplace-category-featured':''}" href="${prefix}wedding-suppliers/${c.slug}/" style="background-image:url('${c.hero}')"><span><strong>${c.label}</strong><small>Explore <b aria-hidden="true">→</b></small></span></a>`).join('')}</div>`);
+  return html;
+}
 function directoryPresentation(html,prefix){
   if(!html.includes('supplier-category-page'))return html;
   const title=html.match(/<h1 class="marketplace-title">([^<]+)<\/h1>/)?.[1]||'Find Wedding Suppliers';
-  html=html.replace(/<section class="marketplace-hero[^"]*"[\s\S]*?<\/section>/,()=>`<section class="marketplace-hero public-photo-banner" aria-label="Wedding supplier discovery"><img src="${prefix}assets/wedding-garden.webp" alt="" width="1536" height="1024" fetchpriority="high"><div class="public-photo-banner-copy"><p class="public-eyebrow">YOUR PEOPLE. YOUR PLANS. ONE PLACE.</p><h1 class="marketplace-title">${title}</h1></div></section>`);
-  const intro=`<section class="public-discovery-intro" data-discovery-intro><div><p class="public-eyebrow">FIND YOUR WEDDING TEAM</p><h2>Great suppliers. A simpler way to plan.</h2><p>Explore wedding businesses by service and location, save your favourites and start a conversation. Keep your suppliers, messages and wedding plans together in WedSparks.</p></div><aside><strong>Your wedding spending gives back.</strong><p>Every complete $10,000 paid through WedSparks payments earns $1,000 in free wedding credits.</p>${link(prefix+'wedding-credits/','See how wedding credits work ↗')}</aside></section>`;
+  const canonical=html.match(/rel="canonical" href="([^"]+)"/)?.[1]||'';
+  const slug=canonical.split('/wedding-suppliers/')[1]?.split('/')[0];
+  const category=supplierRoutes.categoryBySlug(slug);
+  const hero=category?.hero||supplierRoutes.mainHero;
+  const focal=category?.heroPosition||(!category&&supplierRoutes.mainHeroPosition)||'center calc(50% - 50px)';
+  html=html.replace(/<section class="marketplace-hero[^"]*"[\s\S]*?<\/section>/,()=>`<section class="marketplace-hero public-photo-banner" aria-label="Wedding supplier discovery" style="--supplier-hero-position:${focal}"><img src="${hero}" style="object-position:${focal}" alt="" width="1536" height="1024" fetchpriority="high"><div class="public-photo-banner-copy"><p class="public-eyebrow">YOUR PEOPLE. YOUR PLANS. ONE PLACE.</p><h1 class="marketplace-title">${title}</h1></div></section>`);
+  const intro=`<section class="public-discovery-intro" data-discovery-intro><div><p class="public-eyebrow">FIND YOUR WEDDING TEAM</p><h2>Great suppliers. A simpler way to plan.</h2><p>Explore wedding businesses by service and location, save your favourites and start a conversation. Keep your suppliers, messages and wedding plans together in WedSparks.</p>${link(prefix+'marketplace-search/','Browse categories and locations ↗')}</div><aside><strong>Your wedding spending gives back.</strong><p>Every complete $10,000 paid through WedSparks payments earns $1,000 in free wedding credits.</p>${link(prefix+'wedding-credits/','See how wedding credits work ↗')}</aside></section>`;
   html=html.replace(/<section class="public-discovery-intro"[\s\S]*?<\/section>/,'');
   html=html.replace('<section class="supplier-category-content"',intro+'<section class="supplier-category-content"');
   if(!html.includes('id="featured-card-template"'))html=html.replace(/<article class="featured-supplier-card"[\s\S]*?<\/article>/,m=>`<template id="featured-card-template">${m}</template>`);
@@ -100,13 +115,14 @@ function generate(){
   function navigation(dir){
     for(const f of fs.readdirSync(dir,{withFileTypes:true})){
       const abs=path.join(dir,f.name);if(f.isDirectory()){navigation(abs);continue;}if(f.name!=='index.html')continue;
-      const original=fs.readFileSync(abs,'utf8');let html=original;
+      const original=fs.readFileSync(abs,'utf8');let html=original.replaceAll('supplier-category.js?v=30','supplier-category.js?v=31').replaceAll('marketplace.js?v=17','marketplace.js?v=18');
       const relative=path.relative(root,path.dirname(abs)),prefix='../'.repeat(relative?relative.split(path.sep).length:0);
       const frozen=['suppliers','supplier','homepage-2'].includes(relative.split(path.sep)[0]);
       if(!frozen&&html.includes('class="site-header')){
         const mobileId=html.match(/class="mobile-menu-toggle"[^>]*aria-controls="([^"]+)"/)?.[1]||'mobile-navigation';
         html=html.replace(/<header class="site-header[^"]*">[\s\S]*?<\/header>/,()=>header(prefix,mobileId));
         html=directoryPresentation(html,prefix);
+        html=marketplacePresentation(html,prefix);
         if(!/<link rel="icon"/.test(html))html=html.replace('</head>',`<link rel="icon" type="image/svg+xml" href="${prefix}assets/wedsparks-favicon.svg"></head>`);
         html=html.replace(/<link rel="icon"[^>]+>/,()=>`<link rel="icon" type="image/svg+xml" href="${prefix}assets/wedsparks-favicon.svg">`);
       }

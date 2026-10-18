@@ -1,3 +1,9 @@
+const marketplaceRoutes=window.WEDSPARKS_SUPPLIER_ROUTES;
+const marketplaceBase=new URL('../wedding-suppliers/',document.currentScript.src);
+const marketplaceSelected={};
+const categoryOptions=document.querySelector('#marketplace-category-options');
+if(categoryOptions&&marketplaceRoutes){categoryOptions.replaceChildren(...marketplaceRoutes.categories.map(c=>{const b=document.createElement('button');b.type='button';b.textContent=c.value;return b;}));}
+function marketplaceDestination(value){try{const url=new URL(value,location.href);if(url.origin==='https://jr-digitalventures.github.io'&&url.pathname.startsWith('/wedsparksverison1/'))return new URL('../'+url.pathname.slice('/wedsparksverison1/'.length)+url.search,document.currentScript?.src||new URL('marketplace.js',location.href)).href;return ['http:','https:'].includes(url.protocol)?url.href:'';}catch{return '';}}
 const menuButton = document.querySelector('.mobile-menu-toggle');
 const mobileMenu = document.querySelector('#marketplace-mobile-navigation');
 
@@ -33,6 +39,7 @@ searchTriggers.forEach(trigger => {
   dropdown.querySelectorAll(':scope > button:not(.marketplace-date-apply)').forEach(option => {
     option.addEventListener('click', () => {
       trigger.querySelector('strong').textContent = option.textContent.trim();
+      marketplaceSelected[trigger.dataset.marketplaceTrigger]=option.textContent.trim();
       closeSearchDropdowns();
       trigger.focus();
     });
@@ -76,7 +83,8 @@ if (marketplaceCategoryGrid) {
   const createCategoryCard = (row, featured = false) => {
       const link = document.createElement('a');
       link.className = `marketplace-category-card has-data-image${featured ? ' marketplace-category-featured' : ''}`;
-      link.href = safeUrl(row.destination_url) || '#';
+      const category=marketplaceRoutes?.categoryByValue(row.name);
+      link.href = category?new URL(category.slug+'/',marketplaceBase).href:marketplaceBase.href;
       const imageUrl = safeUrl(row.image_url);
       if (imageUrl) link.style.backgroundImage = `url("${imageUrl.replaceAll('"', '%22')}")`;
 
@@ -228,7 +236,9 @@ if (marketplaceLocationTrack) {
     const cards = activeRows.map(row => {
       const link = document.createElement('a');
       link.className = 'marketplace-location-card';
-      link.href = safeLocationUrl(row.destination_url ?? row.desintation_url ?? row.Destination_url ?? row.Desintation_url) || '#';
+      const locationName=String(row.location_name??row.Location_name??'').trim();
+      const region=[...(marketplaceRoutes?.states||[]),...(marketplaceRoutes?.cities||[])].find(item=>item.value.toLowerCase()===locationName.toLowerCase());
+      const destination=new URL(region?region.slug+'/':'',marketplaceBase);if(!region&&locationName)destination.searchParams.set('location',locationName);link.href=destination.href;
 
       const image = document.createElement('img');
       image.src = safeLocationUrl(row.image_url ?? row.Image_url) || '../assets/background-v2.png';
@@ -238,7 +248,7 @@ if (marketplaceLocationTrack) {
       const title = document.createElement('strong');
       title.textContent = row.location_name ?? row.Location_name ?? 'Wedding location';
       const count = document.createElement('small');
-      count.textContent = supplierCountLabel(row.location_suppliers ?? row.Location_suppliers);
+      count.textContent = 'Explore wedding suppliers';
       const arrow = document.createElement('b');
       arrow.setAttribute('aria-hidden', 'true');
       arrow.textContent = '→';
@@ -336,7 +346,7 @@ if (marketplaceSupplierCarousel && marketplaceSupplierPagination) {
     const cards = activeRows.map(row => {
       const link = document.createElement('a');
       link.className = 'supplier-card has-data-image';
-      link.href = safeSupplierUrl(row.destination_url ?? row.Destination_url) || '#';
+      const destination=new URL(marketplaceBase);destination.searchParams.set('style',row.Wedding_style??row.wedding_style??'');link.href=destination.href;
       const imageUrl = safeSupplierUrl(row.Image_url ?? row.image_url);
       if (imageUrl) link.style.backgroundImage = `url("${imageUrl.replaceAll('"', '%22')}")`;
       const content = document.createElement('span');
@@ -388,3 +398,16 @@ if (marketplaceSupplierCarousel && marketplaceSupplierPagination) {
   }, {passive: true});
   loadWeddingStyles();
 }
+
+// Submit the chosen filters to the shared supplier directory.
+document.querySelector('.marketplace-edit-search')?.addEventListener('click',()=>{
+ const target=new URL(marketplaceBase);
+ const category=marketplaceRoutes?.categoryByValue(marketplaceSelected['marketplace-category-options']);
+ if(category)target.pathname+=category.slug+'/';
+ const location=marketplaceSelected['marketplace-location-options'];
+ if(location)target.searchParams.set('location',location);
+ const price=marketplaceSelected['marketplace-budget-options'];
+ if(price&&price!=='Any budget')target.searchParams.set('price',price);
+ if(dateInput?.value)target.searchParams.set('date',dateInput.value);
+ window.location.assign(target.href);
+});

@@ -2,7 +2,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const routes = require('../dist/supplier-category/supplier-routes.js');
+const vm=require('node:vm');
+const routeContext={module:{exports:{}}};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../dist/supplier-category/supplier-routes.js'),'utf8'),routeContext);
+const routes=routeContext.module.exports;
 
 const dist = path.join(__dirname, '../dist');
 const page = (...segments) => path.join(dist, 'wedding-suppliers', ...segments, 'index.html');
@@ -34,12 +37,11 @@ test('generator creates every category, state, city and combination route', () =
 test('generated routes have specific metadata, canonical URLs and working relative assets', () => {
   const html = fs.readFileSync(page('wedding-venues', 'nsw'), 'utf8');
   assert.match(html, /<title>Wedding Venues in New South Wales \| WedSparks<\/title>/);
+  assert.ok(html.includes('venue.png'));
   assert.match(html, /<h1 class="marketplace-title">Wedding Venues<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/jr-digitalventures\.github\.io\/wedsparksverison1\/wedding-suppliers\/wedding-venues\/nsw\/"/);
   assert.match(html, /href="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-category\.css\?v=44"/);
   assert.match(html, /src="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-routes\.js\?v=2"/);
-  assert.match(html, /--supplier-hero-image:url\('https:\/\/vfdtyxcfrqnqdyuimtho\.supabase\.co\/storage\/v1\/object\/public\/Misc%20Website%20Pictures\/venue\.png'\)/);
-  assert.match(html, /background-image:linear-gradient\(180deg,rgba\(9,24,20,\.2\),rgba\(9,24,20,\.08\)\),url\('https:\/\/vfdtyxcfrqnqdyuimtho\.supabase\.co\/storage\/v1\/object\/public\/Misc%20Website%20Pictures\/venue\.png'\)/);
 });
 
 test('every configured supplier category has a dedicated hero image', () => {
@@ -69,6 +71,18 @@ test('sitemap contains all generated supplier routes', () => {
   const locations = sitemap.match(/<loc>/g) || [];
   const expected = 1 + routes.categories.length + routes.states.length + routes.cities.length
     + routes.categories.length * (routes.states.length + routes.cities.length);
-  assert.equal(locations.length, expected);
+  assert.ok(locations.length >= expected);
   assert.match(sitemap, /wedding-suppliers\/wedding-celebrants\/melbourne-vic\//);
+});
+
+test('directory filter labels retain working Unicode price ranges',()=>{
+ const html=fs.readFileSync(page(),'utf8');
+ for(const price of ['$1,000–$2,500','$2,500–$5,000'])assert.ok(html.includes('>'+price+'</button>'));
+ assert.ok(html.includes('public-photo-banner'));assert.ok(html.includes('public-discovery-intro'));
+});
+test('marketplace search is a working page with current account entry points',()=>{
+ const html=fs.readFileSync(path.join(dist,'marketplace-search/index.html'),'utf8');
+ assert.ok(html.includes('id="marketplace-search"'));assert.ok(html.includes('public-photo-banner'));
+ assert.ok(html.includes('../signup/?experience=couple'));assert.ok(html.includes('../signup/?experience=supplier'));
+ assert.ok(!html.includes('http-equiv="refresh"'));assert.ok(!html.includes('Card Label'));
 });

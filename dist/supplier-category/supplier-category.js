@@ -1,16 +1,16 @@
-﻿const SB='https://vfdtyxcfrqnqdyuimtho.supabase.co',KEY='sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd',PAGE=15;
-const list=document.querySelector('.supplier-results-list'),pager=document.querySelector('.supplier-pagination'),featuredSource=document.querySelector('#featured-card-template'),featured=featuredSource?.content.querySelector('.featured-supplier-card')?.cloneNode(true)||document.querySelector('.featured-supplier-card'),count=document.querySelector('#supplier-results-title>span:first-child');
-if(featuredSource&&featured){featured.hidden=true;featuredSource.before(featured);}
-const template=(document.querySelector('#supplier-card-template')?.content.querySelector('.supplier-listing-card')||list?.querySelector('.supplier-listing-card'))?.cloneNode(true),spark='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5L12 2Z"/></svg>';
+const SB='https://vfdtyxcfrqnqdyuimtho.supabase.co',KEY='sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd',PAGE=15;
+const list=document.querySelector('.supplier-results-list'),pager=document.querySelector('.supplier-pagination'),featuredSource=document.querySelector('#featured-card-template'),featured=featuredSource?.content?.querySelector('.featured-supplier-card')?.cloneNode(true)||document.querySelector('.featured-supplier-card'),count=document.querySelector('#supplier-results-title>span:first-child');
+if(featuredSource?.content&&featured){featured.hidden=true;featuredSource.before(featured);}
+const template=(document.querySelector('#supplier-card-template')?.content?.querySelector('.supplier-listing-card')||list?.querySelector('.supplier-listing-card'))?.cloneNode(true),spark='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5L12 2Z"/></svg>';
 const state={rows:[],category:'',locationState:'',locationCity:'',locationNational:false,price:'',style:'',date:'',page:0};
 const val=(r,k)=>r?.[k]??'',clean=v=>String(v??'').trim(),norm=v=>clean(v).toLowerCase(),split=v=>clean(v).split(/[,;|\n]+/).map(x=>x.trim()).filter(Boolean);
 const supplierPageUrl=new URL('../supplier/',document.currentScript?.src||new URL('supplier-category.js',location.href));
 let publishedRoutes={};
-const profileDestination=r=>{const id=clean(r.vendor_id),slug=publishedRoutes[id];if(id){const url=new URL(slug&&/^[a-z0-9-]+$/.test(slug)?'../suppliers/'+slug+'/':'../supplier/',supplierPageUrl);if(!slug)url.searchParams.set('vendor',id);return url.href;}return safe(val(r,'Destination URL'))||'#';};
+const profileDestination=r=>{const id=clean(r.vendor_id),slug=publishedRoutes[id],published=typeof slug==='string'&&/^[a-z0-9-]+$/.test(slug);if(id){const url=new URL(published?'../suppliers/'+slug+'/':'../supplier/',supplierPageUrl);if(!published)url.searchParams.set('id',id);return url.href;}return safe(val(r,'Destination URL'))||'#';};
 const safe=v=>{try{const u=new URL(clean(v),location.href);if(u.origin==='https://jr-digitalventures.github.io'&&u.pathname==='/wedsparksverison1/supplier/'){const local=new URL(supplierPageUrl);local.search=u.search;return local.href;}return /^https?:$/.test(u.protocol)?u.href:''}catch{return''}};
 const money=v=>{const s=clean(v),n=Number(s.replace(/[^0-9.]/g,''));return s&&Number.isFinite(n)?new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0}).format(n):s};
 const trunc=(v,n)=>{const s=clean(v);if(s.length<=n)return s;const cut=s.slice(0,n-3),i=cut.lastIndexOf(' ');return`${cut.slice(0,i>0?i:cut.length).trimEnd()}...`};
-const images=r=>Array.from({length:10},(_,i)=>safe(val(r,`Image #${i+1}`))).filter(Boolean),yes=r=>['yes','true','1'].includes(norm(val(r,'Highlighted Record')??val(r,'Highlighted Record Column')));
+const images=r=>Array.from({length:10},(_,i)=>safe(val(r,`Image #${i+1}`))).filter(Boolean),yes=r=>['yes','true','1'].includes(norm(r?.['Highlighted Record']??r?.['Highlighted Record Column']));
 const normalDate=v=>{const s=clean(v),iso=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/),au=s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);if(iso)return`${iso[1]}-${iso[2].padStart(2,'0')}-${iso[3].padStart(2,'0')}`;if(au)return`${au[3]}-${au[2].padStart(2,'0')}-${au[1].padStart(2,'0')}`;const d=new Date(s);return Number.isNaN(d.getTime())?s:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const ROUTES=window.WEDSPARKS_SUPPLIER_ROUTES;
 const slugify=value=>clean(value).toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -53,7 +53,7 @@ function updateRouteMetadata(){
     const heroPosition=category?.heroPosition||(!category&&ROUTES.mainHeroPosition)||'center calc(50% - 50px)';
     const mobileHeroPosition=category?.heroPosition||(!category&&ROUTES.mainHeroPosition)||'62% center';
     const heroPhoto=hero.querySelector('img');
-    if(heroPhoto&&category){heroPhoto.src=heroImage;heroPhoto.style.objectPosition=innerWidth<=700?mobileHeroPosition:heroPosition;}
+    if(heroPhoto){heroPhoto.src=heroImage;heroPhoto.style.objectPosition=window.innerWidth<=700?mobileHeroPosition:heroPosition;}
     const heroUrl=`url("${heroImage}")`;
     hero.style.setProperty('--supplier-hero-image',heroUrl);
     hero.style.setProperty('--supplier-hero-position',heroPosition);
@@ -104,7 +104,7 @@ const categoryFilters = {
     { label: 'Dietary Options', options: ['Standard', 'Gluten-free available', 'Vegan available', 'Other dietary options available'] },
   ],
   catering: [
-    { label: 'Service Style', options: ['Plated', 'Buffet', 'Shared feast', 'CanapÃ©s', 'Grazing', 'Food truck'] },
+    { label: 'Service Style', options: ['Plated', 'Buffet', 'Shared feast', 'Canapés', 'Grazing', 'Food truck'] },
     { label: 'Cuisine', options: ['Australian', 'Asian', 'European', 'Mediterranean', 'Middle Eastern', 'Indian', 'Mexican', 'Mixed/Other'] },
     { label: 'Dietary Options', options: ['Standard', 'Vegetarian available', 'Vegan available', 'Gluten-free available', 'Other dietary options available'] },
   ],
@@ -121,7 +121,7 @@ const categoryFilters = {
     { label: 'Trial Available', options: ['Yes', 'No'] },
   ],
   hireage: [
-    { label: 'Hire Type', options: ['Furniture', 'Tableware', 'Linen', 'DÃ©cor', 'Lighting', 'Structures', 'Signage', 'Mixed hire'] },
+    { label: 'Hire Type', options: ['Furniture', 'Tableware', 'Linen', 'Décor', 'Lighting', 'Structures', 'Signage', 'Mixed hire'] },
     { label: 'Setup Service', options: ['Hire only', 'Delivery', 'Delivery + setup'] },
   ],
   'live entertainment': [
@@ -134,7 +134,7 @@ const categoryFilters = {
   ],
   photographer: [
     { label: 'Photography Style', options: ['Documentary', 'Editorial', 'Traditional', 'Fine art', 'Mixed'] },
-    { label: 'Coverage', options: ['Up to 4 hours', '4â€“8 hours', '8+ hours'] },
+    { label: 'Coverage', options: ['Up to 4 hours', '4–8 hours', '8+ hours'] },
   ],
   stationary: [
     { label: 'Product Type', options: ['Invitations', 'Save the dates', 'On-the-day stationery', 'Signage', 'Full suite'] },
@@ -143,16 +143,16 @@ const categoryFilters = {
   ],
   transport: [
     { label: 'Vehicle Type', options: ['Classic car', 'Luxury car', 'Limousine', 'Bus/Coach', 'Van', 'Vintage vehicle', 'Specialty vehicle'] },
-    { label: 'Passenger Capacity', options: ['1â€“4', '5â€“8', '9â€“20', '21+'] },
+    { label: 'Passenger Capacity', options: ['1–4', '5–8', '9–20', '21+'] },
   ],
   venue: [
     { label: 'Venue Type', options: ['Hotel', 'Estate', 'Winery', 'Restaurant', 'Garden', 'Beach', 'Barn', 'Warehouse', 'Function centre', 'Private property', 'Other'] },
-    { label: 'Guest Capacity', options: ['Under 50', '50â€“100', '101â€“150', '151â€“200', '200+'] },
+    { label: 'Guest Capacity', options: ['Under 50', '50–100', '101–150', '151–200', '200+'] },
     { label: 'Ceremony On-site', options: ['Yes', 'No'] },
   ],
   videographer: [
     { label: 'Video Style', options: ['Cinematic', 'Documentary', 'Editorial', 'Traditional', 'Mixed'] },
-    { label: 'Coverage', options: ['Up to 4 hours', '4â€“8 hours', '8+ hours'] },
+    { label: 'Coverage', options: ['Up to 4 hours', '4–8 hours', '8+ hours'] },
   ],
   'wedding dress': [
     { label: 'Purchase Type', options: ['Made to order', 'Ready to wear', 'Sample', 'Hire', 'Pre-loved'] },
@@ -202,7 +202,7 @@ function updateLocationLabel() {
 function positionLocationMenu() {
   const menu = document.getElementById('heading-location-options');
   if (menu.hidden) return;
-  // Keep the desktop panel aligned to the start of â€œINâ€, regardless of label length.
+  // Keep the desktop panel aligned to the start of “IN”, regardless of label length.
   menu.style.setProperty('--location-offset', '0px');
   const filter = menu.closest('.supplier-heading-filter');
   const anchor = document.querySelector('.supplier-location-anchor');
@@ -285,7 +285,7 @@ function drawLocationMenu() {
   states.append(stateList);
   container.append(states);
   const locations = block('supplier-location-detail');
-  const back = button('â† Back', () => {
+  const back = button('← Back', () => {
     locationUI.pane = 'states'; drawLocationMenu(); positionLocationMenu();
     locationUI.activeButton?.focus();
   }, 'supplier-location-back');
@@ -431,13 +431,13 @@ document.addEventListener('keydown', event => {
 
 function setupMenus(){
  const ct=document.querySelector('[data-heading-filter="heading-category-options"]'),st=document.querySelector('[data-filter-trigger="supplier-style-options"]'),pt=document.querySelector('[data-filter-trigger="supplier-price-options"]');
- menu('heading-category-options',unique('Wedding Vendor Type'),'All wedding categories',v=>{state.category=v;state.page=0;label(ct,v||'WEDDING CATEGORY',!!v);closeAll();renderCategoryFilters();updateSupplierUrl();render()});
+ menu('heading-category-options',[...new Set([...(ROUTES?.categories.map(c=>c.value)||[]),...unique('Wedding Vendor Type')])],'All wedding categories',v=>{state.category=v;state.page=0;label(ct,v||'WEDDING CATEGORY',!!v);closeAll();renderCategoryFilters();updateSupplierUrl();render()});
  setupLocationMenu();
  menu('supplier-style-options',unique('Vendor Style',true),'Any style',v=>{state.style=v;state.page=0;label(st,v||'Style',!!v);closeAll();render()});
  document.querySelectorAll('#supplier-price-options button').forEach(b=>b.onclick=()=>{state.price=b.textContent==='Any price'?'':b.textContent;state.page=0;label(pt,state.price||'Starting Price',!!state.price);closeAll();render()});
 }
 document.querySelector('.supplier-date-apply')?.addEventListener('click',()=>{const input=document.querySelector('#supplier-filter-date');if(!input?.value)return;state.date=normalDate(input.value);state.page=0;label(document.querySelector('[data-filter-trigger="supplier-date-options"]'),new Intl.DateTimeFormat('en-AU',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(`${state.date}T00:00:00`)),true);closeAll();render()});
-const priceMatch=r=>{if(!state.price)return true;const n=Number(clean(val(r,'Starting Price')).replace(/[^0-9.]/g,''));if(!Number.isFinite(n))return false;if(state.price==='Under $1,000')return n<1000;if(state.price==='$1,000â€“$2,500')return n>=1000&&n<=2500;if(state.price==='$2,500â€“$5,000')return n>=2500&&n<=5000;if(state.price==='$5,000+')return n>=5000;return true};
+const priceMatch=r=>{if(!state.price)return true;const n=Number(clean(val(r,'Starting Price')).replace(/[^0-9.]/g,''));if(!Number.isFinite(n))return false;if(state.price==='Under $1,000')return n<1000;if(state.price==='$1,000–$2,500')return n>=1000&&n<=2500;if(state.price==='$2,500–$5,000')return n>=2500&&n<=5000;if(state.price==='$5,000+')return n>=5000;return true};
 const matches=r=>(!state.category||norm(val(r,'Wedding Vendor Type'))===norm(state.category))&&(!state.locationState||norm(val(r,'Location - State'))===norm(state.locationState))&&(!state.locationCity||norm(val(r,'Location - Suburb/City'))===norm(state.locationCity))&&(!state.style||split(val(r,'Vendor Style')).some(x=>norm(x)===norm(state.style)))&&(!state.date||split(val(r,'Dates Available')).some(x=>normalDate(x)===state.date))&&priceMatch(r);
 
 // Remember one winner per search for this tab's session, including across reloads.
@@ -483,7 +483,7 @@ const fav=card=>{const b=card.querySelector('.supplier-favourite');if(!b)return;
 function fillFeatured(r){featured.hidden=false;featured.querySelector('.supplier-type').textContent=clean(val(r,'Wedding Vendor Type'));featured.querySelector('.supplier-card-titleline h2').textContent=clean(val(r,'Name of Wedding Vendor'));featured.querySelector('.supplier-location span').textContent=clean(val(r,'Location'));featured.querySelector('.supplier-price-value').textContent=money(val(r,'Starting Price'));featured.querySelector('.supplier-description').textContent=trunc(val(r,'Highlighted About Paragraph'),170);features(featured.querySelector('.supplier-features'),Array.from({length:6},(_,i)=>val(r,`Highlighted Feature #${i+1}`)),30);featured.querySelector('.featured-supplier-actions a').href=profileDestination(r);featured.querySelector('.featured-supplier-media img').alt=clean(val(r,'Name of Wedding Vendor'))||'Featured wedding supplier';carousel(featured,images(r))}
 function makeCard(r){const c=template.cloneNode(true),name=clean(val(r,'Name of Wedding Vendor'));c.querySelector('.supplier-type').textContent=clean(val(r,'Wedding Vendor Type'));c.querySelector('.supplier-card-titleline h2').textContent=name;c.querySelector('.supplier-location span').textContent=clean(val(r,'Location'));c.querySelector('.supplier-price-value').textContent=money(val(r,'Starting Price'));c.querySelector('.supplier-description').textContent=trunc(val(r,'About Paragraph'),300);features(c.querySelector('.supplier-features'),Array.from({length:4},(_,i)=>val(r,`Showcased Feature #${i+1}`)),40);c.querySelector('.supplier-profile-button').href=profileDestination(r);c.querySelector('.supplier-listing-media img').alt=name||'Wedding supplier';const f=c.querySelector('.supplier-favourite');f.setAttribute('aria-label',`Save ${name||'supplier'}`);f.classList.remove('is-saved','is-expanded');f.style.width='';f.querySelector('span').textContent='Save to Favourites';fav(c);carousel(c,images(r));return c}
 const empty=message=>{const p=document.createElement('p');p.className='supplier-results-empty';p.textContent=message;list.append(p)};
-function pagination(n){pager.replaceChildren();pager.hidden=n<=1;if(n<=1)return;const add=(text,target,{disabled=false,current=false,labelText=''}={})=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.disabled=disabled;if(labelText)b.setAttribute('aria-label',labelText);if(current)b.setAttribute('aria-current','page');b.onclick=()=>{if(disabled||target===state.page)return;state.page=target;render();list.scrollIntoView({behavior:'smooth',block:'start'})};pager.append(b)};const gap=()=>{const s=document.createElement('span');s.className='supplier-pagination-ellipsis';s.textContent='â€¦';pager.append(s)};add('â€¹',state.page-1,{disabled:state.page===0,labelText:'Previous page'});const visible=new Set([0,n-1,state.page-1,state.page,state.page+1]);if(state.page<=2)[0,1,2,3].forEach(i=>i<n&&visible.add(i));if(state.page>=n-3)[n-4,n-3,n-2,n-1].forEach(i=>i>=0&&visible.add(i));let last=-1;[...visible].filter(i=>i>=0&&i<n).sort((a,b)=>a-b).forEach(i=>{if(last>=0&&i-last>1)gap();add(String(i+1),i,{current:i===state.page,labelText:`Page ${i+1}`});last=i});add('â€º',state.page+1,{disabled:state.page===n-1,labelText:'Next page'})}
+function pagination(n){pager.replaceChildren();pager.hidden=n<=1;if(n<=1)return;const add=(text,target,{disabled=false,current=false,labelText=''}={})=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.disabled=disabled;if(labelText)b.setAttribute('aria-label',labelText);if(current)b.setAttribute('aria-current','page');b.onclick=()=>{if(disabled||target===state.page)return;state.page=target;render();list.scrollIntoView({behavior:'smooth',block:'start'})};pager.append(b)};const gap=()=>{const s=document.createElement('span');s.className='supplier-pagination-ellipsis';s.textContent='…';pager.append(s)};add('‹',state.page-1,{disabled:state.page===0,labelText:'Previous page'});const visible=new Set([0,n-1,state.page-1,state.page,state.page+1]);if(state.page<=2)[0,1,2,3].forEach(i=>i<n&&visible.add(i));if(state.page>=n-3)[n-4,n-3,n-2,n-1].forEach(i=>i>=0&&visible.add(i));let last=-1;[...visible].filter(i=>i>=0&&i<n).sort((a,b)=>a-b).forEach(i=>{if(last>=0&&i-last>1)gap();add(String(i+1),i,{current:i===state.page,labelText:`Page ${i+1}`});last=i});add('›',state.page+1,{disabled:state.page===n-1,labelText:'Next page'})}
 function render() {
   const rows = state.rows.filter(matches);
   const highlight = selectHighlight(rows);
@@ -505,11 +505,17 @@ function render() {
 function initialQuery() {
   const q = new URLSearchParams(location.search);
   const routed = routeSelection();
+  state.price=['Under $1,000','$1,000–$2,500','$2,500–$5,000','$5,000+'].includes(q.get('price'))?q.get('price'):'';
+  state.date=q.get('date')?normalDate(q.get('date')):'';
+  state.style=clean(q.get('style'));
+  label(document.querySelector('[data-filter-trigger="supplier-style-options"]'),state.style||'Style',!!state.style);
+  label(document.querySelector('[data-filter-trigger="supplier-price-options"]'),state.price||'Starting Price',!!state.price);
+  label(document.querySelector('[data-filter-trigger="supplier-date-options"]'),state.date||'Date',!!state.date);
   state.category='';state.locationState='';state.locationCity='';state.locationNational=false;state.page=0;
   const categoryTrigger=document.querySelector('[data-heading-filter="heading-category-options"]');
   label(categoryTrigger,'WEDDING CATEGORY',false);
   const category = routed.category || q.get('category') || q.get('vendorType') || '';
-  const matchedCategory = unique('Wedding Vendor Type').find(value => norm(value) === norm(category));
+  const matchedCategory = ROUTES?.categoryByValue(category)?.value || unique('Wedding Vendor Type').find(value => norm(value) === norm(category));
   if (matchedCategory) {
     state.category = matchedCategory;
     label(document.querySelector('[data-heading-filter="heading-category-options"]'), matchedCategory, true);
