@@ -4,7 +4,7 @@ const { join } = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
 const routeContext = {module:{exports:{}}};
-vm.runInNewContext(readFileSync(join(__dirname,'../dist/supplier-category/supplier-routes.js'),'utf8'),routeContext);
+vm.runInNewContext(readFileSync(join(__dirname,'../dist/wedding-suppliers/supplier-routes.js'),'utf8'),routeContext);
 const supplierRoutes=routeContext.module.exports;
 
 // Exercise the page's actual dropdown callbacks and render selection without a network request.
@@ -83,14 +83,14 @@ function page({ rows = defaultRows(), random = 0, session = storage(), pathname 
     history,
     document: {
       querySelector: selector => selector === '#featured-card-template' || selector === '#supplier-card-template' ? null : element(selector),
-      currentScript: {src:'http://localhost/supplier-category/supplier-category.js'},
+      currentScript: {src:'http://localhost/wedding-suppliers/supplier-category.js'},
       querySelectorAll: () => [],
       getElementById: id => element(`#${id}`),
       createElement: () => new Element(),
       addEventListener() {},
     },
   });
-  const source = readFileSync(join(__dirname, '../dist/supplier-category/supplier-category.js'), 'utf8');
+  const source = readFileSync(join(__dirname, '../dist/wedding-suppliers/supplier-category.js'), 'utf8');
   vm.runInContext(source.replace(/^load\(\);/m, ''), context);
   vm.runInContext(`
     carousel = () => {};

@@ -1,11 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const routes = require('../dist/supplier-category/supplier-routes.js');
+const routes = require('../dist/wedding-suppliers/supplier-routes.js');
 
 const projectRoot = path.resolve(__dirname, '..');
 const distRoot = path.join(projectRoot, 'dist');
 const outputRoot = path.join(distRoot, 'wedding-suppliers');
-const templatePath = path.join(distRoot, 'supplier-category', 'index.html');
+const templatePath = path.join(outputRoot, 'index.html');
 const liveRoot = 'https://jr-digitalventures.github.io/wedsparksverison1';
 
 if (path.dirname(outputRoot) !== distRoot || path.basename(outputRoot) !== 'wedding-suppliers') {
@@ -44,14 +44,14 @@ const render = page => {
   const canonical = `${liveRoot}/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
   let html = fs.readFileSync(templatePath, 'utf8');
   html = html
-    .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${description}">\n  <link rel="canonical" href="${canonical}">`)
+    .replace(/<meta name="description" content="[^"]*">\s*(?:<link rel="canonical" href="[^"]*">)?/, `<meta name="description" content="${description}">\n  <link rel="canonical" href="${canonical}">`)
     .replace(/<title>[^<]*<\/title>/, `<title>${label} | WedSparks</title>`)
     .replace('href="../styles.css?v=55"', `href="${prefix}styles.css?v=55"`)
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
-    .replace('href="supplier-category.css?v=44"', `href="${prefix}supplier-category/supplier-category.css?v=44"`)
-    .replace('src="../marketplace-search/marketplace.js?v=17"', `src="${prefix}marketplace-search/marketplace.js?v=17"`)
-    .replace('src="supplier-routes.js?v=2"', `src="${prefix}supplier-category/supplier-routes.js?v=2"`)
-    .replace('src="supplier-category.js?v=30"', `src="${prefix}supplier-category/supplier-category.js?v=30"`)
+    .replace('href="supplier-category.css?v=45"', `href="${prefix}wedding-suppliers/supplier-category.css?v=45"`)
+    .replace('src="../marketplace-search/marketplace.js?v=18"', `src="${prefix}marketplace-search/marketplace.js?v=18"`)
+    .replace('src="supplier-routes.js?v=3"', `src="${prefix}wedding-suppliers/supplier-routes.js?v=3"`)
+    .replace('src="supplier-category.js?v=32"', `src="${prefix}wedding-suppliers/supplier-category.js?v=32"`)
     .replaceAll('href="../marketplace-search/"', `href="${prefix}marketplace-search/"`)
     .replaceAll('href="../wedding-suppliers/" aria-current="page"', `href="${prefix}wedding-suppliers/" aria-current="page"`)
     .replace('href="../" aria-label="WedSparks home"', `href="${prefix}" aria-label="WedSparks home"`)
@@ -61,7 +61,11 @@ const render = page => {
   return html;
 };
 
-fs.rmSync(outputRoot, { recursive: true, force: true });
+// Preserve the shared directory assets while rebuilding all generated SEO route folders.
+fs.mkdirSync(outputRoot, { recursive: true });
+for (const entry of fs.readdirSync(outputRoot, { withFileTypes: true })) {
+  if (entry.isDirectory()) fs.rmSync(path.join(outputRoot, entry.name), { recursive: true, force: true });
+}
 pages.forEach(page => {
   const directory = path.join(outputRoot, ...page.segments);
   fs.mkdirSync(directory, { recursive: true });
@@ -74,4 +78,9 @@ const sitemap = pages.map(page => {
 }).join('\n');
 fs.writeFileSync(path.join(distRoot, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemap}\n</urlset>\n`);
 fs.writeFileSync(path.join(distRoot, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${liveRoot}/sitemap.xml\n`);
+const legacyRoot = path.join(distRoot, 'supplier-category');
+if (path.dirname(legacyRoot) !== distRoot || path.basename(legacyRoot) !== 'supplier-category') {
+  throw new Error(`Refusing to remove unexpected legacy directory: ${legacyRoot}`);
+}
+fs.rmSync(legacyRoot, { recursive: true, force: true });
 console.log(`Generated ${pages.length} wedding supplier pages.`);
