@@ -1,12 +1,20 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const routes = require('../dist/wedding-suppliers/supplier-routes.js');
+const vm = require('node:vm');
 
 const projectRoot = path.resolve(__dirname, '..');
 const distRoot = path.join(projectRoot, 'dist');
 const outputRoot = path.join(distRoot, 'wedding-suppliers');
 const templatePath = path.join(outputRoot, 'index.html');
 const liveRoot = 'https://jr-digitalventures.github.io/wedsparksverison1';
+const baseTemplate = fs.readFileSync(templatePath, 'utf8');
+const routeModule = { exports: {} };
+vm.runInNewContext(
+  fs.readFileSync(path.join(outputRoot, 'supplier-routes.js'), 'utf8'),
+  { module: routeModule, exports: routeModule.exports, globalThis: {} },
+  { filename: 'supplier-routes.js' }
+);
+const routes = routeModule.exports;
 
 if (path.dirname(outputRoot) !== distRoot || path.basename(outputRoot) !== 'wedding-suppliers') {
   throw new Error(`Refusing to replace unexpected output directory: ${outputRoot}`);
@@ -34,6 +42,7 @@ const pageLabel = ({ category, location }) => {
 const render = page => {
   const depth = 1 + page.segments.length;
   const prefix = '../'.repeat(depth);
+  const supplierAssetPrefix = page.segments.length ? `${prefix}wedding-suppliers/` : '';
   const label = pageLabel(page);
   const heroLabel = page.category?.label || 'Find Wedding Suppliers';
   const heroImage = page.category?.hero || routes.mainHero;
@@ -42,16 +51,16 @@ const render = page => {
   const description = `Discover ${label.toLowerCase()} and compare wedding services, packages and profiles on WedSparks.`;
   const routePath = `/wedsparksverison1/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
   const canonical = `${liveRoot}/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
-  let html = fs.readFileSync(templatePath, 'utf8');
+  let html = baseTemplate;
   html = html
     .replace(/<meta name="description" content="[^"]*">\s*(?:<link rel="canonical" href="[^"]*">)?/, `<meta name="description" content="${description}">\n  <link rel="canonical" href="${canonical}">`)
     .replace(/<title>[^<]*<\/title>/, `<title>${label} | WedSparks</title>`)
     .replace('href="../styles.css?v=55"', `href="${prefix}styles.css?v=55"`)
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
-    .replace('href="supplier-category.css?v=45"', `href="${prefix}wedding-suppliers/supplier-category.css?v=45"`)
+    .replace(/href="[^"]*supplier-category\.css\?v=45"/, `href="${supplierAssetPrefix}supplier-category.css?v=45"`)
     .replace('src="../marketplace-search/marketplace.js?v=18"', `src="${prefix}marketplace-search/marketplace.js?v=18"`)
-    .replace('src="supplier-routes.js?v=3"', `src="${prefix}wedding-suppliers/supplier-routes.js?v=3"`)
-    .replace('src="supplier-category.js?v=32"', `src="${prefix}wedding-suppliers/supplier-category.js?v=32"`)
+    .replace(/src="[^"]*supplier-routes\.js\?v=3"/, `src="${supplierAssetPrefix}supplier-routes.js?v=3"`)
+    .replace(/src="[^"]*supplier-category\.js\?v=32"/, `src="${supplierAssetPrefix}supplier-category.js?v=32"`)
     .replaceAll('href="../marketplace-search/"', `href="${prefix}marketplace-search/"`)
     .replaceAll('href="../wedding-suppliers/" aria-current="page"', `href="${prefix}wedding-suppliers/" aria-current="page"`)
     .replace('href="../" aria-label="WedSparks home"', `href="${prefix}" aria-label="WedSparks home"`)
