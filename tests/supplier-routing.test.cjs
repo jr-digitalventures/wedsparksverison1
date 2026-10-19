@@ -40,8 +40,8 @@ test('generated routes have specific metadata, canonical URLs and working relati
   assert.ok(html.includes('venue.png'));
   assert.match(html, /<h1 class="marketplace-title">Wedding Venues<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/jr-digitalventures\.github\.io\/wedsparksverison1\/wedding-suppliers\/wedding-venues\/nsw\/"/);
-  assert.match(html, /href="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-category\.css\?v=44"/);
-  assert.match(html, /src="\.\.\/\.\.\/\.\.\/supplier-category\/supplier-routes\.js\?v=2"/);
+  assert.match(html, /href="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-category\.css\?v=45"/);
+  assert.match(html, /src="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-routes\.js\?v=3"/);
 });
 
 test('every configured supplier category has a dedicated hero image', () => {
@@ -51,12 +51,12 @@ test('every configured supplier category has a dedicated hero image', () => {
 });
 
 test('supplier hero focal points preserve exclusions and frame requested edges', () => {
-  assert.equal(routes.categoryByValue('Cake').heroPosition, 'center top');
-  assert.equal(routes.categoryByValue('Florist').heroPosition, 'center bottom');
-  assert.equal(routes.categoryByValue('Transport').heroPosition, undefined);
-  assert.match(fs.readFileSync(page('wedding-florists'), 'utf8'), /--supplier-hero-position:center bottom/);
-  assert.match(fs.readFileSync(page('wedding-cakes'), 'utf8'), /--supplier-hero-position:center top/);
-  assert.match(fs.readFileSync(page('wedding-transport'), 'utf8'), /--supplier-hero-position:center calc\(50% - 50px\)/);
+  assert.equal(routes.categoryByValue('Cake').heroPosition, '75% 58%');
+  assert.equal(routes.categoryByValue('Florist').heroPosition, '75% 72%');
+  assert.equal(routes.categoryByValue('Transport').heroPosition, '75% 58%');
+  assert.match(fs.readFileSync(page('wedding-florists'), 'utf8'), /--supplier-hero-position:75% 72%/);
+  assert.match(fs.readFileSync(page('wedding-cakes'), 'utf8'), /--supplier-hero-position:75% 58%/);
+  assert.match(fs.readFileSync(page('wedding-transport'), 'utf8'), /--supplier-hero-position:75% 58%/);
 });
 
 test('location-only pages retain the generic supplier heading', () => {
