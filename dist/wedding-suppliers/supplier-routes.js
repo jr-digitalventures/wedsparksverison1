@@ -5,7 +5,7 @@
 }(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const imageRoot = 'https://vfdtyxcfrqnqdyuimtho.supabase.co/storage/v1/object/public/Misc%20Website%20Pictures/';
   const hero = name => `${imageRoot}${encodeURIComponent(name)}.png`;
-  const mainHero = hero('main page');
+  const mainHero = hero('Garden Wedding Through the Foliage');
   const mainHeroPosition = 'center top';
   const categories = [
     { value: 'Bar Service', slug: 'bar-services', label: 'Bar Services', hero: hero('bar service') },
