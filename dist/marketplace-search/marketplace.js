@@ -2,7 +2,10 @@ const marketplaceRoutes=window.WEDSPARKS_SUPPLIER_ROUTES;
 const marketplaceBase=new URL('../wedding-suppliers/',document.currentScript.src);
 const marketplaceSelected={};
 const categoryOptions=document.querySelector('#marketplace-category-options');
-if(categoryOptions&&marketplaceRoutes){categoryOptions.replaceChildren(...marketplaceRoutes.categories.map(c=>{const b=document.createElement('button');b.type='button';b.textContent=c.value;return b;}));}
+if(categoryOptions&&marketplaceRoutes){
+ const all=document.createElement('button');all.type='button';all.textContent='All wedding categories';
+ categoryOptions.replaceChildren(all,...marketplaceRoutes.categories.map(c=>{const b=document.createElement('button');b.type='button';b.textContent=c.value;return b;}));
+}
 function marketplaceDestination(value){try{const url=new URL(value,location.href);if(url.origin==='https://jr-digitalventures.github.io'&&url.pathname.startsWith('/wedsparksverison1/'))return new URL('../'+url.pathname.slice('/wedsparksverison1/'.length)+url.search,document.currentScript?.src||new URL('marketplace.js',location.href)).href;return ['http:','https:'].includes(url.protocol)?url.href:'';}catch{return '';}}
 const menuButton = document.querySelector('.mobile-menu-toggle');
 const mobileMenu = document.querySelector('#marketplace-mobile-navigation');
