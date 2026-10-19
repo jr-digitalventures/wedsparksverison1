@@ -47,6 +47,101 @@ searchTriggers.forEach(trigger => {
 });
 
 const dateInput = document.querySelector('#marketplace-date');
+
+const marketplaceLocationMenu = document.querySelector('#marketplace-location-options');
+const marketplaceLocationTrigger = document.querySelector('[data-marketplace-trigger="marketplace-location-options"]');
+const marketplaceLocationUI = {active:'', pane:'states', groups:[]};
+const marketplaceStateAbbreviations = {
+  'new south wales':'NSW', victoria:'VIC', queensland:'QLD', 'western australia':'WA',
+  'south australia':'SA', tasmania:'TAS', 'australian capital territory':'ACT', 'northern territory':'NT'
+};
+const normaliseMarketplaceLocation = value => String(value || '').trim().toLowerCase();
+const marketplaceLocationBlock = (className, text='') => {
+  const node=document.createElement('div'); node.className=className; node.textContent=text; return node;
+};
+const marketplaceLocationButton = (text, className, action) => {
+  const node=document.createElement('button'); node.type='button'; node.className=className; node.textContent=text;
+  node.addEventListener('click',event=>{event.stopPropagation();action();}); return node;
+};
+function setMarketplaceLocation(region='',city='',close=false,national=false){
+  const abbreviation=marketplaceStateAbbreviations[normaliseMarketplaceLocation(region)] || region;
+  const visible=city ? `${city}, ${abbreviation}` : abbreviation || (national ? 'Australia' : 'Find your where');
+  marketplaceLocationTrigger?.querySelector('strong')?.replaceChildren(visible);
+  marketplaceSelected['marketplace-location-options']=city ? `${city}, ${region}` : region;
+  if(close){closeSearchDropdowns();marketplaceLocationTrigger?.focus();}
+}
+function drawMarketplaceLocationMenu(){
+  if(!marketplaceLocationMenu)return;
+  marketplaceLocationMenu.replaceChildren();
+  marketplaceLocationMenu.dataset.pane=marketplaceLocationUI.pane;
+  const states=marketplaceLocationBlock('marketplace-location-states');
+  const heading=marketplaceLocationBlock('marketplace-location-heading');
+  heading.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>Select a state</span>';
+  states.append(heading);
+  const stateList=marketplaceLocationBlock('marketplace-location-state-list');
+  stateList.append(marketplaceLocationButton('All locations','marketplace-location-state marketplace-location-national',()=>setMarketplaceLocation('','',true,true)));
+  marketplaceLocationUI.groups.forEach(group=>{
+    const row=marketplaceLocationButton(group.name,'marketplace-location-state',()=>{
+      marketplaceLocationUI.active=group.name;marketplaceLocationUI.pane='locations';
+      setMarketplaceLocation(group.name);drawMarketplaceLocationMenu();
+    });
+    row.dataset.active=String(normaliseMarketplaceLocation(group.name)===normaliseMarketplaceLocation(marketplaceLocationUI.active));
+    stateList.append(row);
+  });
+  states.append(stateList); marketplaceLocationMenu.append(states);
+
+  const detail=marketplaceLocationBlock('marketplace-location-detail');
+  detail.append(marketplaceLocationButton('← Back','marketplace-location-back',()=>{
+    marketplaceLocationUI.pane='states';drawMarketplaceLocationMenu();
+  }));
+  detail.append(marketplaceLocationBlock('marketplace-location-heading',marketplaceLocationUI.active || 'Select a state'));
+  detail.append(marketplaceLocationButton('All','marketplace-location-all',()=>setMarketplaceLocation(marketplaceLocationUI.active,'',true)));
+  const cityList=marketplaceLocationBlock('marketplace-location-city-list');
+  const activeGroup=marketplaceLocationUI.groups.find(group=>normaliseMarketplaceLocation(group.name)===normaliseMarketplaceLocation(marketplaceLocationUI.active));
+  (activeGroup?.cities || []).forEach(city=>cityList.append(marketplaceLocationButton(city,'marketplace-location-choice',()=>setMarketplaceLocation(activeGroup.name,city,true))));
+  if(!activeGroup?.cities.length)cityList.append(marketplaceLocationBlock('marketplace-location-empty','No suburbs or cities available.'));
+  detail.append(cityList); marketplaceLocationMenu.append(detail);
+}
+function fallbackMarketplaceLocationGroups(){
+  return (marketplaceRoutes?.states || []).map(state=>({
+    name:state.value,
+    cities:(marketplaceRoutes?.cities || []).filter(city=>normaliseMarketplaceLocation(city.state)===normaliseMarketplaceLocation(state.value)).map(city=>city.value)
+  }));
+}
+async function loadMarketplaceLocationGroups(){
+  marketplaceLocationUI.groups=fallbackMarketplaceLocationGroups();
+  marketplaceLocationUI.active=marketplaceLocationUI.groups[0]?.name || '';
+  drawMarketplaceLocationMenu();
+  try{
+    const select=encodeURIComponent('"Location - State","Location - Suburb/City"');
+    const response=await fetch(`https://vfdtyxcfrqnqdyuimtho.supabase.co/rest/v1/Vendor%20Public%20Profiles?select=${select}`,{headers:{apikey:'sb_publishable_ZKsMTDpNvDifXRSCZJTTAA_JLt1QFYd'}});
+    if(!response.ok)throw new Error(`Supabase request failed (${response.status})`);
+    const rows=await response.json();
+    const grouped=new Map();
+    rows.forEach(row=>{
+      const region=String(row['Location - State'] || '').trim();
+      const city=String(row['Location - Suburb/City'] || '').trim();
+      if(!region)return;
+      if(!grouped.has(region))grouped.set(region,new Set());
+      if(city)grouped.get(region).add(city);
+    });
+    const ordered=(marketplaceRoutes?.states || []).map(state=>state.value);
+    marketplaceLocationUI.groups=[...grouped].sort(([a],[b])=>{
+      const ai=ordered.findIndex(value=>normaliseMarketplaceLocation(value)===normaliseMarketplaceLocation(a));
+      const bi=ordered.findIndex(value=>normaliseMarketplaceLocation(value)===normaliseMarketplaceLocation(b));
+      return (ai<0?999:ai)-(bi<0?999:bi)||a.localeCompare(b);
+    }).map(([name,cities])=>({name,cities:[...cities].sort((a,b)=>a.localeCompare(b))}));
+    marketplaceLocationUI.active=marketplaceLocationUI.groups[0]?.name || '';
+    drawMarketplaceLocationMenu();
+  }catch(error){console.warn('Using local Marketplace location fallback:',error.message);}
+}
+marketplaceLocationTrigger?.addEventListener('click',()=>{
+  if(marketplaceLocationTrigger.getAttribute('aria-expanded')==='true'){
+    marketplaceLocationUI.pane='states';drawMarketplaceLocationMenu();
+  }
+});
+loadMarketplaceLocationGroups();
+
 document.querySelector('.marketplace-date-apply')?.addEventListener('click', () => {
   if (!dateInput.value) return;
   const selectedDate = new Date(`${dateInput.value}T00:00:00`);

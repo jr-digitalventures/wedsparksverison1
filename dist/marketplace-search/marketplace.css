@@ -68,3 +68,41 @@
 .marketplace-search-field:has(.marketplace-search-value[aria-expanded=true]){z-index:110}
 .marketplace-dropdown{z-index:1000!important}
 .marketplace-categories,.marketplace-locations{position:relative;z-index:1}
+
+/* State and suburb/city drill-down used by the Wedding Location search field. */
+#marketplace-location-options.marketplace-location-selector{
+  left:calc(-18px - 1px);right:auto;width:min(760px,calc(100vw - 32px));min-width:0;
+  max-height:min(480px,75dvh);overflow:hidden;padding:8px;
+  display:grid;grid-template-columns:45% 55%;
+  border:1px solid #e0dfdb;border-radius:10px;background:#fff;
+  box-shadow:0 8px 24px rgba(16,62,51,.14);color:#161b19;
+  font:400 14px/1.4 var(--sans);text-transform:none;letter-spacing:0;
+}
+#marketplace-location-options.marketplace-location-selector[hidden]{display:none}
+#marketplace-location-options .marketplace-location-states,
+#marketplace-location-options .marketplace-location-detail{display:flex;flex-direction:column;min-width:0;min-height:0}
+#marketplace-location-options .marketplace-location-states{padding-right:8px}
+#marketplace-location-options .marketplace-location-detail{padding-left:8px;border-left:1px solid #e0dfdb}
+#marketplace-location-options .marketplace-location-heading{display:flex;align-items:center;gap:10px;min-height:48px;flex-shrink:0;padding:8px 16px;border-bottom:1px solid #e0dfdb;font-weight:500}
+#marketplace-location-options .marketplace-location-heading svg{width:18px;height:18px;flex:0 0 18px;color:#103e33}
+#marketplace-location-options .marketplace-location-state-list,
+#marketplace-location-options .marketplace-location-city-list{display:block;overflow-y:auto;overscroll-behavior:contain;min-height:0}
+#marketplace-location-options button{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:46px;width:100%;padding:10px 16px;border:0;border-radius:0;border-bottom:0;background:#fff;color:#161b19;font:400 14px/1.4 var(--sans);white-space:normal;text-align:left}
+#marketplace-location-options button:hover,
+#marketplace-location-options button:focus-visible,
+#marketplace-location-options .marketplace-location-state[data-active="true"],
+#marketplace-location-options .marketplace-location-choice[aria-pressed="true"]{background:#e7eeeb;color:#103e33}
+#marketplace-location-options button:focus-visible{outline:2px solid #103e33;outline-offset:-3px}
+#marketplace-location-options .marketplace-location-state::after{content:'';width:6px;height:6px;flex:0 0 6px;border-right:1px solid #103e33;border-top:1px solid #103e33;transform:rotate(45deg)}
+#marketplace-location-options .marketplace-location-national::after{display:none}
+#marketplace-location-options .marketplace-location-all{flex-shrink:0;border-bottom:1px solid #e0dfdb}
+#marketplace-location-options .marketplace-location-empty{display:block;padding:16px}
+#marketplace-location-options .marketplace-location-back{display:none}
+@media(max-width:900px){
+  #marketplace-location-options.marketplace-location-selector{position:fixed;left:16px;right:16px;top:50%;width:auto;max-height:75dvh;grid-template-columns:minmax(0,1fr);transform:translateY(-50%)}
+  #marketplace-location-options .marketplace-location-states{padding-right:0}
+  #marketplace-location-options .marketplace-location-detail{padding-left:0;border-left:0}
+  #marketplace-location-options[data-pane="states"] .marketplace-location-detail,
+  #marketplace-location-options[data-pane="locations"] .marketplace-location-states{display:none}
+  #marketplace-location-options .marketplace-location-back{display:flex;border-bottom:1px solid #e0dfdb}
+}
