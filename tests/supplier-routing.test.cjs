@@ -4,7 +4,7 @@ const path = require('node:path');
 const test = require('node:test');
 const vm=require('node:vm');
 const routeContext={module:{exports:{}}};
-vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../dist/supplier-category/supplier-routes.js'),'utf8'),routeContext);
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../dist/wedding-suppliers/supplier-routes.js'),'utf8'),routeContext);
 const routes=routeContext.module.exports;
 
 const dist = path.join(__dirname, '../dist');

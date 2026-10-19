@@ -60,7 +60,7 @@ export function renderPage(page){
   return html;
 }
 const supplierRouteContext={module:{exports:{}}};
-vm.runInNewContext(fs.readFileSync(new URL('../dist/supplier-category/supplier-routes.js',import.meta.url),'utf8'),supplierRouteContext);
+vm.runInNewContext(fs.readFileSync(new URL('../dist/wedding-suppliers/supplier-routes.js',import.meta.url),'utf8'),supplierRouteContext);
 const supplierRoutes=supplierRouteContext.module.exports;
 function marketplacePresentation(html,prefix){
   if(!html.includes('class="marketplace-search-page"'))return html;
