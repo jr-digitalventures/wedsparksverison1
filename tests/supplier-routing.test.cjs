@@ -40,8 +40,8 @@ test('generated routes have specific metadata, canonical URLs and working relati
   assert.ok(html.includes('venue.png'));
   assert.match(html, /<h1 class="marketplace-title">Wedding Venues<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/jr-digitalventures\.github\.io\/wedsparksverison1\/wedding-suppliers\/wedding-venues\/nsw\/"/);
-  assert.match(html, /href="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-category\.css\?v=46"/);
-  assert.match(html, /src="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-routes\.js\?v=4"/);
+  assert.match(html, /href="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-category\.css\?v=47"/);
+  assert.match(html, /src="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-routes\.js\?v=5"/);
 });
 
 test('every configured supplier category has a dedicated hero image', () => {
@@ -51,12 +51,16 @@ test('every configured supplier category has a dedicated hero image', () => {
 });
 
 test('supplier hero focal points frame people without cutting off their heads', () => {
-  assert.equal(routes.categoryByValue('Cake').heroPosition, '75% top');
+  assert.equal(routes.categoryByValue('Cake').heroPosition, '75% bottom');
   assert.equal(routes.categoryByValue('Florist').heroPosition, '75% bottom');
   assert.equal(routes.categoryByValue('Transport').heroPosition, '75% center');
+  assert.equal(routes.categoryByValue('Bar Service').heroFlip, true);
+  assert.equal(routes.categoryByValue('Photographer').heroFlip, true);
+  assert.equal(routes.categoryByValue('Videographer').heroFlip, true);
   assert.match(fs.readFileSync(page('wedding-florists'), 'utf8'), /--supplier-hero-position:75% bottom/);
-  assert.match(fs.readFileSync(page('wedding-cakes'), 'utf8'), /--supplier-hero-position:75% top/);
+  assert.match(fs.readFileSync(page('wedding-cakes'), 'utf8'), /--supplier-hero-position:75% bottom/);
   assert.match(fs.readFileSync(page('wedding-transport'), 'utf8'), /--supplier-hero-position:75% center/);
+  assert.match(fs.readFileSync(page('bar-services'), 'utf8'), /supplier-hero-image--flipped/);
 });
 
 test('location-only pages retain the generic supplier heading', () => {

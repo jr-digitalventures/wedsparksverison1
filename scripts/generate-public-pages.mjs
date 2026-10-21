@@ -76,7 +76,8 @@ function directoryPresentation(html,prefix){
   const category=supplierRoutes.categoryBySlug(slug);
   const hero=category?.hero||supplierRoutes.mainHero;
   const focal=category?.heroPosition||(!category&&supplierRoutes.mainHeroPosition)||'center calc(50% - 50px)';
-  html=html.replace(/<section class="marketplace-hero[^"]*"[\s\S]*?<\/section>/,()=>`<section class="marketplace-hero public-photo-banner" aria-label="Wedding supplier discovery" style="--supplier-hero-position:${focal}"><img src="${hero}" style="object-position:${focal}" alt="" width="1536" height="1024" fetchpriority="high"><div class="public-photo-banner-copy"><h2 class="supplier-hero-subtitle">CONNECT WITH THE RIGHT SUPPLIERS FOR YOUR WEDDING</h2><h1 class="marketplace-title">${title}</h1></div></section>`);
+  const heroClass=`supplier-hero-image${category?.heroFlip?' supplier-hero-image--flipped':''}`;
+  html=html.replace(/<section class="marketplace-hero[^"]*"[\s\S]*?<\/section>/,()=>`<section class="marketplace-hero public-photo-banner" aria-label="Wedding supplier discovery" style="--supplier-hero-position:${focal}"><img class="${heroClass}" src="${hero}" style="object-position:${focal}" alt="" width="1536" height="1024" fetchpriority="high"><div class="public-photo-banner-copy"><h2 class="supplier-hero-subtitle">CONNECT WITH THE RIGHT SUPPLIERS FOR YOUR WEDDING</h2><h1 class="marketplace-title">${title}</h1></div></section>`);
   const intro=`<section class="public-discovery-intro" data-discovery-intro><div><p class="public-eyebrow">FIND YOUR WEDDING TEAM</p><h2>Great suppliers. A simpler way to plan.</h2><p>Explore wedding businesses by service and location, save your favourites and start a conversation. Keep your suppliers, messages and wedding plans together in WedSparks.</p>${link(prefix+'marketplace-search/','Browse categories and locations ↗')}</div><aside><strong>Your wedding spending gives back.</strong><p>Every complete $10,000 paid through WedSparks payments earns $1,000 in free wedding credits.</p>${link(prefix+'wedding-credits/','See how wedding credits work ↗')}</aside></section>`;
   html=html.replace(/<section class="public-discovery-intro"[\s\S]*?<\/section>/,'');
   html=html.replace('<section class="supplier-category-content"',intro+'<section class="supplier-category-content"');
@@ -124,7 +125,7 @@ function generate(){
         .replace(/href="(?:\.\.\/)*shared\/\.\.\/auth\.css"/g,`href="${prefix}auth.css"`)
         .replace(/src="(?:\.\.\/)*shared\/header-auth\.js"/g,`src="${prefix}shared/header-auth.js"`)
         .replace(/href="(?:\.\.\/)*shared\/public-site\.css"/g,`href="${prefix}shared/public-site.css"`)
-        .replace(/src="(?:\.\.\/)*shared\/supplier-save-bridge\.js(?:\?v=\d+)?"/g,`src="${prefix}shared/supplier-save-bridge.js?v=2"`);
+        .replace(/src="(?:\.\.\/)*shared\/supplier-save-bridge\.js(?:\?v=\d+)?"/g,`src="${prefix}shared/supplier-save-bridge.js?v=3"`);
       const frozen=['suppliers','supplier','homepage-2'].includes(relative.split(path.sep)[0]);
       if(!frozen&&html.includes('class="site-header')){
         const mobileId=html.match(/class="mobile-menu-toggle"[^>]*aria-controls="([^"]+)"/)?.[1]||'mobile-navigation';
