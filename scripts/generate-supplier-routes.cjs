@@ -57,16 +57,21 @@ const render = page => {
     .replace(/<title>[^<]*<\/title>/, `<title>${label} | WedSparks</title>`)
     .replace('href="../styles.css?v=55"', `href="${prefix}styles.css?v=55"`)
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
-    .replace(/href="[^"]*supplier-category\.css\?v=45"/, `href="${supplierAssetPrefix}supplier-category.css?v=45"`)
+    .replace(/href="[^"]*supplier-category\.css\?v=\d+"/, `href="${supplierAssetPrefix}supplier-category.css?v=46"`)
     .replace('src="../marketplace-search/marketplace.js?v=18"', `src="${prefix}marketplace-search/marketplace.js?v=18"`)
-    .replace(/src="[^"]*supplier-routes\.js\?v=3"/, `src="${supplierAssetPrefix}supplier-routes.js?v=3"`)
+    .replace(/src="[^"]*supplier-routes\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-routes.js?v=4"`)
     .replace(/src="[^"]*supplier-category\.js\?v=32"/, `src="${supplierAssetPrefix}supplier-category.js?v=32"`)
+    .replace('href="../shared/../auth.css"', `href="${prefix}auth.css"`)
+    .replace('src="../shared/header-auth.js"', `src="${prefix}shared/header-auth.js"`)
+    .replace('href="../shared/public-site.css"', `href="${prefix}shared/public-site.css"`)
+    .replace('src="../shared/supplier-save-bridge.js?v=2"', `src="${prefix}shared/supplier-save-bridge.js?v=2"`)
     .replaceAll('href="../marketplace-search/"', `href="${prefix}marketplace-search/"`)
     .replaceAll('href="../wedding-suppliers/" aria-current="page"', `href="${prefix}wedding-suppliers/" aria-current="page"`)
     .replace('href="../" aria-label="WedSparks home"', `href="${prefix}" aria-label="WedSparks home"`)
     .replace('<h1 class="marketplace-title">Find Wedding Suppliers</h1>', `<h1 class="marketplace-title">${heroLabel}</h1>`)
-    .replace(/--supplier-hero-image:url\('[^']+'\);--supplier-hero-position:[^;]+;--supplier-hero-mobile-position:[^;]+;background-image:linear-gradient\(180deg,rgba\(9,24,20,\.2\),rgba\(9,24,20,\.08\)\),url\('[^']+'\);background-position:[^\"]+/, `--supplier-hero-image:url('${heroImage}');--supplier-hero-position:${heroPosition};--supplier-hero-mobile-position:${mobileHeroPosition};background-image:linear-gradient(180deg,rgba(9,24,20,.2),rgba(9,24,20,.08)),url('${heroImage}');background-position:${heroPosition}`)
-    .replace('<body class="marketplace-search-page supplier-category-page">', `<body class="marketplace-search-page supplier-category-page" data-supplier-route="${routePath}">`);
+    .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*style=")[^"]*(")/, `$1--supplier-hero-position:${heroPosition}$2`)
+    .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*><img src=")[^"]*(" style="object-position:)[^"]*/, `$1${heroImage}$2${heroPosition}`)
+    .replace(/<body class="marketplace-search-page supplier-category-page"(?: data-supplier-route="[^"]*")?>/, `<body class="marketplace-search-page supplier-category-page" data-supplier-route="${routePath}">`);
   return html;
 };
 

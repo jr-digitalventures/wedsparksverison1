@@ -430,7 +430,7 @@
   }
 }
 .supplier-category-page:not(.has-featured-supplier) .supplier-category-content{
-  padding-bottom:30px;
+  padding-bottom:0;
 }
 .supplier-category-page:not(.has-featured-supplier) .supplier-results-list{
   margin-top:0;

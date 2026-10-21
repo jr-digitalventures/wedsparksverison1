@@ -117,6 +117,14 @@ function generate(){
       const abs=path.join(dir,f.name);if(f.isDirectory()){navigation(abs);continue;}if(f.name!=='index.html')continue;
       const original=fs.readFileSync(abs,'utf8');let html=original.replaceAll('supplier-category.js?v=30','supplier-category.js?v=31').replaceAll('marketplace.js?v=17','marketplace.js?v=18');
       const relative=path.relative(root,path.dirname(abs)),prefix='../'.repeat(relative?relative.split(path.sep).length:0);
+      // Supplier route pages begin from the wedding-suppliers template, so make
+      // their shared assets relative to the generated route rather than that
+      // template. This keeps the card/chat enhancement loaded at every depth.
+      html=html
+        .replace(/href="(?:\.\.\/)*shared\/\.\.\/auth\.css"/g,`href="${prefix}auth.css"`)
+        .replace(/src="(?:\.\.\/)*shared\/header-auth\.js"/g,`src="${prefix}shared/header-auth.js"`)
+        .replace(/href="(?:\.\.\/)*shared\/public-site\.css"/g,`href="${prefix}shared/public-site.css"`)
+        .replace(/src="(?:\.\.\/)*shared\/supplier-save-bridge\.js(?:\?v=\d+)?"/g,`src="${prefix}shared/supplier-save-bridge.js?v=2"`);
       const frozen=['suppliers','supplier','homepage-2'].includes(relative.split(path.sep)[0]);
       if(!frozen&&html.includes('class="site-header')){
         const mobileId=html.match(/class="mobile-menu-toggle"[^>]*aria-controls="([^"]+)"/)?.[1]||'mobile-navigation';
