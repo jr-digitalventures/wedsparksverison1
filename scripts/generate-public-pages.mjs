@@ -7,7 +7,8 @@ import {applyPublicSeo} from './public-seo.mjs';
 import {planningLinks,planningShowcase,supplierShowcase,toolAftercare,creditCta} from './public-sections.mjs';
 import {brandMark,favicon} from './brand.mjs';
 import {publicPages,guides} from './public-page-content.mjs';
-const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../dist');
+const scriptDirectory=path.dirname(fileURLToPath(import.meta.url));
+const root=path.resolve(scriptDirectory,'../dist');
 function writeText(file,value){if(fs.existsSync(file)&&fs.readFileSync(file,'utf8')===value)return;fs.writeFileSync(file,value);}
 export const origin=(process.env.SITE_URL||'https://jr-digitalventures.github.io/wedsparksverison1').replace(/\/$/,'');
 export const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -62,6 +63,9 @@ export function renderPage(page){
 const supplierRouteContext={module:{exports:{}}};
 vm.runInNewContext(fs.readFileSync(new URL('../dist/wedding-suppliers/supplier-routes.js',import.meta.url),'utf8'),supplierRouteContext);
 const supplierRoutes=supplierRouteContext.module.exports;
+const supplierSeoContext={module:{exports:{}}};
+vm.runInNewContext(fs.readFileSync(new URL('../dist/wedding-suppliers/supplier-seo-content.js',import.meta.url),'utf8'),supplierSeoContext);
+const supplierSeoContent=supplierSeoContext.module.exports;
 function marketplacePresentation(html,prefix){
   if(!html.includes('class="marketplace-search-page"'))return html;
   if(!html.includes('public-photo-banner'))html=html.replace('<section class="marketplace-hero" aria-label="Wedding supplier marketplace search">',`<section class="marketplace-hero public-photo-banner" aria-label="Wedding supplier marketplace search"><img src="${supplierRoutes.mainHero}" alt="" width="1536" height="1024" fetchpriority="high"><div class="public-photo-banner-copy"><p class="public-eyebrow">FIND YOUR WEDDING TEAM</p>`).replace('<h1 class="marketplace-title">Search Wedding Suppliers</h1>','<h1 class="marketplace-title">Search Wedding Suppliers</h1></div>');
@@ -72,14 +76,18 @@ function directoryPresentation(html,prefix){
   if(!html.includes('supplier-category-page'))return html;
   const title=html.match(/<h1 class="marketplace-title">([^<]+)<\/h1>/)?.[1]||'Find Wedding Suppliers';
   const canonical=html.match(/rel="canonical" href="([^"]+)"/)?.[1]||'';
-  const slug=canonical.split('/wedding-suppliers/')[1]?.split('/')[0];
-  const category=supplierRoutes.categoryBySlug(slug);
+  const segments=canonical.split('/wedding-suppliers/')[1]?.split('/').filter(Boolean)||[];
+  const category=supplierRoutes.categoryBySlug(segments[0]);
+  const location=supplierRoutes.locationBySlug(category?segments[1]:segments[0]);
   const hero=category?.hero||supplierRoutes.mainHero;
   const focal=category?.heroPosition||(!category&&supplierRoutes.mainHeroPosition)||'center calc(50% - 50px)';
   const heroClass=`supplier-hero-image${category?.heroFlip?' supplier-hero-image--flipped':''}`;
   const heroTransform=category?.heroFlip?'transform:scaleX(-1);':'';
   html=html.replace(/<section class="marketplace-hero[^"]*"[\s\S]*?<\/section>/,()=>`<section class="marketplace-hero public-photo-banner" aria-label="Wedding supplier discovery" style="--supplier-hero-position:${focal}"><img class="${heroClass}" src="${hero}" style="object-position:${focal};${heroTransform}" alt="" width="1536" height="1024" fetchpriority="high"><div class="public-photo-banner-copy"><h2 class="supplier-hero-subtitle">CONNECT WITH THE RIGHT SUPPLIERS FOR YOUR WEDDING</h2><h1 class="marketplace-title">${title}</h1></div></section>`);
-  const seoCopy=supplierRoutes.seoContent(category);
+  const seoCategory=category?.value||'All wedding suppliers';
+  const seoLocation=location?(location.abbreviation||location.label):'';
+  const seoKey=seoLocation?`${seoCategory} + ${seoLocation}`:category?`${seoCategory} + No Location selected or Location selected that IS NOT state or main city`:'All wedding suppliers + Any location / no category selected';
+  const seoCopy=supplierSeoContent[seoKey]||supplierRoutes.seoContent(category);
   const seoSection=`<section class="supplier-seo-dynamic" aria-live="polite"><h3 data-seo-dynamic-title>${esc(seoCopy.title)}</h3><p data-seo-dynamic-paragraph>${esc(seoCopy.paragraph)}</p></section>`;
   const intro=`<section class="public-discovery-intro" data-discovery-intro><div><p class="public-eyebrow">FIND YOUR WEDDING TEAM</p><h2>Great suppliers. A simpler way to plan.</h2><p>Explore wedding businesses by service and location, save your favourites and start a conversation. Keep your suppliers, messages and wedding plans together in WedSparks.</p>${link(prefix+'marketplace-search/','Browse categories and locations ↗')}</div><aside><strong>Your wedding spending gives back.</strong><p>Every complete $10,000 paid through WedSparks payments earns $1,000 in free wedding credits.</p>${link(prefix+'wedding-credits/','See how wedding credits work ↗')}</aside></section>`;
   html=html.replace(/<section class="supplier-seo-dynamic"[\s\S]*?<\/section>/,'');
