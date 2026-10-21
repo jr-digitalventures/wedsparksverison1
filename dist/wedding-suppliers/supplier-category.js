@@ -13,6 +13,7 @@ const trunc=(v,n)=>{const s=clean(v);if(s.length<=n)return s;const cut=s.slice(0
 const images=r=>Array.from({length:10},(_,i)=>safe(val(r,`Image #${i+1}`))).filter(Boolean),yes=r=>['yes','true','1'].includes(norm(r?.['Highlighted Record']??r?.['Highlighted Record Column']));
 const normalDate=v=>{const s=clean(v),iso=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/),au=s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);if(iso)return`${iso[1]}-${iso[2].padStart(2,'0')}-${iso[3].padStart(2,'0')}`;if(au)return`${au[3]}-${au[2].padStart(2,'0')}-${au[1].padStart(2,'0')}`;const d=new Date(s);return Number.isNaN(d.getTime())?s:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const ROUTES=window.WEDSPARKS_SUPPLIER_ROUTES;
+const SEO_CONTENT=window.WEDSPARKS_SUPPLIER_SEO_CONTENT||{};
 const slugify=value=>clean(value).toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 function routeContext(){
   const pathname=location.pathname||new URL(location.href).pathname;
@@ -41,13 +42,19 @@ function seoLabel(){
   if(locationName)return`Wedding Suppliers in ${locationName}`;
   return'Wedding Suppliers Australia';
 }
+function spreadsheetSeoContent(category,location){
+  const categoryName=category?.value||'All wedding suppliers';
+  const locationName=location?(location.abbreviation||location.label):'';
+  const key=locationName?`${categoryName} + ${locationName}`:category?`${categoryName} + No Location selected or Location selected that IS NOT state or main city`:'All wedding suppliers + Any location / no category selected';
+  return SEO_CONTENT[key]||ROUTES?.seoContent?.(category);
+}
 function updateRouteMetadata(){
   const title=`${seoLabel()} | WedSparks`;
   document.title=title;
   const heroTitle=document.querySelector('.marketplace-title');
   const category=ROUTES?.categoryByValue(state.category);
   if(heroTitle)heroTitle.textContent=category?.label||'Find Wedding Suppliers';
-  const seoCopy=ROUTES?.seoContent?.(category);
+  const seoCopy=spreadsheetSeoContent(category,selectedLocationRoute());
   const seoTitle=document.querySelector('[data-seo-dynamic-title]');
   const seoParagraph=document.querySelector('[data-seo-dynamic-paragraph]');
   if(seoTitle&&seoCopy)seoTitle.textContent=seoCopy.title;

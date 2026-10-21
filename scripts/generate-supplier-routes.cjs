@@ -15,6 +15,13 @@ vm.runInNewContext(
   { filename: 'supplier-routes.js' }
 );
 const routes = routeModule.exports;
+const seoContentModule = { exports: {} };
+vm.runInNewContext(
+  fs.readFileSync(path.join(outputRoot, 'supplier-seo-content.js'), 'utf8'),
+  { module: seoContentModule, exports: seoContentModule.exports, globalThis: {} },
+  { filename: 'supplier-seo-content.js' }
+);
+const seoContent = seoContentModule.exports;
 
 if (path.dirname(outputRoot) !== distRoot || path.basename(outputRoot) !== 'wedding-suppliers') {
   throw new Error(`Refusing to replace unexpected output directory: ${outputRoot}`);
@@ -38,6 +45,16 @@ const pageLabel = ({ category, location }) => {
   if (locationName) return `Wedding Suppliers in ${locationName}`;
   return 'Wedding Suppliers Australia';
 };
+const seoKey = ({ category, location }) => {
+  const categoryName = category?.value || 'All wedding suppliers';
+  const locationName = location ? (location.abbreviation || location.label) : '';
+  if (locationName) return `${categoryName} + ${locationName}`;
+  if (category) return `${categoryName} + No Location selected or Location selected that IS NOT state or main city`;
+  return 'All wedding suppliers + Any location / no category selected';
+};
+const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[character]));
 
 const render = page => {
   const depth = 1 + page.segments.length;
@@ -45,7 +62,7 @@ const render = page => {
   const supplierAssetPrefix = page.segments.length ? `${prefix}wedding-suppliers/` : '';
   const label = pageLabel(page);
   const heroLabel = page.category?.label || 'Find Wedding Suppliers';
-  const seoCopy = routes.seoContent(page.category);
+  const seoCopy = seoContent[seoKey(page)] || routes.seoContent(page.category);
   const heroImage = page.category?.hero || routes.mainHero;
   const heroPosition = page.category?.heroPosition || (!page.category && routes.mainHeroPosition) || 'center calc(50% - 50px)';
   const heroClass = page.category?.heroFlip ? ' supplier-hero-image--flipped' : '';
@@ -60,10 +77,11 @@ const render = page => {
     .replace(/<title>[^<]*<\/title>/, `<title>${label} | WedSparks</title>`)
     .replace('href="../styles.css?v=55"', `href="${prefix}styles.css?v=55"`)
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
-    .replace(/href="[^"]*supplier-category\.css\?v=\d+"/, `href="${supplierAssetPrefix}supplier-category.css?v=48"`)
+    .replace(/href="[^"]*supplier-category\.css\?v=\d+"/, `href="${supplierAssetPrefix}supplier-category.css?v=49"`)
     .replace('src="../marketplace-search/marketplace.js?v=18"', `src="${prefix}marketplace-search/marketplace.js?v=18"`)
     .replace(/src="[^"]*supplier-routes\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-routes.js?v=7"`)
-    .replace(/src="[^"]*supplier-category\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-category.js?v=33"`)
+    .replace(/src="[^"]*supplier-seo-content\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-seo-content.js?v=1"`)
+    .replace(/src="[^"]*supplier-category\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-category.js?v=34"`)
     .replace('href="../shared/../auth.css"', `href="${prefix}auth.css"`)
     .replace('src="../shared/header-auth.js"', `src="${prefix}shared/header-auth.js"`)
     .replace('href="../shared/public-site.css"', `href="${prefix}shared/public-site.css"`)
@@ -72,7 +90,7 @@ const render = page => {
     .replaceAll('href="../wedding-suppliers/" aria-current="page"', `href="${prefix}wedding-suppliers/" aria-current="page"`)
     .replace('href="../" aria-label="WedSparks home"', `href="${prefix}" aria-label="WedSparks home"`)
     .replace('<h1 class="marketplace-title">Find Wedding Suppliers</h1>', `<h1 class="marketplace-title">${heroLabel}</h1>`)
-    .replace(/<section class="supplier-seo-dynamic"[\s\S]*?<\/section>/, `<section class="supplier-seo-dynamic" aria-live="polite"><h3 data-seo-dynamic-title>${seoCopy.title}</h3><p data-seo-dynamic-paragraph>${seoCopy.paragraph}</p></section>`)
+    .replace(/<section class="supplier-seo-dynamic"[\s\S]*?<\/section>/, `<section class="supplier-seo-dynamic" aria-live="polite"><h3 data-seo-dynamic-title>${escapeHtml(seoCopy.title)}</h3><p data-seo-dynamic-paragraph>${escapeHtml(seoCopy.paragraph)}</p></section>`)
     .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*style=")[^"]*(")/, `$1--supplier-hero-position:${heroPosition}$2`)
     .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*><img)(?: class="[^"]*")? src=/, `$1 class="supplier-hero-image${heroClass}" src=`)
     .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*><img(?: class="[^"]*")? src=")[^"]*(" style=")[^"]*(")/, `$1${heroImage}$2object-position:${heroPosition};${heroTransform}$3`)
