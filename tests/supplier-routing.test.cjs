@@ -40,8 +40,8 @@ test('generated routes have specific metadata, canonical URLs and working relati
   assert.ok(html.includes('venue.png'));
   assert.match(html, /<h1 class="marketplace-title">Wedding Venues<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/jr-digitalventures\.github\.io\/wedsparksverison1\/wedding-suppliers\/wedding-venues\/nsw\/"/);
-  assert.match(html, /href="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-category\.css\?v=47"/);
-  assert.match(html, /src="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-routes\.js\?v=6"/);
+  assert.match(html, /href="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-category\.css\?v=48"/);
+  assert.match(html, /src="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-routes\.js\?v=7"/);
 });
 
 test('every configured supplier category has a dedicated hero image', () => {
