@@ -48,6 +48,7 @@ const render = page => {
   const heroImage = page.category?.hero || routes.mainHero;
   const heroPosition = page.category?.heroPosition || (!page.category && routes.mainHeroPosition) || 'center calc(50% - 50px)';
   const heroClass = page.category?.heroFlip ? ' supplier-hero-image--flipped' : '';
+  const heroTransform = page.category?.heroFlip ? 'transform:scaleX(-1);' : '';
   const mobileHeroPosition = page.category?.heroPosition || (!page.category && routes.mainHeroPosition) || '62% center';
   const description = `Discover ${label.toLowerCase()} and compare wedding services, packages and profiles on WedSparks.`;
   const routePath = `/wedsparksverison1/wedding-suppliers/${page.segments.length ? `${page.segments.join('/')}/` : ''}`;
@@ -60,7 +61,7 @@ const render = page => {
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
     .replace(/href="[^"]*supplier-category\.css\?v=\d+"/, `href="${supplierAssetPrefix}supplier-category.css?v=47"`)
     .replace('src="../marketplace-search/marketplace.js?v=18"', `src="${prefix}marketplace-search/marketplace.js?v=18"`)
-    .replace(/src="[^"]*supplier-routes\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-routes.js?v=5"`)
+    .replace(/src="[^"]*supplier-routes\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-routes.js?v=6"`)
     .replace(/src="[^"]*supplier-category\.js\?v=32"/, `src="${supplierAssetPrefix}supplier-category.js?v=32"`)
     .replace('href="../shared/../auth.css"', `href="${prefix}auth.css"`)
     .replace('src="../shared/header-auth.js"', `src="${prefix}shared/header-auth.js"`)
@@ -72,7 +73,7 @@ const render = page => {
     .replace('<h1 class="marketplace-title">Find Wedding Suppliers</h1>', `<h1 class="marketplace-title">${heroLabel}</h1>`)
     .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*style=")[^"]*(")/, `$1--supplier-hero-position:${heroPosition}$2`)
     .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*><img)(?: class="[^"]*")? src=/, `$1 class="supplier-hero-image${heroClass}" src=`)
-    .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*><img(?: class="[^"]*")? src=")[^"]*(" style="object-position:)[^"]*/, `$1${heroImage}$2${heroPosition}`)
+    .replace(/(<section class="marketplace-hero public-photo-banner"[^>]*><img(?: class="[^"]*")? src=")[^"]*(" style=")[^"]*(")/, `$1${heroImage}$2object-position:${heroPosition};${heroTransform}$3`)
     .replace(/<body class="marketplace-search-page supplier-category-page"(?: data-supplier-route="[^"]*")?>/, `<body class="marketplace-search-page supplier-category-page" data-supplier-route="${routePath}">`);
   return html;
 };
