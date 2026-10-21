@@ -2,7 +2,7 @@ import { supabase } from './supabase-client.js';
 import { verifiedUser, loadAccount, siteUrl, onSessionChange } from './auth.js';
 
 const results = document.querySelector('.supplier-results');
-let eligible = new Set(), revision = 0, accountOwner = null;
+let eligible = new Set(), revision = 0, accountOwner = null, canChat = false;
 let refreshTimer = null;
 
 function paintSupplierChats() {
@@ -22,7 +22,7 @@ function paintSupplierChats() {
     const vendor = vendors.get(name);
     let link = card.querySelector('.ws-supplier-chat');
 
-    if (!vendor?.vendor_id || (accountOwner && !eligible.has(vendor.vendor_id))) {
+    if (!vendor?.vendor_id || !canChat || !eligible.has(vendor.vendor_id)) {
       link?.remove();
       continue;
     }
@@ -69,6 +69,7 @@ async function loadChatSuppliers() {
     if (!user) {
       accountOwner = null;
       eligible = new Set();
+      canChat = false;
       paintSupplierChats();
       return;
     }
@@ -79,9 +80,12 @@ async function loadChatSuppliers() {
 
     if (!account.roles.includes('couple')) {
       eligible = new Set();
+      canChat = false;
       paintSupplierChats();
       return;
     }
+
+    canChat = true;
 
     const ids = new Set();
 
@@ -114,10 +118,10 @@ if (results) {
     'a.ws-supplier-chat:hover{background:#305547;color:white}' +
     'a.ws-supplier-chat:focus-visible{outline:3px solid #ad7542;outline-offset:3px}' +
     '.featured-supplier-actions a.ws-supplier-chat{margin:0;color:white;background:#213e34}' +
-    '.supplier-listing-content,.featured-supplier-content{min-width:0}.supplier-card-price-block{position:absolute!important;top:30px!important;right:30px!important;align-items:flex-end!important;text-align:right!important}.supplier-card-buttons a.supplier-profile-button{position:static!important;inset:auto!important;grid-column:auto!important;grid-row:auto!important;flex:auto!important;width:100%!important;height:auto!important;margin:0!important}.supplier-card-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin:0;grid-column:1/-1}.supplier-listing-content>.supplier-card-buttons{grid-row:6;align-self:end}.featured-supplier-actions .supplier-card-buttons{width:100%;margin:0}' +
+    '.supplier-listing-content,.featured-supplier-content{min-width:0}.supplier-card-buttons a.supplier-profile-button{position:static!important;inset:auto!important;grid-column:auto!important;grid-row:auto!important;flex:auto!important;width:100%!important;height:auto!important;margin:0!important}.supplier-card-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin:0;grid-column:1/-1}.supplier-card-buttons:not(:has(.ws-supplier-chat)){grid-template-columns:1fr}.supplier-listing-content>.supplier-card-buttons{grid-row:6;align-self:end}.featured-supplier-actions .supplier-card-buttons{width:100%;margin:0}' +
     '.supplier-card-buttons a,.supplier-card-buttons a.ws-supplier-chat,.supplier-card-buttons a.supplier-profile-button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0;min-height:53px;padding:12px 15px;border-radius:8px;background:#213e34;color:white;text-decoration:none;font:600 14px/1.4 Arial,sans-serif;box-sizing:border-box}' +
     '.supplier-card-buttons a.supplier-profile-button{background:white;border:1px solid #213e34;color:#213e34}' +
-    '@media(max-width:700px){.supplier-card-price-block{position:static!important;margin-top:12px}.supplier-listing-content>.supplier-card-buttons,.featured-supplier-actions .supplier-card-buttons{margin-top:20px}.supplier-card-buttons{gap:8px}.supplier-card-buttons a,.supplier-card-buttons a.ws-supplier-chat{font-size:12px;padding:11px 7px}}';
+    '@media(max-width:700px){.supplier-listing-content>.supplier-card-buttons,.featured-supplier-actions .supplier-card-buttons{margin-top:20px}.supplier-card-buttons{gap:8px}.supplier-card-buttons a,.supplier-card-buttons a.ws-supplier-chat{font-size:12px;padding:11px 7px}}';
   document.head.append(style);
 
   new MutationObserver(paintSupplierChats).observe(
@@ -129,6 +133,7 @@ if (results) {
       revision++;
       accountOwner = user?.id || null;
       eligible = new Set();
+      canChat = false;
       paintSupplierChats();
     }
 

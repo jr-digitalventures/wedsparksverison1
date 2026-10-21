@@ -1,4 +1,4 @@
-import './supplier-chat.js';
+import './supplier-chat.js?v=3';
 import { supabase } from './supabase-client.js';
 import { verifiedUser, loadAccount, siteUrl, onSessionChange } from './auth.js';
 

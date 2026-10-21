@@ -8,20 +8,20 @@
   const mainHero = hero('Garden Wedding Through the Foliage');
   const mainHeroPosition = 'center top';
   const categories = [
-    { value: 'Bar Service', slug: 'bar-services', label: 'Bar Services', hero: hero('bar service'), heroPosition: '75% center' },
-    { value: 'Cake', slug: 'wedding-cakes', label: 'Wedding Cakes', hero: hero('cake'), heroPosition: '75% top' },
+    { value: 'Bar Service', slug: 'bar-services', label: 'Bar Services', hero: hero('bar service'), heroPosition: '75% center', heroFlip: true },
+    { value: 'Cake', slug: 'wedding-cakes', label: 'Wedding Cakes', hero: hero('cake'), heroPosition: '75% bottom' },
     { value: 'Catering', slug: 'wedding-caterers', label: 'Wedding Caterers', hero: hero('catering'), heroPosition: '75% center' },
-    { value: 'Celebrant', slug: 'wedding-celebrants', label: 'Wedding Celebrants', hero: hero('celebrant'), heroPosition: '75% top' },
+    { value: 'Celebrant', slug: 'wedding-celebrants', label: 'Wedding Celebrants', hero: hero('celebrant'), heroPosition: '75% bottom' },
     { value: 'Florist', slug: 'wedding-florists', label: 'Wedding Florists', hero: hero('florist'), heroPosition: '75% bottom' },
-    { value: 'Hair Stylist', slug: 'wedding-hair-stylists', label: 'Wedding Hair Stylists', hero: hero('hair stylist'), heroPosition: '75% top' },
-    { value: 'Hireage', slug: 'wedding-hire', label: 'Wedding Hire', hero: hero('hireage'), heroPosition: '75% top' },
-    { value: 'Live Entertainment', slug: 'wedding-entertainment', label: 'Wedding Entertainment', hero: hero('live entertainment'), heroPosition: '75% top' },
-    { value: 'Make-up', slug: 'wedding-makeup-artists', label: 'Wedding Makeup Artists', hero: hero('makeup'), heroPosition: '75% top' },
-    { value: 'Photographer', slug: 'wedding-photographers', label: 'Wedding Photographers', hero: hero('photographer'), heroPosition: '75% center' },
+    { value: 'Hair Stylist', slug: 'wedding-hair-stylists', label: 'Wedding Hair Stylists', hero: hero('hair stylist'), heroPosition: '75% bottom' },
+    { value: 'Hireage', slug: 'wedding-hire', label: 'Wedding Hire', hero: hero('hireage'), heroPosition: '75% bottom' },
+    { value: 'Live Entertainment', slug: 'wedding-entertainment', label: 'Wedding Entertainment', hero: hero('live entertainment'), heroPosition: '75% bottom' },
+    { value: 'Make-up', slug: 'wedding-makeup-artists', label: 'Wedding Makeup Artists', hero: hero('makeup'), heroPosition: '75% bottom' },
+    { value: 'Photographer', slug: 'wedding-photographers', label: 'Wedding Photographers', hero: hero('photographer'), heroPosition: '75% center', heroFlip: true },
     { value: 'Stationary', slug: 'wedding-stationery', label: 'Wedding Stationery', hero: hero('stationary'), heroPosition: '75% center' },
     { value: 'Transport', slug: 'wedding-transport', label: 'Wedding Transport', hero: hero('transport'), heroPosition: '75% center' },
     { value: 'Venue', slug: 'wedding-venues', label: 'Wedding Venues', hero: hero('venue'), heroPosition: '75% center' },
-    { value: 'Videographer', slug: 'wedding-videographers', label: 'Wedding Videographers', hero: hero('videographer'), heroPosition: '75% center' },
+    { value: 'Videographer', slug: 'wedding-videographers', label: 'Wedding Videographers', hero: hero('videographer'), heroPosition: '75% center', heroFlip: true },
     { value: 'Wedding Dress', slug: 'wedding-dresses', label: 'Wedding Dresses', hero: hero('wedding dress'), heroPosition: '75% top' },
   ];
   const states = [
