@@ -47,13 +47,28 @@ function updateRouteMetadata(){
   const heroTitle=document.querySelector('.marketplace-title');
   const category=ROUTES?.categoryByValue(state.category);
   if(heroTitle)heroTitle.textContent=category?.label||'Find Wedding Suppliers';
+  const seoCopy=ROUTES?.seoContent?.(category);
+  const seoTitle=document.querySelector('[data-seo-dynamic-title]');
+  const seoParagraph=document.querySelector('[data-seo-dynamic-paragraph]');
+  if(seoTitle&&seoCopy)seoTitle.textContent=seoCopy.title;
+  if(seoParagraph&&seoCopy)seoParagraph.textContent=seoCopy.paragraph;
   const hero=document.querySelector('.marketplace-hero');
   if(hero&&ROUTES){
     const heroImage=category?.hero||ROUTES.mainHero;
     const heroPosition=category?.heroPosition||(!category&&ROUTES.mainHeroPosition)||'center calc(50% - 50px)';
     const mobileHeroPosition=category?.heroPosition||(!category&&ROUTES.mainHeroPosition)||'62% center';
     const heroPhoto=hero.querySelector('img');
-    if(heroPhoto){heroPhoto.src=heroImage;heroPhoto.style.objectPosition=window.innerWidth<=700?mobileHeroPosition:heroPosition;}
+    const heroFlipped=Boolean(category?.heroFlip);
+    if(heroPhoto){
+      // Static route pages already contain the right image and orientation. Do
+      // not reset it during startup: doing so could briefly show the original
+      // (unflipped) file before this script finished its first update.
+      const resolvedHeroImage=new URL(heroImage,location.href).href;
+      if(heroPhoto.src!==resolvedHeroImage)heroPhoto.src=heroImage;
+      heroPhoto.style.objectPosition=window.innerWidth<=700?mobileHeroPosition:heroPosition;
+      heroPhoto.style.transform=heroFlipped?'scaleX(-1)':'';
+      heroPhoto.classList.toggle('supplier-hero-image--flipped',heroFlipped);
+    }
     const heroUrl=`url("${heroImage}")`;
     hero.style.setProperty('--supplier-hero-image',heroUrl);
     hero.style.setProperty('--supplier-hero-position',heroPosition);

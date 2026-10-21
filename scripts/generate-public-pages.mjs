@@ -79,9 +79,12 @@ function directoryPresentation(html,prefix){
   const heroClass=`supplier-hero-image${category?.heroFlip?' supplier-hero-image--flipped':''}`;
   const heroTransform=category?.heroFlip?'transform:scaleX(-1);':'';
   html=html.replace(/<section class="marketplace-hero[^"]*"[\s\S]*?<\/section>/,()=>`<section class="marketplace-hero public-photo-banner" aria-label="Wedding supplier discovery" style="--supplier-hero-position:${focal}"><img class="${heroClass}" src="${hero}" style="object-position:${focal};${heroTransform}" alt="" width="1536" height="1024" fetchpriority="high"><div class="public-photo-banner-copy"><h2 class="supplier-hero-subtitle">CONNECT WITH THE RIGHT SUPPLIERS FOR YOUR WEDDING</h2><h1 class="marketplace-title">${title}</h1></div></section>`);
+  const seoCopy=supplierRoutes.seoContent(category);
+  const seoSection=`<section class="supplier-seo-dynamic" aria-live="polite"><h3 data-seo-dynamic-title>${esc(seoCopy.title)}</h3><p data-seo-dynamic-paragraph>${esc(seoCopy.paragraph)}</p></section>`;
   const intro=`<section class="public-discovery-intro" data-discovery-intro><div><p class="public-eyebrow">FIND YOUR WEDDING TEAM</p><h2>Great suppliers. A simpler way to plan.</h2><p>Explore wedding businesses by service and location, save your favourites and start a conversation. Keep your suppliers, messages and wedding plans together in WedSparks.</p>${link(prefix+'marketplace-search/','Browse categories and locations ↗')}</div><aside><strong>Your wedding spending gives back.</strong><p>Every complete $10,000 paid through WedSparks payments earns $1,000 in free wedding credits.</p>${link(prefix+'wedding-credits/','See how wedding credits work ↗')}</aside></section>`;
+  html=html.replace(/<section class="supplier-seo-dynamic"[\s\S]*?<\/section>/,'');
   html=html.replace(/<section class="public-discovery-intro"[\s\S]*?<\/section>/,'');
-  html=html.replace('<section class="supplier-category-content"',intro+'<section class="supplier-category-content"');
+  html=html.replace('<section class="supplier-category-content"',seoSection+intro+'<section class="supplier-category-content"');
   if(!html.includes('id="featured-card-template"'))html=html.replace(/<article class="featured-supplier-card"[\s\S]*?<\/article>/,m=>`<template id="featured-card-template">${m}</template>`);
   if(!html.includes('id="supplier-card-template"')){let first=true;html=html.replace(/<article class="supplier-listing-card"[\s\S]*?<\/article>/g,m=>{if(!first)return '';first=false;return `<template id="supplier-card-template">${m}</template><p class="directory-loading" role="status">Loading published suppliers…</p>`;});}
   html=html.replace('<span>467</span>','<span>—</span>');

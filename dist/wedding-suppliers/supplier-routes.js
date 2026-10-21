@@ -50,6 +50,11 @@
   const locationBySlug = slug => states.find(item => item.slug === normalise(slug)) || cities.find(item => item.slug === normalise(slug));
   const stateByValue = value => states.find(item => normalise(item.value) === normalise(value));
   const cityByValues = (city, state) => cities.find(item => normalise(item.value) === normalise(city) && normalise(item.state) === normalise(state));
-  return { mainHero, mainHeroPosition, categories, states, cities, categoryBySlug, categoryByValue, locationBySlug, stateByValue, cityByValues };
+  const seoContent = category => {
+    if (category?.seoTitle && category?.seoParagraph) return { title: category.seoTitle, paragraph: category.seoParagraph };
+    if (category) return { title: `Find ${category.label}`, paragraph: `Explore ${category.label.toLowerCase()} for your wedding and compare services, packages and profiles on WedSparks.` };
+    return { title: 'Find wedding suppliers for your day', paragraph: 'Explore wedding suppliers by category and location, compare services and packages, and find the right people for every part of your celebration.' };
+  };
+  return { mainHero, mainHeroPosition, categories, states, cities, categoryBySlug, categoryByValue, locationBySlug, stateByValue, cityByValues, seoContent };
 }));
 // Canonical wedding supplier category, state, city, and combined route definitions.
