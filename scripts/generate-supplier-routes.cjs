@@ -81,7 +81,7 @@ const render = page => {
     .replace(/<title>[^<]*<\/title>/, `<title>${label} | WedSparks</title>`)
     .replace('href="../styles.css?v=55"', `href="${prefix}styles.css?v=55"`)
     .replace('href="../marketplace-search/marketplace.css?v=33"', `href="${prefix}marketplace-search/marketplace.css?v=33"`)
-    .replace(/href="[^"]*supplier-category\.css\?v=\d+"/, `href="${supplierAssetPrefix}supplier-category.css?v=51"`)
+    .replace(/href="[^"]*supplier-category\.css\?v=\d+"/, `href="${supplierAssetPrefix}supplier-category.css?v=52"`)
     .replace('src="../marketplace-search/marketplace.js?v=18"', `src="${prefix}marketplace-search/marketplace.js?v=18"`)
     .replace(/src="[^"]*supplier-routes\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-routes.js?v=7"`)
     .replace(/src="[^"]*supplier-seo-content\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-seo-content.js?v=1"`)
