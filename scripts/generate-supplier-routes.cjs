@@ -53,7 +53,7 @@ const seoKey = ({ category, location }) => {
   return 'All wedding suppliers + Any location / no category selected';
 };
 const locationOnlySeoCopy = {
-  title: 'Bring Your Wedding Plans Together with the Right Suppliers',
+  title: 'Everything You Need for Your Wedding, All in One Place.',
   paragraph: 'Explore wedding suppliers across photography, venues, flowers, catering, cakes, entertainment, styling and more. Compare profiles, services and packages to see which vendors suit your plans and budget. Consider your date, guest numbers and venue requirements before requesting quotes. Browse by category or filter by location to discover wedding professionals for your celebration.'
 };
 const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
@@ -85,7 +85,7 @@ const render = page => {
     .replace('src="../marketplace-search/marketplace.js?v=18"', `src="${prefix}marketplace-search/marketplace.js?v=18"`)
     .replace(/src="[^"]*supplier-routes\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-routes.js?v=7"`)
     .replace(/src="[^"]*supplier-seo-content\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-seo-content.js?v=1"`)
-    .replace(/src="[^"]*supplier-category\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-category.js?v=37"`)
+    .replace(/src="[^"]*supplier-category\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-category.js?v=38"`)
     .replace('href="../shared/../auth.css"', `href="${prefix}auth.css"`)
     .replace('src="../shared/header-auth.js"', `src="${prefix}shared/header-auth.js"`)
     .replace('href="../shared/public-site.css"', `href="${prefix}shared/public-site.css"`)
