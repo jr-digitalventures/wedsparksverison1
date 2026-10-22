@@ -23,7 +23,7 @@ test('spreadsheet SEO content covers every category and main location combinatio
   const defaultKey = 'All wedding suppliers + Any location / no category selected';
 
   assert.equal(Object.keys(content).length, 256);
-  assert.equal(content[defaultKey].title, 'Find the Perfect Wedding Suppliers to Bring Your Day to Life');
+  assert.equal(content[defaultKey].title, 'Everything You Need for Your Wedding, All in One Place.');
 
   for (const category of routes.categories) {
     assert.ok(content[`${category.value} + No Location selected or Location selected that IS NOT state or main city`]);
@@ -38,7 +38,7 @@ test('generated pages use spreadsheet SEO content for the default and category-c
   const barSydneyPage = fs.readFileSync(path.join(supplierRoot, 'bar-services', 'sydney-nsw', 'index.html'), 'utf8');
   const locationOnlyPage = fs.readFileSync(path.join(supplierRoot, 'nsw', 'index.html'), 'utf8');
 
-  assert.match(defaultPage, /Find the Perfect Wedding Suppliers to Bring Your Day to Life/);
+  assert.match(defaultPage, /Everything You Need for Your Wedding, All in One Place\./);
   assert.match(barSydneyPage, /Raise a Glass with Wedding Bar Services in Sydney, NSW/);
-  assert.match(locationOnlyPage, /Bring Your Wedding Plans Together with the Right Suppliers/);
+  assert.match(locationOnlyPage, /Everything You Need for Your Wedding, All in One Place\./);
 });

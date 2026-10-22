@@ -32,7 +32,7 @@ unexpected = set(content).difference(expected)
 if missing or unexpected:
     raise ValueError(f'Unexpected spreadsheet coverage. Missing: {sorted(missing)}; extra: {sorted(unexpected)}')
 
-content['All wedding suppliers + Any location / no category selected']['title'] = 'Find the Perfect Wedding Suppliers to Bring Your Day to Life'
+content['All wedding suppliers + Any location / no category selected']['title'] = 'Everything You Need for Your Wedding, All in One Place.'
 
 payload = json.dumps(content, ensure_ascii=False, separators=(',', ':'))
 destination.write_text(
