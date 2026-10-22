@@ -214,11 +214,27 @@ const stateAbbreviations = {
 function updateLocationLabel() {
   const stateLabel = stateAbbreviations[norm(state.locationState)] || state.locationState;
   const text = state.locationCity ? `${state.locationCity}, ${stateLabel}` : stateLabel || (state.locationNational ? 'Australia' : '');
-  label(document.querySelector('[data-heading-filter="heading-location-options"]'), text || 'LOCATION', !!text);
+  updateResultsHeading();
   locationControls.forEach(({ button, region, city, stateRow }) => {
     const selected = norm(region) === norm(state.locationState) && (stateRow || norm(city) === norm(state.locationCity));
     button.setAttribute('aria-pressed', String(selected));
   });
+}
+function updateResultsHeading() {
+  const stateLabel = stateAbbreviations[norm(state.locationState)] || state.locationState;
+  const locationText = state.locationCity ? `${state.locationCity}, ${stateLabel}` : stateLabel || (state.locationNational ? 'Australia' : '');
+  const hasSelection = Boolean(state.category || locationText);
+  label(
+    document.querySelector('[data-heading-filter="heading-category-options"]'),
+    state.category || (locationText ? 'WEDDING VENDORS' : 'CHOOSE YOUR WEDDING VENDOR'),
+    Boolean(state.category || locationText)
+  );
+  label(
+    document.querySelector('[data-heading-filter="heading-location-options"]'),
+    locationText || 'SELECT A LOCATION',
+    Boolean(locationText)
+  );
+  if (count) count.hidden = !hasSelection;
 }
 
 function positionLocationMenu() {
@@ -452,8 +468,8 @@ document.addEventListener('keydown', event => {
 });
 
 function setupMenus(){
- const ct=document.querySelector('[data-heading-filter="heading-category-options"]'),st=document.querySelector('[data-filter-trigger="supplier-style-options"]'),pt=document.querySelector('[data-filter-trigger="supplier-price-options"]');
- menu('heading-category-options',[...new Set([...(ROUTES?.categories.map(c=>c.value)||[]),...unique('Wedding Vendor Type')])],'All wedding categories',v=>{state.category=v;state.page=0;label(ct,v||'WEDDING CATEGORY',!!v);closeAll();renderCategoryFilters();updateSupplierUrl();render()});
+ const st=document.querySelector('[data-filter-trigger="supplier-style-options"]'),pt=document.querySelector('[data-filter-trigger="supplier-price-options"]');
+ menu('heading-category-options',[...new Set([...(ROUTES?.categories.map(c=>c.value)||[]),...unique('Wedding Vendor Type')])],'All wedding categories',v=>{state.category=v;state.page=0;updateResultsHeading();closeAll();renderCategoryFilters();updateSupplierUrl();render()});
  setupLocationMenu();
  menu('supplier-style-options',unique('Vendor Style',true),'Any style',v=>{state.style=v;state.page=0;label(st,v||'Style',!!v);closeAll();render()});
  document.querySelectorAll('#supplier-price-options button').forEach(b=>b.onclick=()=>{state.price=b.textContent==='Any price'?'':b.textContent;state.page=0;label(pt,state.price||'Starting Price',!!state.price);closeAll();render()});
@@ -520,6 +536,7 @@ function render() {
     renderedHighlight = highlight;
   }
   count.textContent = rows.length;
+  updateResultsHeading();
   list.replaceChildren();
   results.slice(state.page * PAGE, state.page * PAGE + PAGE).forEach(record => list.append(makeCard(record)));
   if (!rows.length) empty('No wedding suppliers match these filters yet.');
@@ -535,13 +552,10 @@ function initialQuery() {
   label(document.querySelector('[data-filter-trigger="supplier-price-options"]'),state.price||'Starting Price',!!state.price);
   label(document.querySelector('[data-filter-trigger="supplier-date-options"]'),state.date||'Date',!!state.date);
   state.category='';state.locationState='';state.locationCity='';state.locationNational=false;state.page=0;
-  const categoryTrigger=document.querySelector('[data-heading-filter="heading-category-options"]');
-  label(categoryTrigger,'WEDDING CATEGORY',false);
   const category = routed.category || q.get('category') || q.get('vendorType') || '';
   const matchedCategory = ROUTES?.categoryByValue(category)?.value || unique('Wedding Vendor Type').find(value => norm(value) === norm(category));
   if (matchedCategory) {
     state.category = matchedCategory;
-    label(document.querySelector('[data-heading-filter="heading-category-options"]'), matchedCategory, true);
   }
   renderCategoryFilters();
   const groups = locationGroups();

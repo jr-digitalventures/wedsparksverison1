@@ -40,7 +40,7 @@ test('generated routes have specific metadata, canonical URLs and working relati
   assert.ok(html.includes('venue.png'));
   assert.match(html, /<h1 class="marketplace-title">Wedding Venues<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/jr-digitalventures\.github\.io\/wedsparksverison1\/wedding-suppliers\/wedding-venues\/nsw\/"/);
-  assert.match(html, /href="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-category\.css\?v=49"/);
+  assert.match(html, /href="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-category\.css\?v=50"/);
   assert.match(html, /src="\.\.\/\.\.\/\.\.\/wedding-suppliers\/supplier-routes\.js\?v=7"/);
 });
 
@@ -83,7 +83,7 @@ test('sitemap contains all generated supplier routes', () => {
 test('directory filter labels retain working Unicode price ranges',()=>{
  const html=fs.readFileSync(page(),'utf8');
  for(const price of ['$1,000–$2,500','$2,500–$5,000'])assert.ok(html.includes('>'+price+'</button>'));
- assert.ok(html.includes('public-photo-banner'));assert.ok(html.includes('public-discovery-intro'));
+ assert.ok(html.includes('public-photo-banner'));assert.ok(!html.includes('public-discovery-intro'));
 });
 test('marketplace search is a working page with current account entry points',()=>{
  const html=fs.readFileSync(path.join(dist,'marketplace-search/index.html'),'utf8');
