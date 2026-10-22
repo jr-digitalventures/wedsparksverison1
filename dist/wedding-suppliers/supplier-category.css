@@ -451,8 +451,8 @@
 /* Wedding supplier directory presentation and responsive card system. */
 @media(max-width:700px){
   /* Keep the main discovery image centred on the couple in the narrow crop. */
-  body[data-supplier-route$="/wedding-suppliers/"] .marketplace-hero::before{background-position:calc(58% - 75px) 28%!important}
-  body[data-supplier-route$="/wedding-suppliers/"] .supplier-hero-image{object-position:calc(58% - 75px) 28%!important}
+  body[data-supplier-route$="/wedding-suppliers/"] .marketplace-hero::before{background-image:linear-gradient(180deg,rgba(9,24,20,.2),rgba(9,24,20,.08)),url('../assets/wedding-suppliers-mobile-hero.png')!important;background-position:center 35%!important;background-size:cover}
+  body[data-supplier-route$="/wedding-suppliers/"] .supplier-hero-image{content:url('../assets/wedding-suppliers-mobile-hero.png');object-position:center 35%!important}
   .supplier-category-page .marketplace-hero .public-photo-banner-copy{bottom:40px}
   .supplier-category-page .supplier-hero-subtitle{font-size:0}
   .supplier-category-page .supplier-hero-subtitle::after{content:'CONNECT WITH THE RIGHT SUPPLIERS';font:400 16px/1.6 Georgia,'Times New Roman',serif;letter-spacing:.18em}
@@ -465,7 +465,7 @@
   .supplier-heading-filter>button{width:100%;display:flex;align-items:center;justify-content:space-between;font-size:17px;text-align:left;white-space:nowrap}
   .supplier-heading-filter>button i{margin:0 3px 4px 16px}
   .supplier-heading-filter>button[aria-expanded=true] i{margin:5px 3px 0 16px}
-  .supplier-heading-filter+.supplier-heading-filter{margin-top:15px}
+  .supplier-heading-filter+.supplier-heading-filter{margin-top:8px}
   .supplier-heading-menu{left:0;right:auto}
   .supplier-heading-filter:last-child .supplier-heading-menu{left:0;right:auto}
 
@@ -494,5 +494,7 @@
   .featured-supplier-content .featured-supplier-actions,
   .supplier-listing-content .supplier-profile-button{order:7;margin-top:0}
   .featured-supplier-content .supplier-card-titleline h2,
-  .supplier-listing-content .supplier-card-titleline h2{width:100%;font-size:25px}
+  .supplier-listing-content .supplier-card-titleline h2{width:100%;max-width:none;font-size:25px}
+  .featured-supplier-content .supplier-card-titleline,
+  .supplier-listing-content .supplier-card-titleline{width:100%;max-width:none;flex:0 0 100%}
 }
