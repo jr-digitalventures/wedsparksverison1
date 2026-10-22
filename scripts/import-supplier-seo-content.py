@@ -32,6 +32,8 @@ unexpected = set(content).difference(expected)
 if missing or unexpected:
     raise ValueError(f'Unexpected spreadsheet coverage. Missing: {sorted(missing)}; extra: {sorted(unexpected)}')
 
+content['All wedding suppliers + Any location / no category selected']['title'] = 'Find the Perfect Wedding Suppliers to Bring Your Day to Life'
+
 payload = json.dumps(content, ensure_ascii=False, separators=(',', ':'))
 destination.write_text(
     '(function(root,factory){const content=factory();if(typeof module===\'object\'&&module.exports)module.exports=content;else root.WEDSPARKS_SUPPLIER_SEO_CONTENT=content;}(typeof globalThis!==\'undefined\'?globalThis:this,function(){return '

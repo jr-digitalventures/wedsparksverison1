@@ -43,6 +43,7 @@ function seoLabel(){
   return'Wedding Suppliers Australia';
 }
 function spreadsheetSeoContent(category,location){
+  if(!category&&location)return{title:'Bring Your Wedding Plans Together with the Right Suppliers',paragraph:'Explore wedding suppliers across photography, venues, flowers, catering, cakes, entertainment, styling and more. Compare profiles, services and packages to see which vendors suit your plans and budget. Consider your date, guest numbers and venue requirements before requesting quotes. Browse by category or filter by location to discover wedding professionals for your celebration.'};
   const categoryName=category?.value||'All wedding suppliers';
   const locationName=location?(location.abbreviation||location.label):'';
   const key=locationName?`${categoryName} + ${locationName}`:category?`${categoryName} + No Location selected or Location selected that IS NOT state or main city`:'All wedding suppliers + Any location / no category selected';

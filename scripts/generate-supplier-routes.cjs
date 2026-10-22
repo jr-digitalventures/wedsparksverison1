@@ -52,6 +52,10 @@ const seoKey = ({ category, location }) => {
   if (category) return `${categoryName} + No Location selected or Location selected that IS NOT state or main city`;
   return 'All wedding suppliers + Any location / no category selected';
 };
+const locationOnlySeoCopy = {
+  title: 'Bring Your Wedding Plans Together with the Right Suppliers',
+  paragraph: 'Explore wedding suppliers across photography, venues, flowers, catering, cakes, entertainment, styling and more. Compare profiles, services and packages to see which vendors suit your plans and budget. Consider your date, guest numbers and venue requirements before requesting quotes. Browse by category or filter by location to discover wedding professionals for your celebration.'
+};
 const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[character]));
@@ -62,7 +66,7 @@ const render = page => {
   const supplierAssetPrefix = page.segments.length ? `${prefix}wedding-suppliers/` : '';
   const label = pageLabel(page);
   const heroLabel = page.category?.label || 'Find Wedding Suppliers';
-  const seoCopy = seoContent[seoKey(page)] || routes.seoContent(page.category);
+  const seoCopy = (!page.category && page.location ? locationOnlySeoCopy : seoContent[seoKey(page)]) || routes.seoContent(page.category);
   const heroImage = page.category?.hero || routes.mainHero;
   const heroPosition = page.category?.heroPosition || (!page.category && routes.mainHeroPosition) || 'center calc(50% - 50px)';
   const heroClass = page.category?.heroFlip ? ' supplier-hero-image--flipped' : '';
@@ -81,7 +85,7 @@ const render = page => {
     .replace('src="../marketplace-search/marketplace.js?v=18"', `src="${prefix}marketplace-search/marketplace.js?v=18"`)
     .replace(/src="[^"]*supplier-routes\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-routes.js?v=7"`)
     .replace(/src="[^"]*supplier-seo-content\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-seo-content.js?v=1"`)
-    .replace(/src="[^"]*supplier-category\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-category.js?v=36"`)
+    .replace(/src="[^"]*supplier-category\.js\?v=\d+"/, `src="${supplierAssetPrefix}supplier-category.js?v=37"`)
     .replace('href="../shared/../auth.css"', `href="${prefix}auth.css"`)
     .replace('src="../shared/header-auth.js"', `src="${prefix}shared/header-auth.js"`)
     .replace('href="../shared/public-site.css"', `href="${prefix}shared/public-site.css"`)
