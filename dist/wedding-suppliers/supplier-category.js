@@ -226,7 +226,7 @@ function updateResultsHeading() {
   const hasSelection = Boolean(state.category || locationText);
   label(
     document.querySelector('[data-heading-filter="heading-category-options"]'),
-    state.category || (locationText ? 'WEDDING VENDORS' : 'CHOOSE YOUR WEDDING VENDOR'),
+    state.category || (locationText ? 'WEDDING VENDORS' : 'CHOOSE A WEDDING VENDOR'),
     Boolean(state.category || locationText)
   );
   label(
