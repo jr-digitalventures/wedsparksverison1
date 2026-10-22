@@ -449,3 +449,47 @@
   padding:8px 10px;
 }
 /* Wedding supplier directory presentation and responsive card system. */
+@media(max-width:700px){
+  /* Keep the main discovery image centred on the couple in the narrow crop. */
+  body[data-supplier-route$="/wedding-suppliers/"] .marketplace-hero::before{background-position:58% 28%!important}
+  body[data-supplier-route$="/wedding-suppliers/"] .supplier-hero-image{object-position:58% 28%!important}
+  .supplier-category-page .supplier-hero-subtitle{font-size:0}
+  .supplier-category-page .supplier-hero-subtitle::after{content:'CONNECT WITH THE RIGHT SUPPLIERS';font:400 16px/1.6 Georgia,'Times New Roman',serif;letter-spacing:.18em}
+
+  .supplier-seo-dynamic{display:none}
+  #supplier-results-title>span:first-child,
+  #supplier-results-title>.supplier-location-anchor{display:none!important}
+  .supplier-category-content h2{display:block;margin-bottom:20px}
+  .supplier-heading-filter{display:block;width:100%}
+  .supplier-heading-filter>button{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left}
+  .supplier-heading-filter>button i{margin:0 3px 4px 16px}
+  .supplier-heading-filter>button[aria-expanded=true] i{margin:5px 3px 0 16px}
+  .supplier-heading-filter+.supplier-heading-filter{margin-top:10px}
+  .supplier-heading-menu{left:0;right:auto}
+  .supplier-heading-filter:last-child .supplier-heading-menu{left:0;right:auto}
+
+  .featured-supplier-label{display:none}
+  .featured-supplier-content,
+  .supplier-listing-content{display:flex;flex-direction:column}
+  .featured-supplier-content .supplier-card-topline,
+  .supplier-listing-heading,
+  .supplier-listing-heading .supplier-card-topline{display:contents}
+  .featured-supplier-content .supplier-type,
+  .supplier-listing-content .supplier-type{order:1}
+  .featured-supplier-content .supplier-card-titleline,
+  .supplier-listing-content .supplier-card-titleline{order:2;width:100%}
+  .featured-supplier-content .supplier-location,
+  .supplier-listing-content .supplier-location{order:3}
+  .featured-supplier-content .supplier-description,
+  .supplier-listing-content .supplier-description{order:4}
+  .featured-supplier-content .supplier-features,
+  .supplier-listing-content .supplier-features{order:5;grid-template-columns:1fr;gap:10px;margin-bottom:18px}
+  .featured-supplier-content .supplier-features span:nth-child(n+4),
+  .supplier-listing-content .supplier-features span:nth-child(n+4){display:none}
+  .featured-supplier-content .supplier-card-price-block,
+  .supplier-listing-content .supplier-card-price-block{order:6;align-items:flex-start;margin:0 0 20px;text-align:left}
+  .featured-supplier-content .featured-supplier-actions,
+  .supplier-listing-content .supplier-profile-button{order:7;margin-top:0}
+  .featured-supplier-content .supplier-card-titleline h2,
+  .supplier-listing-content .supplier-card-titleline h2{width:100%;font-size:25px}
+}
