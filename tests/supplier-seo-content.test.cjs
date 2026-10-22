@@ -38,5 +38,5 @@ test('generated pages use spreadsheet SEO content for the default and category-c
   const barSydneyPage = fs.readFileSync(path.join(supplierRoot, 'bar-services', 'sydney-nsw', 'index.html'), 'utf8');
 
   assert.match(defaultPage, /Bring Your Wedding Plans Together with the Right Suppliers/);
-  assert.match(barSydneyPage, /Raise a Glass with Sydney Wedding Bar Services/);
+  assert.match(barSydneyPage, /Raise a Glass with Wedding Bar Services in Sydney, NSW/);
 });
