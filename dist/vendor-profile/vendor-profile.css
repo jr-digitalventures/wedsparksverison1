@@ -143,3 +143,8 @@ body.vendor-profile-page:has(.vp-vendor-hero) .public-header .mobile-nav-panel .
 .vendor-profile-page .vp-match :is(h2,h3,p,strong,a,.vp-eyebrow,.vp-state-label,.vp-match-symbol,.vp-match-monogram){color:#fff}
 .vendor-profile-page .vp-match :is(.vp-match-symbol,.vp-match-monogram){border-color:#ffffff80}
 .vendor-profile-page .vp-match>.vp-fine{border-top-color:#ffffff40}
+/* Equal whitespace above and below the matching panel, without the overview divider. */
+.vendor-profile-page{--vp-panel-gap:43px}
+.vp-shell>.vp-about{border-bottom:0;margin-bottom:var(--vp-panel-gap)}
+.vendor-profile-page .vp-match{margin-bottom:var(--vp-panel-gap)}
+@media(max-width:700px){.vendor-profile-page{--vp-panel-gap:31px}}
