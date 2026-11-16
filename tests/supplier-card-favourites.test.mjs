@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync('dist/shared/supplier-save-bridge.js','utf8').replace(/^import .*\r?\n/gm,'');
+let click, session, current=null, roles=[], stored=new Set(), destination;
+const label={textContent:''},attrs={},classes=new Set();
+const card={querySelector:()=>({textContent:'Test Vendor'})};
+const button={hidden:false,disabled:false,closest:()=>card,querySelector:()=>label,getAttribute:k=>attrs[k],setAttribute:(k,v)=>attrs[k]=v,classList:{contains:k=>classes.has(k),toggle:(k,v)=>v?classes.add(k):classes.delete(k)}};
+const ctx={URL,Set,setTimeout,location:{pathname:'/wedding-suppliers/',search:'',assign:url=>destination=url},window:{wedsparksSupplierPage:{getRows:()=>[{'Name of Wedding Vendor':'Test Vendor',vendor_id:'vendor'}]}},verifiedUser:async()=>current,loadAccount:async()=>({roles}),siteUrl:p=>'https://example.test/'+p,onSessionChange:fn=>session=fn,MutationObserver:class{observe(){}},document:{head:{append(){}},createElement:()=>({setAttribute(){},style:{}}),querySelector:()=>null,querySelectorAll:()=>[button],addEventListener:(type,fn)=>click=fn},supabase:{from:()=>{let op='read';return {select(){return this},eq(){return this},insert(){op='save';return this},delete(){op='remove';return this},then(resolve){if(op==='save')stored.add('vendor');if(op==='remove')stored.delete('vendor');resolve({data:op==='read'?[...stored].map(vendor_id=>({vendor_id})):[{vendor_id:'vendor'}]});}}}}};
+vm.createContext(ctx);vm.runInContext(source,ctx);
+const refresh=()=>vm.runInContext('refreshAccount()',ctx);
+const press=()=>click({target:{closest:()=>button},preventDefault(){},stopImmediatePropagation(){}});
+await refresh();assert.equal(button.hidden,false);await press();assert.equal(new URL(destination).pathname,'/login/');
+current={id:'supplier'};roles=['supplier'];await refresh();assert.equal(button.hidden,true);
+current={id:'couple'};roles=['couple'];await refresh();assert.equal(button.hidden,false);assert.equal(label.textContent,'Save to Favourites');await press();assert.equal(label.textContent,'Saved - remove');assert.equal(attrs['aria-pressed'],'true');await refresh();assert.equal(label.textContent,'Saved - remove');await press();assert.equal(label.textContent,'Save to Favourites');assert.equal(stored.size,0);
+current=null;await refresh();assert.equal(button.hidden,false);assert.equal(attrs['aria-pressed'],'false');
+console.log('PASS: guest login, supplier hidden heart, couple save/reload/remove and logout.');

@@ -44,7 +44,7 @@ http.createServer(async (req, res) => {
 
     res.end(body);
   } catch {
-    res.writeHead(404).end('Not found');
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' }).end(await readFile(path.join(root, '404.html')));
   }
 }).listen(4173, '127.0.0.1', () => {
   console.log('Local: http://127.0.0.1:4173');

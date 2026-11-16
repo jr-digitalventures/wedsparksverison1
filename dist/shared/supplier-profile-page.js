@@ -7,7 +7,7 @@ let previewOwner=null,revoked=false;
 onSessionChange(({user})=>{if(previewOwner&&previewOwner!==user?.id){revoked=true;root.replaceChildren(el('p','Please sign in again to view your draft.'));document.querySelectorAll('dialog').forEach(d=>d.close());}});
 async function start(){
   try{
-    if(params.get('preview')==='1'){
+    if(params.get('draft')==='1'){
       document.title='Storefront preview — WedSparks';
       const user=await requireUser(location.pathname+location.search);if(!user)return;previewOwner=user.id;
       const account=await loadAccount(user);if(!account.roles.includes('supplier'))throw new Error('This preview is available to the supplier who owns the draft.');

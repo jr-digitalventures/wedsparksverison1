@@ -1,3 +1,4 @@
+import { vendorProfileUrl } from './profile-url.js';
 ﻿import { supabase } from './supabase-client.js';
 import {
   verifiedUser, loadAccount, siteUrl, onSessionChange
@@ -137,7 +138,7 @@ function makeCard(vendor, version) {
   card.querySelector('.supplier-tags')?.remove();
 
   const profile = card.querySelector('.supplier-profile-button');
-  const destination = safeUrl(vendor['Destination URL']);
+  const destination = safeUrl(vendorProfileUrl(vendor['Destination URL'], siteUrl()));
   if (profile) {
     if (destination) profile.href = destination;
     else profile.style.display = 'none';

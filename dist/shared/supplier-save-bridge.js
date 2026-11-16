@@ -1,4 +1,4 @@
-import './supplier-chat.js?v=3';
+import './supplier-chat.js?v=4';
 import { supabase } from './supabase-client.js';
 import { verifiedUser, loadAccount, siteUrl, onSessionChange } from './auth.js';
 
@@ -15,6 +15,10 @@ let saved = new Set();
 let revision = 0;
 let ready = false;
 const busy = new Set();
+
+const style = document.createElement('style');
+style.textContent = '.supplier-favourite[hidden],.featured-supplier-actions button[hidden]{display:none!important}';
+document.head.append(style);
 
 function controls() {
   return document.querySelectorAll(
@@ -34,6 +38,8 @@ function vendorFor(button) {
 
 function paint() {
   for (const button of controls()) {
+    const hidden = !ready || Boolean(user && !canSave);
+    if (button.hidden !== hidden) button.hidden = hidden;
     const vendor = vendorFor(button);
     const selected = Boolean(vendor && saved.has(vendor.vendor_id));
     const pressed = String(selected);
@@ -70,6 +76,14 @@ async function refreshAccount() {
       const account = await loadAccount(current);
       if (version !== revision) return;
 
+      user = current;
+      canSave = account.roles.includes('couple');
+      if (!canSave) {
+        ready = true;
+        paint();
+        return;
+      }
+
       const result = await supabase.from('saved_suppliers')
         .select('vendor_id')
         .eq('user_id', current.id);
@@ -104,12 +118,6 @@ document.addEventListener('click', async event => {
 
   if (!ready) return;
 
-  const vendor = vendorFor(button);
-  if (!vendor?.vendor_id) {
-    message.textContent = 'This supplier could not be identified.';
-    return;
-  }
-
   if (!user) {
     const login = new URL(siteUrl('login/'));
     login.searchParams.set('returnTo', location.pathname + location.search);
@@ -120,6 +128,12 @@ document.addEventListener('click', async event => {
   if (!canSave) {
     message.textContent =
       'Saving suppliers requires a wedding planning account.';
+    return;
+  }
+
+  const vendor = vendorFor(button);
+  if (!vendor?.vendor_id) {
+    message.textContent = 'This supplier could not be identified.';
     return;
   }
 
@@ -172,6 +186,7 @@ onSessionChange(() => {
   revision++;
   ready = false;
   user = null;
+  canSave = false;
   saved.clear();
   paint();
   setTimeout(refreshAccount, 0);

@@ -137,7 +137,7 @@ function generate(){
         .replace(/href="(?:\.\.\/)*shared\/\.\.\/auth\.css"/g,`href="${prefix}auth.css"`)
         .replace(/src="(?:\.\.\/)*shared\/header-auth\.js"/g,`src="${prefix}shared/header-auth.js"`)
         .replace(/href="(?:\.\.\/)*shared\/public-site\.css"/g,`href="${prefix}shared/public-site.css"`)
-        .replace(/src="(?:\.\.\/)*shared\/supplier-save-bridge\.js(?:\?v=\d+)?"/g,`src="${prefix}shared/supplier-save-bridge.js?v=3"`);
+        .replace(/src="(?:\.\.\/)*shared\/supplier-save-bridge\.js(?:\?v=\d+)?"/g,`src="${prefix}shared/supplier-save-bridge.js?v=4"`);
       const frozen=['suppliers','supplier','homepage-2','vendor-profile'].includes(relative.split(path.sep)[0]);
       if(!frozen&&html.includes('class="site-header')){
         const mobileId=html.match(/class="mobile-menu-toggle"[^>]*aria-controls="([^"]+)"/)?.[1]||'mobile-navigation';

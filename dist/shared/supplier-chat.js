@@ -1,8 +1,7 @@
-import { supabase } from './supabase-client.js';
 import { verifiedUser, loadAccount, siteUrl, onSessionChange } from './auth.js';
 
 const results = document.querySelector('.supplier-results');
-let eligible = new Set(), revision = 0, accountOwner = null, canChat = false;
+let revision = 0, accountOwner = null, canChat = false;
 let refreshTimer = null;
 
 function paintSupplierChats() {
@@ -22,7 +21,7 @@ function paintSupplierChats() {
     const vendor = vendors.get(name);
     let link = card.querySelector('.ws-supplier-chat');
 
-    if (!vendor?.vendor_id || !canChat || !eligible.has(vendor.vendor_id)) {
+    if (!vendor?.vendor_id || !canChat) {
       link?.remove();
       continue;
     }
@@ -49,12 +48,7 @@ function paintSupplierChats() {
     }
 
     link.dataset.vendorId = vendor.vendor_id;
-    const profile=card.querySelector('.supplier-profile-button')||card.querySelector('.featured-supplier-actions a:not(.ws-supplier-chat)')||card.querySelector('.supplier-card-buttons a:not(.ws-supplier-chat)');
-    if(profile&&!profile.dataset.originalProfile)profile.dataset.originalProfile=profile.href;
-    const signup=new URL(siteUrl('signup/'));signup.searchParams.set('experience','couple');
-    const chatSignup=new URL(signup);chatSignup.searchParams.set('returnTo',target.pathname+target.search);
-    link.href=accountOwner?target.href:chatSignup.href;
-    if(profile){if(accountOwner)profile.href=profile.dataset.originalProfile;else{const profileSignup=new URL(signup),destination=new URL(profile.dataset.originalProfile);if(destination.origin===new URL(siteUrl()).origin)profileSignup.searchParams.set('returnTo',destination.pathname+destination.search);profile.href=profileSignup.href;}}
+    link.href = target.href;
     link.setAttribute('aria-label','Start a chat with ' + name);
   }
 }
@@ -68,7 +62,6 @@ async function loadChatSuppliers() {
 
     if (!user) {
       accountOwner = null;
-      eligible = new Set();
       canChat = false;
       paintSupplierChats();
       return;
@@ -79,29 +72,12 @@ async function loadChatSuppliers() {
     if (current !== revision) return;
 
     if (!account.roles.includes('couple')) {
-      eligible = new Set();
       canChat = false;
       paintSupplierChats();
       return;
     }
 
     canChat = true;
-
-    const ids = new Set();
-
-    for (let offset = 0; offset <= 10000; offset += 100) {
-      const {data,error} = await supabase.rpc('get_message_suppliers',{
-        p_search:'',p_limit:100,p_offset:offset
-      });
-
-      if (current !== revision) return;
-      if (error || !Array.isArray(data)) throw new Error();
-
-      data.forEach(row => ids.add(row.vendor_id));
-      if (data.length < 100) break;
-    }
-
-    eligible = ids;
     paintSupplierChats();
   } catch {
     if (current === revision) {
@@ -132,7 +108,6 @@ if (results) {
     if (accountOwner !== (user?.id || null)) {
       revision++;
       accountOwner = user?.id || null;
-      eligible = new Set();
       canChat = false;
       paintSupplierChats();
     }
