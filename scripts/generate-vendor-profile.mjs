@@ -36,7 +36,7 @@ const html = `<!doctype html>
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../auth.css">
   <link rel="stylesheet" href="../shared/public-site.css">
-  <link rel="stylesheet" href="vendor-profile.css?v=2">
+  <link rel="stylesheet" href="vendor-profile.css?v=3">
   <script type="application/ld+json" data-vendor-seo>${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>
   <script type="module" src="route.js?v=1"></script>
 </head>

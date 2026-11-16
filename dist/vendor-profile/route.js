@@ -23,5 +23,5 @@ if (id || params.get('draft') === '1' || (pathSlug && pathSlug !== 'index.html')
   }
   await import('../shared/supplier-profile-page.js?v=2');
 } else {
-  await import('./vendor-profile.js?v=1');
+  await import('./vendor-profile.js?v=3');
 }

@@ -131,3 +131,7 @@ body.vendor-profile-page:has(.vp-vendor-hero) .public-header .mobile-menu-toggle
 body.vendor-profile-page:has(.vp-vendor-hero) .public-header .mobile-nav-panel .header-nav-link{color:var(--vp-green)}
 @media(max-width:1100px){.vp-vendor-hero-inner{flex-wrap:wrap;gap:24px}.vp-vendor-hero{height:500px}.vp-vendor-hero-actions{margin-left:auto}}
 @media(max-width:700px){.vp-vendor-hero{height:530px;min-height:530px}.vp-vendor-hero-inner{padding:110px 30px 30px;gap:24px}.vendor-profile-page .vp-vendor-hero h2{font-size:40px;letter-spacing:-1px}.vp-vendor-hero-meta{font-size:11px;gap:10px 0}.vp-vendor-hero-meta>a,.vp-vendor-hero-meta>span{padding:0 12px}.vp-vendor-hero-meta>:last-child{padding-left:0;flex-basis:100%}.vp-vendor-hero-meta>:nth-child(2){border-right:0}.vp-vendor-hero-actions{margin-left:0;width:100%;gap:8px}.vp-hero-action{padding:10px 14px;flex:1;gap:7px;font-size:11px}}
+/* Shared section order: hero, anchor navigation, full-width overview, then columns. */
+.vp-shell>.vp-section-nav{margin-bottom:0}
+.vp-shell>.vp-about{width:100%;max-width:none;margin:0 0 43px}
+@media(max-width:700px){.vp-shell>.vp-about{margin-bottom:31px}}

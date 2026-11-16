@@ -1,6 +1,6 @@
 import { vendor as sampleVendor, couple as sampleCouple, getVendorPreset, comparisonSamples } from './data.js';
 import { normaliseVendor, escapeHtml as e, money, dateLabel, priceLabel, reviewStats, reviewSources, quickFacts, shiftMonth, estimatePackage, budgetProjection, validateEnquiry, enquiryTypes } from './model.js';
-import { renderProfile, renderMatch, renderAvailability, renderReviews, icon, button } from './view.js';
+import { renderProfile, renderMatch, renderAvailability, renderReviews, icon, button } from './view.js?v=3';
 
 const storageKey = 'wedsparks.vendorProfile.demo.v1';
 const readStorage = () => { try { return JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch { return {}; } };
