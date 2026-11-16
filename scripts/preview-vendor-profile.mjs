@@ -16,5 +16,5 @@ http.createServer((req, res) => {
       if (start >= size || end < start) { res.writeHead(416, { 'Content-Range': `bytes */${size}` }).end(); return; }
       res.writeHead(206, { ...headers, 'Content-Range': `bytes ${start}-${end}/${size}`, 'Content-Length': end - start + 1 }); fs.createReadStream(file, { start, end }).pipe(res);
     } else { res.writeHead(200, { ...headers, 'Content-Length': size }); fs.createReadStream(file).pipe(res); }
-  } catch { res.writeHead(404).end('Not found'); }
+  } catch { res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' }).end(fs.readFileSync(path.join(root, '404.html'))); }
 }).listen(8765, '127.0.0.1', () => console.log('Vendor profile preview: http://127.0.0.1:8765/vendor-profile/'));

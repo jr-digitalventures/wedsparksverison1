@@ -1,3 +1,4 @@
+import { vendorProfileUrl } from './profile-url.js';
 import { supabase } from './supabase-client.js';
 import { requireUser, loadAccount, siteUrl, onSessionChange } from './auth.js';
 
@@ -911,7 +912,7 @@ function safeSupplierUrl(value) {
   if (!value || typeof value !== 'string' || !value.trim()) return '';
   try {
     const url = new URL(value,siteUrl(''));
-    if(url.origin==='https://jr-digitalventures.github.io'&&url.pathname==='/wedsparksverison1/supplier/')return siteUrl('supplier/'+url.search);
+    if ((url.origin === new URL(siteUrl()).origin || url.origin === 'https://jr-digitalventures.github.io') && /(?:^|\/)supplier(?:\/|$)/.test(url.pathname)) return vendorProfileUrl(url.href, siteUrl());
     return ['http:','https:'].includes(url.protocol) ? url.href : '';
   } catch { return ''; }
 }

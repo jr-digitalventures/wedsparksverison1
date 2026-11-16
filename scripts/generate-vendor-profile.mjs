@@ -1,3 +1,4 @@
+import { generateProfileRoutes } from './generate-profile-routes.mjs';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { vendor, couple } from '../dist/vendor-profile/data.js';
@@ -37,7 +38,7 @@ const html = `<!doctype html>
   <link rel="stylesheet" href="../shared/public-site.css">
   <link rel="stylesheet" href="vendor-profile.css?v=1">
   <script type="application/ld+json" data-vendor-seo>${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>
-  <script type="module" src="vendor-profile.js?v=1"></script>
+  <script type="module" src="route.js?v=1"></script>
 </head>
 <body class="vendor-profile-page" data-vendor-profile-page="true">
   <a class="skip-link" href="#vendor-profile-root">Skip to vendor profile</a>
@@ -49,3 +50,5 @@ const html = `<!doctype html>
 `;
 fs.writeFileSync(fileURLToPath(new URL('../dist/vendor-profile/index.html', import.meta.url)), html);
 console.log('Generated the Wedding Vendor Profile at /vendor-profile/ from its sample data.');
+
+generateProfileRoutes();

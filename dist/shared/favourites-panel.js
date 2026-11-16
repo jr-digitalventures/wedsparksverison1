@@ -1,3 +1,4 @@
+import { vendorProfileUrl } from './profile-url.js';
 import { supabase } from './supabase-client.js';
 import {
   verifiedUser, loadAccount, onSessionChange, siteUrl
@@ -84,7 +85,7 @@ function card(record, vendor, version) {
 
   const actions = document.createElement('div');
   actions.className = 'ws-saved-actions';
-  const destination = safeUrl(vendor?.['Destination URL']);
+  const destination = safeUrl(vendorProfileUrl(vendor?.['Destination URL'], siteUrl()));
 
   if (active && destination) {
     const link = document.createElement('a');

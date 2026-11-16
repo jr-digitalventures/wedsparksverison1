@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const source=fs.readFileSync('dist/shared/supplier-chat.js','utf8');
 let row=null;
-const profile={href:'https://example.test/supplier/?vendor=cake',dataset:{},before(n){row=n;}};
+const profile={href:'https://example.test/vendor-profile/?vendor=cake',dataset:{},before(n){row=n;}};
 const card={querySelector(selector){
  if(selector==='.supplier-card-titleline h2')return {textContent:'Sugar Lane Cakes'};
  if(selector==='.ws-supplier-chat')return row?.children.find(n=>n.className==='ws-supplier-chat')||null;
@@ -15,12 +15,22 @@ const ctx={URL,window:{wedsparksSupplierPage:{getRows:()=>[{'Name of Wedding Ven
 vm.createContext(ctx);
 vm.runInContext(source.slice(0,source.indexOf('\nif (results) {')).replace(/^import .*\r?\n/gm,'')+'\npaintSupplierChats();',ctx);
 assert.equal(row,null,'Guests only receive the original full-width profile action.');
-assert.equal(profile.href,'https://example.test/supplier/?vendor=cake');
-vm.runInContext('accountOwner="couple";canChat=true;eligible=new Set(["cake"]);paintSupplierChats();',ctx);
+assert.equal(profile.href,'https://example.test/vendor-profile/?vendor=cake');
+vm.runInContext('accountOwner="couple";canChat=true;paintSupplierChats();',ctx);
 assert.equal(row.children.length,2);
 let chat=row.children[1];assert(chat.innerHTML.includes('Start a chat'));assert(source.includes('position:static!important'));assert(source.includes('grid-row:auto!important'));
-assert.equal(profile.href,'https://example.test/supplier/?vendor=cake');assert.equal(new URL(chat.href).pathname,'/dashboard/messages/');
+assert.equal(profile.href,'https://example.test/vendor-profile/?vendor=cake');assert.equal(new URL(chat.href).pathname,'/dashboard/messages/');
 vm.runInContext('paintSupplierChats();',ctx);assert.equal(row.children.length,2,'Repainting must not duplicate or relocate actions.');
-vm.runInContext('canChat=false;eligible=new Set();paintSupplierChats();',ctx);
+vm.runInContext('canChat=false;paintSupplierChats();',ctx);
 assert.equal(row.children.length,1,'Non-couple accounts retain only the full-width profile action.');
 console.log('PASS: only signed-in couples receive chat; guests and non-couple accounts retain the full-width profile action.');
+
+ctx.verifiedUser=async()=>({id:'couple'});
+ctx.loadAccount=async()=>({roles:['couple']});
+await vm.runInContext('loadChatSuppliers()',ctx);
+assert.equal(row.children.length,2,'Couples receive chat without querying a supplier eligibility list.');
+ctx.loadAccount=async()=>({roles:['supplier']});
+await vm.runInContext('loadChatSuppliers()',ctx);
+assert.equal(row.children.length,1);
+assert(!source.includes('get_message_suppliers'));
+assert(!source.includes('eligible'));

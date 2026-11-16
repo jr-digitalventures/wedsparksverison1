@@ -45,14 +45,14 @@ async function storefront(root,ctx,status,run,save){
   toolbar.append(state,btn('Save draft',()=>void save('Draft saved. Your live page has not changed.')),
     btn('Preview page',async()=>{
       const tab=window.open('about:blank','_blank');if(tab)tab.opener=null;
-      if(await save('Draft saved. Preview opened.')){const url=siteUrl('supplier/?preview=1');if(tab)tab.location.replace(url);else status.textContent='Draft saved. Allow popups to open the preview, then try again.';}else tab?.close();
+      if(await save('Draft saved. Preview opened.')){const url=siteUrl('vendor-profile/?draft=1');if(tab)tab.location.replace(url);else status.textContent='Draft saved. Allow popups to open the preview, then try again.';}else tab?.close();
     }),btn('Publish',async()=>{
       if(!form.reportValidity())return;const missing=missingEssentials(data.storefront);if(missing.length){status.textContent='Add '+missing.join(', ').toLowerCase()+' before publishing.';return;}
       if(await run(()=>service.publish(data),'Your supplier page is published.')){state.textContent='Published';refreshLinks();}
     },'sd-primary'));
   const live=el('a','View live page ↗','sw-text-link');live.target='_blank';live.rel='noopener';
   const offline=btn('Unpublish',()=>{const d=dialog('Take your page offline?');d.append(el('p','Couples will no longer see your listing. Your details, existing conversations and draft are kept.'));d.append(btn('Keep published',()=>d.close()),btn('Unpublish page',async()=>{if(await run(()=>service.unpublish(),'Your page is offline. Your draft is kept.')){state.textContent='Unpublished draft';refreshLinks();d.close();}},'sd-primary'));d.showModal();});
-  function refreshLinks(){live.hidden=offline.hidden=!service.published;if(service.vendorId)live.href=siteUrl('supplier/?id='+service.vendorId);}
+  function refreshLinks(){live.hidden=offline.hidden=!service.published;if(service.vendorId)live.href=siteUrl('vendor-profile/?id='+service.vendorId);}
   refreshLinks();toolbar.append(live,offline);root.append(toolbar,form);
   const progress=card('Your storefront essentials'),progressText=el('p'),track=el('div',null,'sd-health-bar'),fill=el('span');track.append(fill);progress.append(progressText,track);form.append(progress);
   function update(){const missing=missingEssentials(data.storefront);progressText.textContent=(6-missing.length)+' of 6 essentials added'+(missing.length?' · '+missing.join(', '):' · Ready to publish');fill.style.width=((6-missing.length)/6*100)+'%';}

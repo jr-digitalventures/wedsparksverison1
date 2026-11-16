@@ -27,6 +27,7 @@ export function safeReturnPath(value) {
       return null;
     }
 
+    target.pathname = target.pathname.replace(/\/supplier(?=\/|$)/, '/vendor-profile');
     const relative = target.pathname.slice(siteBase.pathname.length);
     const allowed = [
       'dashboard/profile','dashboard/profile/','dashboard/profile/index.html',
@@ -35,7 +36,7 @@ export function safeReturnPath(value) {
       'supplier-account/messages', 'supplier-account/messages/',
       'supplier-account/messages/index.html',
       '', 'index.html',
-      'supplier','supplier/','supplier/index.html',
+      'vendor-profile','vendor-profile/','vendor-profile/index.html',
       'supplier-profile-import','supplier-profile-import/','supplier-profile-import/index.html',
       'supplier-onboarding','supplier-onboarding/','supplier-onboarding/index.html',
       'marketplace-search', 'marketplace-search/',
@@ -44,7 +45,7 @@ export function safeReturnPath(value) {
       'supplier-category/index.html'
     ];
 
-    return (allowed.includes(relative) || /^supplier-account(?:\/(?:messages|bookings|availability|storefront|reviews|pricing-packages|account-settings|profile-health|settings|profile|leads))?(?:\/(?:index\.html)?)?$/.test(relative) || /^wedding-suppliers(?:\/[a-z0-9-]+){0,2}\/?$/.test(relative))
+    return (allowed.includes(relative) || /^vendor-profile(?:\/[a-z0-9-]+)?\/?$/.test(relative) || /^supplier-account(?:\/(?:messages|bookings|availability|storefront|reviews|pricing-packages|account-settings|profile-health|settings|profile|leads))?(?:\/(?:index\.html)?)?$/.test(relative) || /^wedding-suppliers(?:\/[a-z0-9-]+){0,2}\/?$/.test(relative))
       ? target.pathname + target.search + target.hash
       : null;
   } catch {

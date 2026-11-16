@@ -34,7 +34,7 @@ for(const route of routes){const file=path.resolve('dist',route,'index.html'),ht
  for(const match of html.matchAll(/(?:href|src)="([^"]+)"/g)){const href=match[1];if(/^(?:https?:|data:|mailto:|#)/.test(href))continue;const target=path.resolve(path.dirname(file),href.split(/[?#]/)[0]);assert(fs.existsSync(target),'Missing linked file: '+route+' -> '+href);}
 }
 assert(!sitemap.includes('/privacy/</loc>'));assert(!sitemap.includes('/terms/</loc>'));assert(!sitemap.includes('/supplier/?'));
-assert(fs.readFileSync('dist/supplier/index.html','utf8').includes('noindex,nofollow'),'Dynamic preview template stays protected.');
+assert(fs.readFileSync('dist/supplier/index.html','utf8').includes('noindex,nofollow'),'Legacy profile redirect stays excluded from indexing.');
 assert(!fs.readFileSync('dist/shared/supplier-dashboard.js','utf8').includes('profile-import'),'No import UI added to supplier dashboard.');
 console.log('PASS: credit boundaries, budget/timeline calculations, AU/NZ source recognition, safe field imports, generated page links, indexability and repeatable homepage builds.');
 

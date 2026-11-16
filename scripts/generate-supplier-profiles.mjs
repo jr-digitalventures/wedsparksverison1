@@ -1,3 +1,4 @@
+import { generateProfileRoutes } from './generate-profile-routes.mjs';
 // Public-only build: no service-role key and no private workspace queries.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -26,3 +27,5 @@ const routes=Object.fromEntries(output.map(p=>[p.id,p.slug]));fs.writeFileSync(m
 let index=renderPage({path:'suppliers',title:'Published Wedding Supplier Profiles | WedSparks',description:'Explore the published business profiles of wedding suppliers on WedSparks.',eyebrow:'THE PEOPLE BEHIND YOUR DAY',heading:'Find the people who get your vision.',lead:'Explore published wedding businesses, or browse by category and location in our supplier directory.',sections:[]});
 const cards=output.length?`<section class="public-section"><div class="public-card-grid">${output.map(p=>`<a class="public-card" href="${esc(p.slug)}/"><span class="public-card-number">${esc(p.category)}</span><h2>${esc(p.name)}</h2><span class="public-card-arrow" aria-hidden="true">↗</span></a>`).join('')}</div></section>`:'<section class="public-section"><h2>Our supplier stories are taking shape.</h2><p>Published business profiles will appear here as suppliers complete their storefronts.</p><a class="public-button" href="../wedding-suppliers/">Explore supplier categories</a></section>';
 index=index.replace('<div class="public-copy-wrap">',cards+'<div class="public-copy-wrap">');fs.mkdirSync(path.join(root,'suppliers'),{recursive:true});fs.writeFileSync(path.join(root,'suppliers/index.html'),index);updateSitemap();console.log('Generated '+output.length+' indexable public supplier profiles.');
+
+generateProfileRoutes();

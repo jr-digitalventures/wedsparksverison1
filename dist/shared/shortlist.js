@@ -1,3 +1,4 @@
+import { vendorProfileUrl } from './profile-url.js';
 import { supabase } from './supabase-client.js';
 import {
   requireUser, loadAccount, siteUrl, onSessionChange
@@ -30,7 +31,7 @@ function safeUrl(value) {
   if (typeof value !== 'string' || !value.trim()) return null;
   try {
     const url = new URL(value, siteUrl());
-    if(url.origin==='https://jr-digitalventures.github.io'&&url.pathname==='/wedsparksverison1/supplier/')return siteUrl('supplier/'+url.search);
+    if ((url.origin === new URL(siteUrl()).origin || url.origin === 'https://jr-digitalventures.github.io') && /(?:^|\/)supplier(?:\/|$)/.test(url.pathname)) return vendorProfileUrl(url.href, siteUrl());
     return ['https:', 'http:'].includes(url.protocol) ? url.href : null;
   } catch { return null; }
 }
