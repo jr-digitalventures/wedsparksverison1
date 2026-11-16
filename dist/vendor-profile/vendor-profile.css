@@ -114,7 +114,7 @@ body.vendor-profile-page .public-header .mobile-account-actions button{color:var
 .vp-vendor-hero-image,.vp-vendor-hero-placeholder{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
 .vp-vendor-hero::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(7,26,18,.5),transparent 35%,rgba(7,26,18,.12) 50%,rgba(7,26,18,.8))}
 .vp-vendor-hero-inner{width:100%;max-width:1920px;margin:0 auto;padding:125px var(--public-gutter,135px) 38px;display:flex;align-items:flex-end;justify-content:space-between;gap:30px}
-.vp-vendor-hero-details{min-width:0}.vendor-profile-page .vp-vendor-hero h2{color:#fff;font:400 clamp(36px,3.7vw,65px)/1.08 Georgia,serif;letter-spacing:-1.5px;margin:0 0 18px;text-wrap:balance}
+.vp-vendor-hero-details{min-width:0}.vendor-profile-page .vp-vendor-hero h1{color:#fff;font:400 clamp(36px,3.7vw,65px)/1.08 Georgia,serif;letter-spacing:-1.5px;margin:0 0 18px;text-wrap:balance}
 .vp-vendor-hero-meta{display:flex;align-items:center;gap:0;flex-wrap:wrap;font-size:12px;line-height:1.6}
 .vp-vendor-hero-meta>a,.vp-vendor-hero-meta>span{display:inline-flex;align-items:center;gap:8px;color:#fff;padding:0 20px;border-right:1px solid #ffffff70}
 .vp-vendor-hero-meta>:first-child{padding-left:0}.vp-vendor-hero-meta>:last-child{border-right:0;padding-right:0}.vp-vendor-hero-meta a{text-decoration:none}.vp-vendor-hero-meta a span{text-decoration:underline}.vp-vendor-hero-meta .vp-icon{width:16px;height:16px;flex-basis:16px}
@@ -130,8 +130,16 @@ body.vendor-profile-page:has(.vp-vendor-hero) .public-header .mobile-menu-toggle
 body.vendor-profile-page:has(.vp-vendor-hero) .public-header .mobile-menu-toggle span{background:#fff}
 body.vendor-profile-page:has(.vp-vendor-hero) .public-header .mobile-nav-panel .header-nav-link{color:var(--vp-green)}
 @media(max-width:1100px){.vp-vendor-hero-inner{flex-wrap:wrap;gap:24px}.vp-vendor-hero{height:500px}.vp-vendor-hero-actions{margin-left:auto}}
-@media(max-width:700px){.vp-vendor-hero{height:530px;min-height:530px}.vp-vendor-hero-inner{padding:110px 30px 30px;gap:24px}.vendor-profile-page .vp-vendor-hero h2{font-size:40px;letter-spacing:-1px}.vp-vendor-hero-meta{font-size:11px;gap:10px 0}.vp-vendor-hero-meta>a,.vp-vendor-hero-meta>span{padding:0 12px}.vp-vendor-hero-meta>:last-child{padding-left:0;flex-basis:100%}.vp-vendor-hero-meta>:nth-child(2){border-right:0}.vp-vendor-hero-actions{margin-left:0;width:100%;gap:8px}.vp-hero-action{padding:10px 14px;flex:1;gap:7px;font-size:11px}}
+@media(max-width:700px){.vp-vendor-hero{height:530px;min-height:530px}.vp-vendor-hero-inner{padding:110px 30px 30px;gap:24px}.vendor-profile-page .vp-vendor-hero h1{font-size:40px;letter-spacing:-1px}.vp-vendor-hero-meta{font-size:11px;gap:10px 0}.vp-vendor-hero-meta>a,.vp-vendor-hero-meta>span{padding:0 12px}.vp-vendor-hero-meta>:last-child{padding-left:0;flex-basis:100%}.vp-vendor-hero-meta>:nth-child(2){border-right:0}.vp-vendor-hero-actions{margin-left:0;width:100%;gap:8px}.vp-hero-action{padding:10px 14px;flex:1;gap:7px;font-size:11px}}
 /* Shared section order: hero, anchor navigation, full-width overview, then columns. */
 .vp-shell>.vp-section-nav{margin-bottom:0}
 .vp-shell>.vp-about{width:100%;max-width:none;margin:0 0 43px}
 @media(max-width:700px){.vp-shell>.vp-about{margin-bottom:31px}}
+.vp-about-extra[hidden]{display:none}
+.vp-about-toggle{display:inline-flex;align-items:center;gap:13px;cursor:pointer;color:var(--vp-green);background:transparent;border:0;padding:0;margin:0 0 15px;font-size:13px;font-weight:600;text-align:left;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:700px){.vp-about-toggle{font-size:12px}}
+/* Match panel colours for ULI and NLI. */
+.vendor-profile-page .vp-match{background:#103E33;border-color:#103E33;color:#fff;--vp-ink:#fff;--vp-muted:#fff;--vp-green:#fff;--vp-gold:#fff}
+.vendor-profile-page .vp-match :is(h2,h3,p,strong,a,.vp-eyebrow,.vp-state-label,.vp-match-symbol,.vp-match-monogram){color:#fff}
+.vendor-profile-page .vp-match :is(.vp-match-symbol,.vp-match-monogram){border-color:#ffffff80}
+.vendor-profile-page .vp-match>.vp-fine{border-top-color:#ffffff40}

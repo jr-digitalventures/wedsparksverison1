@@ -1,6 +1,6 @@
 import { vendor as sampleVendor, couple as sampleCouple, getVendorPreset, comparisonSamples } from './data.js';
 import { normaliseVendor, escapeHtml as e, money, dateLabel, priceLabel, reviewStats, reviewSources, quickFacts, shiftMonth, estimatePackage, budgetProjection, validateEnquiry, enquiryTypes } from './model.js';
-import { renderProfile, renderMatch, renderAvailability, renderReviews, icon, button } from './view.js?v=3';
+import { renderProfile, renderMatch, renderAvailability, renderReviews, icon, button } from './view.js?v=5';
 
 const storageKey = 'wedsparks.vendorProfile.demo.v1';
 const readStorage = () => { try { return JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch { return {}; } };
@@ -249,6 +249,13 @@ export function mountVendorProfile(root, { vendor: inputVendor, couple: inputCou
 
   const actions = {
     'close-dialog': () => closeDialog(), 'sign-in': () => signin(), 'simulate-login': completeLogin,
+    'toggle-about': node => {
+      const extra = root.querySelector('#vp-about-extra');
+      const expanded = node.getAttribute('aria-expanded') !== 'true';
+      extra.hidden = !expanded;
+      node.setAttribute('aria-expanded', String(expanded));
+      node.innerHTML = (expanded ? 'See less about ' : 'Learn more about ') + e(vendor.name) + ' ' + icon(expanded ? 'close' : 'plus');
+    },
     save: toggleSave, share: openShare, 'copy-link': copyLink,
     'native-share': async () => { try { await navigator.share({ title: vendor.name, text: vendor.summary, url: dialog.querySelector('[data-share-url]').value }); track('share_action', { method: 'native' }); } catch (error) { if (error.name !== 'AbortError') toast('Sharing is unavailable here. You can copy the link instead.'); } },
     gallery: node => openGallery(vendor.media.gallery, Number(node.dataset.index || 0)),
@@ -300,7 +307,7 @@ export function mountVendorProfile(root, { vendor: inputVendor, couple: inputCou
     if (event.target.matches('[data-budget-form]')) { event.preventDefault(); if (!event.target.reportValidity()) return; const result = updateBudget(); if (result.amount === null || result.amount <= 0) { dialog.querySelector('[data-budget-error]').textContent = result.error || 'Enter a positive planning estimate.'; return; } const entry = { id: event.target.dataset.entry, vendorId: vendor.id, vendorName: vendor.name, packageId: activePackage.id, packageName: activePackage.name, category: vendor.category, amount: result.amount, quantity: result.quantity, isEstimate: result.isEstimate, currency: vendor.pricing.currency }; stored.budget = stored.budget.filter(item => item.id !== entry.id); stored.budget.push(entry); persist(); dialog.querySelector('[data-budget-status]').textContent = 'Included in this browser’s sample wedding budget. This is not a booking.'; paintLocalBudget(); track('budget_estimate_added', { packageId: entry.packageId, amount: entry.amount }); }
   }
   function onKeydown(event) { if (gallery && ['ArrowLeft', 'ArrowRight'].includes(event.key)) { event.preventDefault(); moveGallery(event.key === 'ArrowRight' ? 1 : -1); } if (event.key === 'Escape' && !dialog) { const menu = document.querySelector('.vp-profile-site-header .mobile-nav-panel'), toggle = document.querySelector('.vp-profile-site-header .mobile-menu-toggle'); if (menu && !menu.hidden) { menu.hidden = true; toggle?.setAttribute('aria-expanded', 'false'); toggle?.focus(); } } }
-  function onToggle(event) { if (event.target.matches('details[data-package]') && event.target.open) track('package_viewed', { packageId: event.target.dataset.package }); if (event.target.matches('.vp-read-more')) event.target.querySelector('summary').innerHTML = (event.target.open ? 'Less about the studio ' : 'More about the studio ') + icon('plus'); }
+  function onToggle(event) { if (event.target.matches('details[data-package]') && event.target.open) track('package_viewed', { packageId: event.target.dataset.package }); }
   function onScroll() { if (root.querySelector('#wedding-match')?.getBoundingClientRect().top > 75) root.querySelectorAll('.vp-section-nav a').forEach((link, i) => link.classList.toggle('is-active', i === 0)); }
   document.addEventListener('click', onClick); document.addEventListener('input', onInput); document.addEventListener('change', onChange); document.addEventListener('submit', onSubmit); document.addEventListener('keydown', onKeydown); root.addEventListener('toggle', onToggle, true); window.addEventListener('scroll', onScroll, { passive: true });
   if (!document.querySelector('[data-vp-toast]')) { const node = document.createElement('div'); node.className = 'vp-toast'; node.dataset.vpToast = ''; node.setAttribute('role', 'status'); node.setAttribute('aria-live', 'polite'); node.hidden = true; document.body.append(node); }
